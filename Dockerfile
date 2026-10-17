@@ -3,8 +3,8 @@ FROM node:20-alpine
 ENV NODE_ENV=production
 WORKDIR /app
 
-COPY backend/package.json backend/package-lock.json ./
-RUN npm ci --omit=dev
+COPY backend/package*.json ./
+RUN npm ci --omit=dev || npm install --omit=dev
 
 COPY backend/ ./
 

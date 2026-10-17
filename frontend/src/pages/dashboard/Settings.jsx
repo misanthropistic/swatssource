@@ -6,7 +6,7 @@ import { toast } from "@/lib/notify";
 import {
   AtSign, Mail, Shield, LogOut, Trash2, Save, KeyRound, Lock, Eye, EyeOff,
   CheckCircle2, AlertTriangle, UserCheck, Plug, Loader2, Copy, ExternalLink,
-  Sliders, Volume2, Sparkles, Check, Laptop, ShieldAlert, Key, Globe,
+  Sliders, Volume2, Sparkles, Check, Laptop, ShieldAlert, Key, Globe, ShieldCheck,
 } from "lucide-react";
 import TwoFactorPanel from "@/components/TwoFactorPanel";
 import { Switch } from "@/components/ui/switch";
