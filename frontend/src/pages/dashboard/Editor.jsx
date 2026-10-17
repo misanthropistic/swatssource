@@ -326,7 +326,10 @@ const SliderRow = ({ label, value, min, max, step = 1, suffix = "", onChange, te
    Change one of these three and PublicProfile's gate has to change with it. */
 const ENTRY_STYLES = [
   { id: "bubble", label: "Bubble Pill" },
-  { id: "text", label: "Text Button" },
+  { id: "text", label: "Glowing Text" },
+  { id: "terminal", label: "Cyber Terminal" },
+  { id: "glitch", label: "Glitch Portal" },
+  { id: "pulse", label: "Audio Pulse" },
   { id: "codelock", label: "Code Lock" },
 ];
 
@@ -337,7 +340,16 @@ const EntryStyleThumb = ({ id, accent }) => (
       style={{ background: `radial-gradient(circle at 50% 130%, ${accent}33, transparent 70%)` }}
     />
     {id === "text" ? (
-      <span className="relative font-mono2 text-[10px] uppercase tracking-widest text-zinc-300">Click to enter</span>
+      <span className="relative font-mono2 text-[10px] uppercase tracking-widest text-zinc-300 drop-shadow-[0_0_8px_rgba(255,127,188,0.6)]">Click to enter</span>
+    ) : id === "terminal" ? (
+      <span className="relative font-mono2 text-[9px] uppercase tracking-wider text-emerald-400 font-bold">&gt; [DECRYPT]</span>
+    ) : id === "glitch" ? (
+      <span className="relative font-mono2 text-[9px] uppercase tracking-widest text-cyan-300 border border-cyan-400/50 px-2 py-0.5 rounded shadow-[0_0_8px_rgba(0,240,255,0.4)]">PORTAL//</span>
+    ) : id === "pulse" ? (
+      <span className="relative flex items-center gap-1">
+        <span className="h-2 w-2 rounded-full bg-brand-400 animate-ping" />
+        <span className="font-mono2 text-[9px] uppercase text-brand-200">LISTEN</span>
+      </span>
     ) : id === "codelock" ? (
       <span className="relative flex flex-col items-center gap-1.5">
         <span className="font-mono2 text-[8px] uppercase tracking-widest text-zinc-500">Enter PIN</span>
@@ -1716,36 +1728,116 @@ export default function Editor() {
               </label>
               {p.entry_enabled && (
                 <div className="space-y-4">
-                  <div className="grid grid-cols-3 gap-2">
-                    {ENTRY_STYLES.map(({ id, label }) => (
-                      <button
-                        key={id}
-                        data-testid={`entry-style-${id}`}
-                        aria-pressed={(p.entry_style || "bubble") === id}
-                        onClick={() => set("entry_style", id)}
-                        className={`flex flex-col gap-2 rounded-xl border p-2 text-xs font-semibold transition ${
-                          (p.entry_style || "bubble") === id ? "bg-brand-500/20 border-brand-500 text-brand-200" : "border-white/10 text-zinc-400 hover:bg-white/5"
-                        }`}
-                      >
-                        <EntryStyleThumb id={id} accent={accentColor} />
-                        <span>{label}</span>
-                      </button>
-                    ))}
+                  <div>
+                    <label className="block text-xs font-semibold text-zinc-300 mb-2">Visual Entry Style</label>
+                    <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
+                      {ENTRY_STYLES.map(({ id, label }) => (
+                        <button
+                          key={id}
+                          data-testid={`entry-style-${id}`}
+                          aria-pressed={(p.entry_style || "bubble") === id}
+                          onClick={() => set("entry_style", id)}
+                          className={`flex flex-col gap-2 rounded-xl border p-2 text-xs font-semibold transition ${
+                            (p.entry_style || "bubble") === id ? "bg-brand-500/20 border-brand-500 text-brand-200" : "border-white/10 text-zinc-400 hover:bg-white/5"
+                          }`}
+                        >
+                          <EntryStyleThumb id={id} accent={accentColor} />
+                          <span>{label}</span>
+                        </button>
+                      ))}
+                    </div>
                   </div>
-                  <input
-                    data-testid="entry-text"
-                    value={p.entry_text || ""}
-                    onChange={(e) => set("entry_text", p.entry_style === "codelock" ? e.target.value.replace(/\D/g, "").slice(0, 4) : e.target.value)}
-                    inputMode={p.entry_style === "codelock" ? "numeric" : "text"}
-                    maxLength={p.entry_style === "codelock" ? 4 : 60}
-                    placeholder={p.entry_style === "codelock" ? "4-digit PIN (e.g. 1234)" : "Button text (e.g. Click to enter)"}
-                    className="w-full px-3.5 py-2.5 rounded-xl bg-white/[0.03] border border-white/10 text-xs text-zinc-100 outline-none focus:border-brand-500/50"
-                  />
-                  <p className="text-[11px] leading-relaxed text-zinc-500">
-                    {p.entry_style === "codelock"
-                      ? "Visitors type this PIN to open the page. Leave it empty and the gate opens on click instead."
-                      : "The label on the entry button or text prompt."}
-                  </p>
+
+                  <div>
+                    <label className="block text-xs font-semibold text-zinc-300 mb-1.5">
+                      {p.entry_style === "codelock" ? "Security PIN" : "Primary Button Text"}
+                    </label>
+                    <input
+                      data-testid="entry-text"
+                      value={p.entry_text || ""}
+                      onChange={(e) => set("entry_text", p.entry_style === "codelock" ? e.target.value.replace(/\D/g, "").slice(0, 4) : e.target.value)}
+                      inputMode={p.entry_style === "codelock" ? "numeric" : "text"}
+                      maxLength={p.entry_style === "codelock" ? 4 : 60}
+                      placeholder={p.entry_style === "codelock" ? "4-digit PIN (e.g. 1234)" : "Button text (e.g. Click to enter)"}
+                      className="w-full px-3.5 py-2.5 rounded-xl bg-white/[0.03] border border-white/10 text-xs text-zinc-100 outline-none focus:border-brand-500/50"
+                    />
+                    <p className="mt-1 text-[11px] leading-relaxed text-zinc-500">
+                      {p.entry_style === "codelock"
+                        ? "Visitors type this PIN to open the page. Leave it empty and the gate opens on click instead."
+                        : "The main text prompt on your entry gate."}
+                    </p>
+                  </div>
+
+                  {p.entry_style !== "codelock" && (
+                    <div>
+                      <label className="block text-xs font-semibold text-zinc-300 mb-1.5">
+                        Subtitle / Audio Hint (Optional)
+                      </label>
+                      <input
+                        data-testid="entry-subtext"
+                        value={p.entry_subtext || ""}
+                        onChange={(e) => set("entry_subtext", e.target.value)}
+                        maxLength={80}
+                        placeholder="e.g. 🎧 Sound Recommended • Click anywhere to enter"
+                        className="w-full px-3.5 py-2.5 rounded-xl bg-white/[0.03] border border-white/10 text-xs text-zinc-100 outline-none focus:border-brand-500/50"
+                      />
+                    </div>
+                  )}
+
+                  <div className="grid gap-3 sm:grid-cols-2 pt-1">
+                    <div>
+                      <label className="block text-xs font-semibold text-zinc-300 mb-1.5">
+                        Overlay Backdrop Blur
+                      </label>
+                      <div className="grid grid-cols-4 gap-1.5">
+                        {[
+                          { id: "8px", label: "Low" },
+                          { id: "16px", label: "Med" },
+                          { id: "24px", label: "High" },
+                          { id: "40px", label: "Max" },
+                        ].map((b) => (
+                          <button
+                            key={b.id}
+                            type="button"
+                            onClick={() => set("entry_blur", b.id)}
+                            className={`px-2 py-1.5 rounded-lg text-xs font-semibold border transition ${
+                              (p.entry_blur || "16px") === b.id
+                                ? "border-brand-400 bg-brand-500/20 text-brand-200"
+                                : "border-white/10 bg-white/[0.02] text-zinc-400 hover:bg-white/5"
+                            }`}
+                          >
+                            {b.label}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+
+                    <div>
+                      <label className="block text-xs font-semibold text-zinc-300 mb-1.5">
+                        Overlay Darkness <span className="font-mono2 text-zinc-500">{(p.entry_dim ?? 95)}%</span>
+                      </label>
+                      <Slider
+                        data-testid="entry-dim-slider"
+                        min={50}
+                        max={100}
+                        step={5}
+                        value={[p.entry_dim ?? 95]}
+                        onValueChange={([v]) => set("entry_dim", v)}
+                        className="[&_[role=slider]]:border-brand-400/60 [&_[role=slider]]:bg-brand-500 [&_.absolute]:bg-brand-500"
+                        aria-label="Entry screen darkness"
+                      />
+                    </div>
+                  </div>
+
+                  <div className="pt-2 flex flex-wrap items-center justify-between gap-3 border-t border-white/5">
+                    <span className="text-xs font-semibold text-zinc-300">Pulsating Glow Animation</span>
+                    <Switch
+                      data-testid="entry-anim-toggle"
+                      className={SWITCH_CLASS}
+                      checked={p.entry_anim !== false}
+                      onCheckedChange={(v) => set("entry_anim", v)}
+                    />
+                  </div>
                 </div>
               )}
             </Section>

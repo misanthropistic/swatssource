@@ -5,7 +5,7 @@ import { api, fileUrl } from "@/lib/api";
 import { toast } from "@/lib/notify";
 import { ProfilePreview } from "@/components/ProfilePreview";
 import { Switch } from "@/components/ui/switch";
-import { Check, Wand2, Plus, Trash2, Download, X, User, Eye, Lock, Link2, LayoutGrid, Pencil } from "lucide-react";
+import { Check, Wand2, Plus, Trash2, Download, X, User, Eye, Lock, Link2, LayoutGrid, Pencil, Search } from "lucide-react";
 import { registerMenuAction } from "@/lib/menuActions";
 
 /* The groups the backend filters by (see PROFILE_GROUPS in
@@ -59,6 +59,8 @@ export default function Templates() {
   // The template being previewed, plus which of its parts will be taken.
   const [viewing, setViewing] = useState(null);
   const [include, setInclude] = useState(ALL_GROUPS_ON);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [categoryFilter, setCategoryFilter] = useState("all");
 
   const navigate = useNavigate();
   const isPremium = user?.tier === "premium" || user?.tier === "admin" || user?.is_owner;
@@ -72,7 +74,7 @@ export default function Templates() {
     setLoading(true);
     try {
       const { data } = await api.get("/templates");
-      setTemplates(data || []);
+      setTemplates(Array.isArray(data) && data.length > 0 ? data : []);
     } catch {
       toast.error("Failed to load community templates");
     }
@@ -324,6 +326,46 @@ export default function Templates() {
         </div>
       )}
 
+      {/* Search and Category Filters */}
+      <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 pt-1">
+        <div className="flex items-center gap-1.5 overflow-x-auto pb-1 sm:pb-0 scrollbar-none">
+          {[
+            { id: "all", label: "All Themes" },
+            { id: "cyber", label: "⚡ Cyber & Neon" },
+            { id: "aesthetic", label: "🌸 Y2K Aesthetic" },
+            { id: "dark", label: "🌙 Dark & Velvet" },
+            { id: "retro", label: "🌅 Retro Wave" },
+          ].map((cat) => {
+            const active = categoryFilter === cat.id;
+            return (
+              <button
+                key={cat.id}
+                type="button"
+                onClick={() => setCategoryFilter(cat.id)}
+                className={`whitespace-nowrap px-3 py-1.5 rounded-xl text-xs font-semibold transition cursor-pointer ${
+                  active
+                    ? "bg-brand-500/20 text-brand-200 border border-brand-500/40 shadow-[0_0_12px_rgba(255,127,188,0.2)]"
+                    : "bg-white/[0.03] text-zinc-400 border border-white/5 hover:bg-white/[0.06] hover:text-zinc-200"
+                }`}
+              >
+                {cat.label}
+              </button>
+            );
+          })}
+        </div>
+
+        <div className="relative min-w-[200px] sm:w-64">
+          <input
+            type="text"
+            placeholder="Search templates..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            className="w-full pl-9 pr-3.5 py-1.5 text-xs rounded-xl bg-white/[0.03] border border-white/10 text-zinc-200 placeholder:text-zinc-500 outline-none focus:border-brand-500/40 focus:ring-1 focus:ring-brand-500/20 transition"
+          />
+          <Search className="w-3.5 h-3.5 text-zinc-500 absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" />
+        </div>
+      </div>
+
       {/* Grid */}
       {loading ? (
         <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -347,7 +389,24 @@ export default function Templates() {
         </div>
       ) : (
         <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
-          {templates.map((t) => {
+          {templates
+            .filter((t) => {
+              const q = searchQuery.toLowerCase().trim();
+              const matchQ =
+                !q ||
+                (t.title || "").toLowerCase().includes(q) ||
+                (t.description || "").toLowerCase().includes(q) ||
+                (t.author_username || "").toLowerCase().includes(q);
+              if (!matchQ) return false;
+              if (categoryFilter === "all") return true;
+              const text = `${t.title || ""} ${t.description || ""}`.toLowerCase();
+              if (categoryFilter === "cyber") return text.includes("cyber") || text.includes("neon") || text.includes("matrix");
+              if (categoryFilter === "aesthetic") return text.includes("y2k") || text.includes("bubblegum") || text.includes("pink") || text.includes("fairy");
+              if (categoryFilter === "dark") return text.includes("phantom") || text.includes("dark") || text.includes("midnight") || text.includes("black");
+              if (categoryFilter === "retro") return text.includes("retro") || text.includes("vaporwave") || text.includes("sunset") || text.includes("80s");
+              return true;
+            })
+            .map((t) => {
             const bgUrl = fileUrl(t.background_preview);
             const avatarUrl = fileUrl(t.author_avatar);
             const isOwnerOrAdmin = t.creator_id === user?.id || isAdmin;

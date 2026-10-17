@@ -3,7 +3,7 @@ import { api, apiError } from "@/lib/api";
 import { toast } from "@/lib/notify";
 import {
   SlidersHorizontal, ShieldAlert, ShieldCheck, UserPlus, Save, Loader2, LogIn,
-  Trophy, Plus, Trash2, Eye,
+  Trophy, Plus, Trash2, Eye, Shield, Lock, FileUp, Sparkles, Globe, Laptop,
 } from "lucide-react";
 import AnnouncementManager from "@/components/AnnouncementManager";
 
@@ -13,25 +13,26 @@ export default function SiteSettings() {
     maintenance_mode: false,
     invite_only: false,
     announcement: "",
-    // Admin "Auth check": accounts without Discord linked cannot save profile
-    // edits until they connect it once. Admins and the owner are exempt.
     auth_required_to_edit: false,
-    // Discord-first sign-in: password registration is refused and password sign-in
-    // is refused for accounts with no Discord link (they sign in with Discord
-    // instead, which links back to the same account by email).
     discord_required: false,
+    // Advanced platform security & customization controls
+    force_2fa_staff: false,
+    rate_limiting_enabled: true,
+    session_duration_days: 30,
+    allow_custom_cursors: true,
+    allow_embeds: true,
+    max_upload_mb: 25,
+    max_links: 30,
+    default_meta_title: "swats.bio — personal links & bio pages",
   });
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
-  // The view-reward engine (see backend/rewards.js): milestones of lifetime
-  // profile views that pay a timed Premium trial. Its data lives in its own
-  // site_settings row, saved through its own admin endpoint.
   const [rewards, setRewards] = useState({ enabled: false, milestones: [] });
   const [rewardsSaving, setRewardsSaving] = useState(false);
 
   useEffect(() => {
     api.get("/admin/site")
-      .then(({ data }) => setSettings(data))
+      .then(({ data }) => setSettings((prev) => ({ ...prev, ...(data || {}) })))
       .catch(() => {})
       .finally(() => setLoading(false));
     api.get("/admin/rewards-settings")
@@ -39,9 +40,6 @@ export default function SiteSettings() {
       .catch(() => {});
   }, []);
 
-  // A milestone the engine will drop (no views, no days) is called out here
-  // rather than silently disappearing on save — "I set a reward and nothing
-  // happened" was the report.
   const rewardProblems = rewards.milestones
     .map((m, i) => {
       const views = parseInt(m.views, 10);
@@ -64,8 +62,6 @@ export default function SiteSettings() {
       setRewards({ enabled: !!data.enabled, milestones: data.milestones || [] });
       toast.success("View rewards saved");
     } catch (e) {
-      // Say WHY. "Failed to save view rewards" with the server's answer thrown
-      // away is what made this look unfixable from the outside.
       toast.error(apiError(e.response?.data?.detail) || "Failed to save view rewards");
     }
     setRewardsSaving(false);
@@ -84,29 +80,34 @@ export default function SiteSettings() {
   };
 
   return (
-    <div className="space-y-5" data-testid="site-settings-page">
+    <div className="space-y-6 max-w-4xl" data-testid="site-settings-page">
       <div>
         <h1 className="font-display text-2xl font-black text-zinc-50 flex items-center gap-2.5">
           <SlidersHorizontal className="w-6 h-6 text-brand-400" /> Platform Site Settings
         </h1>
         <p className="text-sm text-zinc-500 mt-1">
-          Configure registration availability, emergency maintenance mode, and global broadcast announcements.
+          Configure registration availability, access gates, security policies, media limits, and global broadcasts.
         </p>
       </div>
 
-      <form onSubmit={saveSettings} className="space-y-5">
-        <div className="glass rounded-2xl p-5 space-y-5">
-          <div className="flex items-center justify-between">
+      <form onSubmit={saveSettings} className="space-y-6">
+        {/* Core Access & Security Gates */}
+        <div className="glass rounded-3xl p-6 space-y-5 shadow-[0_10px_30px_rgba(0,0,0,0.3)]">
+          <div className="flex items-center gap-2 text-zinc-100 font-bold text-sm uppercase tracking-wider font-mono2">
+            <Shield className="w-4 h-4 text-brand-400" /> Access & Authentication Gates
+          </div>
+
+          <div className="flex items-center justify-between gap-4">
             <div>
               <div className="text-sm font-semibold text-zinc-100 flex items-center gap-2">
                 <UserPlus className="w-4 h-4 text-brand-400" /> Public Registration
               </div>
-              <div className="text-xs text-zinc-500">Allow new users to sign up freely without invitation restrictions</div>
+              <div className="text-xs text-zinc-400 mt-0.5">Allow new visitors to register freely without invitation restrictions</div>
             </div>
-            <label className="relative inline-flex items-center cursor-pointer">
+            <label className="relative inline-flex items-center cursor-pointer shrink-0">
               <input
                 type="checkbox"
-                checked={settings.registration_open}
+                checked={!!settings.registration_open}
                 onChange={(e) => setSettings({ ...settings, registration_open: e.target.checked })}
                 className="sr-only peer"
               />
@@ -116,17 +117,17 @@ export default function SiteSettings() {
 
           <div className="h-px bg-white/5" />
 
-          <div className="flex items-center justify-between">
+          <div className="flex items-center justify-between gap-4">
             <div>
               <div className="text-sm font-semibold text-zinc-100 flex items-center gap-2">
                 <ShieldAlert className="w-4 h-4 text-amber-400" /> Require Invite Code for Registration
               </div>
-              <div className="text-xs text-zinc-500">Only users with an active invite code will be permitted to register</div>
+              <div className="text-xs text-zinc-400 mt-0.5">Only users who hold an active, valid invite code will be permitted to register</div>
             </div>
-            <label className="relative inline-flex items-center cursor-pointer">
+            <label className="relative inline-flex items-center cursor-pointer shrink-0">
               <input
                 type="checkbox"
-                checked={settings.invite_only}
+                checked={!!settings.invite_only}
                 onChange={(e) => setSettings({ ...settings, invite_only: e.target.checked })}
                 className="sr-only peer"
               />
@@ -136,17 +137,17 @@ export default function SiteSettings() {
 
           <div className="h-px bg-white/5" />
 
-          <div className="flex items-center justify-between">
+          <div className="flex items-center justify-between gap-4">
             <div>
               <div className="text-sm font-semibold text-zinc-100 flex items-center gap-2">
                 <ShieldAlert className="w-4 h-4 text-red-400" /> Emergency Maintenance Mode
               </div>
-              <div className="text-xs text-zinc-500">Temporarily show maintenance lock screen to all non-admin visitors</div>
+              <div className="text-xs text-zinc-400 mt-0.5">Temporarily show maintenance lock screen to all non-admin visitors across the website</div>
             </div>
-            <label className="relative inline-flex items-center cursor-pointer">
+            <label className="relative inline-flex items-center cursor-pointer shrink-0">
               <input
                 type="checkbox"
-                checked={settings.maintenance_mode}
+                checked={!!settings.maintenance_mode}
                 onChange={(e) => setSettings({ ...settings, maintenance_mode: e.target.checked })}
                 className="sr-only peer"
               />
@@ -156,20 +157,17 @@ export default function SiteSettings() {
 
           <div className="h-px bg-white/5" />
 
-          {/* Admin "Auth check". Aimed at accounts created before Discord
-              sign-in existed: they can sign in and browse, but profile saves are
-              refused until Discord is linked once. */}
           <div className="flex items-center justify-between gap-4">
             <div>
               <div className="text-sm font-semibold text-zinc-100 flex items-center gap-2">
                 <ShieldCheck className="w-4 h-4 text-brand-400" /> Auth check — require Discord to edit profiles
               </div>
-              <div className="text-xs text-zinc-500">
+              <div className="text-xs text-zinc-400 mt-0.5">
                 Accounts without Discord linked can sign in and keep their page, but cannot save profile
                 edits until they connect Discord once. Admins and the owner are never blocked.
               </div>
             </div>
-            <label className="relative inline-flex items-center cursor-pointer">
+            <label className="relative inline-flex items-center cursor-pointer shrink-0">
               <input
                 type="checkbox"
                 className="sr-only peer"
@@ -183,21 +181,17 @@ export default function SiteSettings() {
 
           <div className="h-px bg-white/5" />
 
-          {/* Discord-first authentication. Off by default because switching it on
-              changes how everyone signs in — including accounts that predate
-              Discord sign-in, which then use Discord with the same email. */}
           <div className="flex items-center justify-between gap-4">
             <div>
               <div className="text-sm font-semibold text-zinc-100 flex items-center gap-2">
                 <LogIn className="w-4 h-4 text-brand-300" /> Require Discord to sign in or sign up
               </div>
-              <div className="text-xs text-zinc-500">
+              <div className="text-xs text-zinc-400 mt-0.5">
                 New accounts can only be created with Discord, and password sign-in is refused for accounts with no
-                Discord link — they sign in with Discord instead, which links back to the same account by email.
-                Admins and the owner are never blocked.
+                Discord link — they sign in with Discord instead. Admins and the owner are exempt.
               </div>
             </div>
-            <label className="relative inline-flex items-center cursor-pointer">
+            <label className="relative inline-flex items-center cursor-pointer shrink-0">
               <input
                 type="checkbox"
                 className="sr-only peer"
@@ -210,8 +204,138 @@ export default function SiteSettings() {
           </div>
         </div>
 
-        {/* Real announcement system: levels, audiences, schedules and an inbox
-            push, instead of one free-text string. */}
+        {/* Security & Threat Protection Policies */}
+        <div className="glass rounded-3xl p-6 space-y-5 shadow-[0_10px_30px_rgba(0,0,0,0.3)]">
+          <div className="flex items-center gap-2 text-zinc-100 font-bold text-sm uppercase tracking-wider font-mono2">
+            <Lock className="w-4 h-4 text-emerald-400" /> Security Policies & Hardening
+          </div>
+
+          <div className="flex items-center justify-between gap-4">
+            <div>
+              <div className="text-sm font-semibold text-zinc-100 flex items-center gap-2">
+                <ShieldCheck className="w-4 h-4 text-emerald-400" /> Mandatory 2FA for Staff & Admins
+              </div>
+              <div className="text-xs text-zinc-400 mt-0.5">Enforce TOTP authenticator setup for all administrator and team accounts</div>
+            </div>
+            <label className="relative inline-flex items-center cursor-pointer shrink-0">
+              <input
+                type="checkbox"
+                checked={!!settings.force_2fa_staff}
+                onChange={(e) => setSettings({ ...settings, force_2fa_staff: e.target.checked })}
+                className="sr-only peer"
+              />
+              <div className="w-11 h-6 bg-zinc-800 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-emerald-600"></div>
+            </label>
+          </div>
+
+          <div className="h-px bg-white/5" />
+
+          <div className="flex items-center justify-between gap-4">
+            <div>
+              <div className="text-sm font-semibold text-zinc-100 flex items-center gap-2">
+                <Laptop className="w-4 h-4 text-emerald-400" /> Global API Rate Limiter
+              </div>
+              <div className="text-xs text-zinc-400 mt-0.5">Protect backend endpoints from credential stuffing, rapid bot crawling, and DDoS spikes</div>
+            </div>
+            <label className="relative inline-flex items-center cursor-pointer shrink-0">
+              <input
+                type="checkbox"
+                checked={settings.rate_limiting_enabled !== false}
+                onChange={(e) => setSettings({ ...settings, rate_limiting_enabled: e.target.checked })}
+                className="sr-only peer"
+              />
+              <div className="w-11 h-6 bg-zinc-800 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-emerald-600"></div>
+            </label>
+          </div>
+
+          <div className="h-px bg-white/5" />
+
+          <div className="grid sm:grid-cols-2 gap-4 pt-1">
+            <div>
+              <label className="text-xs font-semibold text-zinc-300 block mb-1.5">Max Session Lifespan</label>
+              <select
+                value={settings.session_duration_days || 30}
+                onChange={(e) => setSettings({ ...settings, session_duration_days: Number(e.target.value) })}
+                className="w-full px-4 py-2.5 rounded-xl bg-white/[0.04] border border-white/10 text-sm text-zinc-100 outline-none focus:border-brand-500/50 transition cursor-pointer"
+              >
+                <option value={7} className="bg-zinc-900 text-zinc-100">7 Days (High Security)</option>
+                <option value={14} className="bg-zinc-900 text-zinc-100">14 Days</option>
+                <option value={30} className="bg-zinc-900 text-zinc-100">30 Days (Standard)</option>
+                <option value={90} className="bg-zinc-900 text-zinc-100">90 Days (Extended)</option>
+              </select>
+            </div>
+
+            <div>
+              <label className="text-xs font-semibold text-zinc-300 block mb-1.5">Max Media Upload Limit</label>
+              <select
+                value={settings.max_upload_mb || 25}
+                onChange={(e) => setSettings({ ...settings, max_upload_mb: Number(e.target.value) })}
+                className="w-full px-4 py-2.5 rounded-xl bg-white/[0.04] border border-white/10 text-sm text-zinc-100 outline-none focus:border-brand-500/50 transition cursor-pointer"
+              >
+                <option value={10} className="bg-zinc-900 text-zinc-100">10 MB</option>
+                <option value={25} className="bg-zinc-900 text-zinc-100">25 MB (Recommended)</option>
+                <option value={50} className="bg-zinc-900 text-zinc-100">50 MB</option>
+                <option value={100} className="bg-zinc-900 text-zinc-100">100 MB (Enterprise)</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        {/* Profile Customization Governance */}
+        <div className="glass rounded-3xl p-6 space-y-5 shadow-[0_10px_30px_rgba(0,0,0,0.3)]">
+          <div className="flex items-center gap-2 text-zinc-100 font-bold text-sm uppercase tracking-wider font-mono2">
+            <Sparkles className="w-4 h-4 text-purple-400" /> Profile Customization Rules
+          </div>
+
+          <div className="flex items-center justify-between gap-4">
+            <div>
+              <div className="text-sm font-semibold text-zinc-100">Allow Custom Animated Cursors</div>
+              <div className="text-xs text-zinc-400 mt-0.5">Permit members to upload custom animated GIF / PNG cursors on public bios</div>
+            </div>
+            <label className="relative inline-flex items-center cursor-pointer shrink-0">
+              <input
+                type="checkbox"
+                checked={settings.allow_custom_cursors !== false}
+                onChange={(e) => setSettings({ ...settings, allow_custom_cursors: e.target.checked })}
+                className="sr-only peer"
+              />
+              <div className="w-11 h-6 bg-zinc-800 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-purple-600"></div>
+            </label>
+          </div>
+
+          <div className="h-px bg-white/5" />
+
+          <div className="flex items-center justify-between gap-4">
+            <div>
+              <div className="text-sm font-semibold text-zinc-100">Allow Third-Party Music & Widget Embeds</div>
+              <div className="text-xs text-zinc-400 mt-0.5">Permit members to embed Spotify, SoundCloud, YouTube and Discord live cards</div>
+            </div>
+            <label className="relative inline-flex items-center cursor-pointer shrink-0">
+              <input
+                type="checkbox"
+                checked={settings.allow_embeds !== false}
+                onChange={(e) => setSettings({ ...settings, allow_embeds: e.target.checked })}
+                className="sr-only peer"
+              />
+              <div className="w-11 h-6 bg-zinc-800 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-purple-600"></div>
+            </label>
+          </div>
+
+          <div className="h-px bg-white/5" />
+
+          <div>
+            <label className="text-xs font-semibold text-zinc-300 block mb-1.5">Default SEO Title Template</label>
+            <input
+              type="text"
+              placeholder="swats.bio — personal links & bio pages"
+              value={settings.default_meta_title || ""}
+              onChange={(e) => setSettings({ ...settings, default_meta_title: e.target.value })}
+              className="w-full px-4 py-2.5 rounded-xl bg-white/[0.04] border border-white/10 text-sm text-zinc-100 placeholder-zinc-500 outline-none focus:border-brand-500/50 transition font-mono2 text-xs"
+            />
+          </div>
+        </div>
+
+        {/* Real announcement system */}
         <AnnouncementManager />
 
         <div className="glass rounded-2xl p-5">
@@ -241,10 +365,7 @@ export default function SiteSettings() {
         </div>
       </form>
 
-      {/* The view-milestone reward system (backend/rewards.js): a member's
-          whole account crosses lifetime profile views, and at each milestone a
-          timed Premium trial lands automatically. Every number here is admin
-          config, stored in its own site_settings row. */}
+      {/* The view-milestone reward system */}
       <div className="glass rounded-2xl p-5" data-testid="rewards-settings">
         <div className="flex items-center justify-between gap-4">
           <div>
@@ -272,10 +393,6 @@ export default function SiteSettings() {
             {rewards.milestones.length === 0 && (
               <p className="text-xs text-zinc-600">No milestones yet — add the first crossover.</p>
             )}
-            {/* Keyed by POSITION, never by the values: a key that changed as
-                you typed made React unmount the input on every keystroke, so the
-                field lost focus after one digit and a milestone could never be
-                typed in at all. */}
             {rewards.milestones.map((m, i) => (
               <div key={i} className="flex items-center gap-2" data-testid={`reward-row-${i}`}>
                 <Eye className="h-3.5 w-3.5 text-zinc-500" />

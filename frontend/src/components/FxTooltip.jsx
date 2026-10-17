@@ -236,26 +236,31 @@ function TipBubble({ x, y, label, style, accent, size = "md", anim }) {
     look === "glass" ? (
       <span
         data-tip-style="glass"
-        className={`block whitespace-nowrap rounded-xl border bg-white/10 font-semibold text-white shadow-2xl backdrop-blur-xl ${pad} ${scale} ${entrance}`}
-        style={{ borderColor: accent ? `${accent}55` : "rgba(255,255,255,0.18)" }}
+        className={`block whitespace-nowrap rounded-xl border bg-white/10 font-semibold text-white shadow-[0_12px_36px_rgba(0,0,0,0.6)] backdrop-blur-2xl ${pad} ${scale} ${entrance}`}
+        style={{
+          borderColor: accent ? `${accent}66` : "rgba(255,255,255,0.22)",
+          boxShadow: accent
+            ? `inset 0 1px 0 rgba(255,255,255,0.3), 0 10px 30px -4px ${accent}40`
+            : "inset 0 1px 0 rgba(255,255,255,0.25), 0 10px 30px rgba(0,0,0,0.6)",
+        }}
       >
         {label}
       </span>
     ) : look === "ice" ? (
       <span
         data-tip-style="ice"
-        className={`block whitespace-nowrap rounded-xl border font-semibold text-white backdrop-blur-md ${pad} ${scale} ${entrance}`}
+        className={`block whitespace-nowrap rounded-xl border font-semibold text-white backdrop-blur-xl ${pad} ${scale} ${entrance}`}
         style={{
-          background: "linear-gradient(160deg, rgba(214,240,255,0.20), rgba(122,180,255,0.12))",
-          borderColor: "rgba(190,230,255,0.5)",
-          boxShadow: "inset 0 1px 0 rgba(255,255,255,0.35), 0 10px 26px rgba(6,18,38,0.7)",
+          background: "linear-gradient(160deg, rgba(214,240,255,0.25), rgba(122,180,255,0.15))",
+          borderColor: "rgba(190,230,255,0.6)",
+          boxShadow: "inset 0 1px 0 rgba(255,255,255,0.45), 0 12px 30px rgba(6,18,38,0.8), 0 0 16px rgba(147,197,253,0.3)",
         }}
       >
         {label}
       </span>
     ) : (
       // classic: black, the label, nothing else — no border, no glow, no tail.
-      <span data-tip-style="classic" className={`block whitespace-nowrap rounded-lg bg-black font-semibold text-white ${pad} ${scale} ${entrance}`}>
+      <span data-tip-style="classic" className={`block whitespace-nowrap rounded-lg bg-black font-semibold text-white shadow-xl ${pad} ${scale} ${entrance}`}>
         {label}
       </span>
     );

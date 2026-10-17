@@ -382,3 +382,9 @@ select:focus-visible,
 .pin-shake {
   animation: sw-pin-shake 0.35s ease-in-out;
 }
+
+/* Custom Cursor Active */
+body.custom-cursor-active,
+body.custom-cursor-active * {
+  cursor: none !important;
+}

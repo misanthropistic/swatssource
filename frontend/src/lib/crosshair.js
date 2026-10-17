@@ -39,9 +39,19 @@ export function scaledCrosshairSize(naturalWidth, naturalHeight, scale) {
 
 export function buildCrosshairCursor(src, settings = {}) {
   const { scale = 1, x = 0, y = 0 } = settings;
+  const isGif = typeof src === "string" && /\.gif(\?|$)/i.test(src);
   const fallback = { value: `url("${src}") ${clamp(x, 0, 63)} ${clamp(y, 0, 63)}, auto`, width: null, height: null };
   return new Promise((resolve) => {
     if (typeof window === "undefined" || !src) return resolve(null);
+    if (isGif) {
+      // GIFs: preserve raw URL so animated frames are not flattened to a static PNG
+      return resolve({
+        value: `url("${src}") ${clamp(x, 0, 63)} ${clamp(y, 0, 63)}, auto`,
+        width: 32,
+        height: 32,
+        isGif: true,
+      });
+    }
     const img = new window.Image();
     img.crossOrigin = "anonymous";
     img.decoding = "async";
@@ -69,3 +79,13 @@ export function buildCrosshairCursor(src, settings = {}) {
     img.src = src;
   });
 }
+
+// Aliases for modern Cursor naming
+export const cursorSettings = crosshairSettings;
+export const validateCursorFile = validateCrosshairFile;
+export const scaledCursorSize = scaledCrosshairSize;
+export const buildCursor = buildCrosshairCursor;
+export const CURSOR_MAX_BYTES = CROSSHAIR_MAX_BYTES;
+export const CURSOR_ACCEPT = CROSSHAIR_ACCEPT;
+export const CURSOR_SCALE_MIN = CROSSHAIR_SCALE_MIN;
+export const CURSOR_SCALE_MAX = CROSSHAIR_SCALE_MAX;

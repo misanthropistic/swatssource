@@ -22,35 +22,167 @@ const PROFILE_GROUPS = [
   ['links', /^links$/],
   ['widgets', /^widgets$/],
   ['background', /^(background_|banner_|bg_)/],
-  ['effects', /(effect|overlay|cursor_effect|custom_|advanced_mode)/],
+  ['effects', /(effect|overlay|cursor_effect|custom_|advanced_mode|crosshair_|cursor_)/],
   ['text', /^(bio|display_name|location|entry_|alias_color|showcase_uid)/],
 ];
 
-/* The parts of a profile a template NEVER carries, in either direction.
+const DEFAULT_STARTER_TEMPLATES = [
+  {
+    title: 'Cyberpunk 2099',
+    description: 'Futuristic neon aesthetics with cyan accents, scanlines, and high-tech typography.',
+    author_username: 'swats',
+    background_preview: '#00f0ff',
+    config: {
+      theme_color: '#00f0ff',
+      accent_color: '#ff0055',
+      name_font: 'Unbounded',
+      bio_font: 'JetBrains Mono',
+      display_font: 'Unbounded',
+      layout: 'default',
+      card_style: 'cyber',
+      card_opacity: 90,
+      card_blur: 16,
+      background_color: '#050811',
+      background_effect: 'cyber_grid',
+      overlay: 'scanlines',
+      overlay_opacity: 30,
+      entry_style: 'terminal',
+      entry_text: 'INITIALIZE_NEURAL_LINK',
+      display_name: 'CYBER//RUNNER',
+      bio: '⚡ Augmented reality architect • Neo-Tokyo netrunner\n[Status: ONLINE]'
+    }
+  },
+  {
+    title: 'Y2K Bubblegum',
+    description: 'Retro 2000s aesthetic with frosted pink glass, sparkles, and bouncy cute typography.',
+    author_username: 'swats',
+    background_preview: '#FF7FBC',
+    config: {
+      theme_color: '#FF7FBC',
+      accent_color: '#FFB8DB',
+      name_font: 'Outfit',
+      bio_font: 'Poppins',
+      display_font: 'Outfit',
+      layout: 'floating',
+      card_style: 'frosted',
+      card_opacity: 75,
+      card_blur: 24,
+      background_color: '#12050c',
+      background_effect: 'sparkles',
+      overlay: 'sparkles',
+      overlay_opacity: 40,
+      entry_style: 'bubble',
+      entry_text: '✧ enter dreamworld ✧',
+      display_name: 'angelic.exe',
+      bio: '★ y2k archivist • digital fairy • listen to my playlist below ♡'
+    }
+  },
+  {
+    title: 'Midnight Phantom',
+    description: 'Deep monochrome obsidian with gothic serif typography, smoke overlay, and velvet purple glow.',
+    author_username: 'swats',
+    background_preview: '#3b0764',
+    config: {
+      theme_color: '#8b5cf6',
+      accent_color: '#a855f7',
+      name_font: 'Playfair Display',
+      bio_font: 'Lora',
+      display_font: 'Playfair Display',
+      layout: 'minimal',
+      card_style: 'glass',
+      card_opacity: 85,
+      card_blur: 20,
+      background_color: '#07040a',
+      background_effect: 'smoke',
+      overlay: 'vhs',
+      overlay_opacity: 25,
+      entry_style: 'text',
+      entry_text: '[ Click into the dark ]',
+      display_name: 'Phantom',
+      bio: 'Walking in the shadows. Night owl & music composer.'
+    }
+  },
+  {
+    title: 'Vaporwave Sunset',
+    description: '80s retro synthwave gradient, warm sunset hues, nostalgic scanline overlay.',
+    author_username: 'swats',
+    background_preview: '#f97316',
+    config: {
+      theme_color: '#f97316',
+      accent_color: '#ec4899',
+      name_font: 'Space Grotesk',
+      bio_font: 'Inter',
+      display_font: 'Space Grotesk',
+      layout: 'default',
+      card_style: 'aurora',
+      card_opacity: 80,
+      background_color: '#0a0512',
+      overlay: 'scanlines',
+      overlay_opacity: 35,
+      entry_style: 'pulse',
+      entry_text: '▶ PRESS TO PLAY 1984',
+      display_name: 'SYNTH // WAVE',
+      bio: 'Late night drives on neon highways. Tape decks and synthesizers.'
+    }
+  },
+  {
+    title: 'Minimalist Monochrome',
+    description: 'Ultra-clean black and white design with high-fashion typography, borderless frosted glass.',
+    author_username: 'swats',
+    background_preview: '#18181b',
+    config: {
+      theme_color: '#ffffff',
+      accent_color: '#e4e4e7',
+      name_font: 'Inter',
+      bio_font: 'Inter',
+      display_font: 'Inter',
+      layout: 'minimal',
+      card_style: 'frosted',
+      card_opacity: 60,
+      card_blur: 30,
+      background_color: '#000000',
+      entry_style: 'text',
+      entry_text: 'ENTER',
+      display_name: 'STUDIO / DESIGN',
+      bio: 'Less is more. Digital minimalism & product craft.'
+    }
+  },
+  {
+    title: 'Neo Acid Matrix',
+    description: 'Raw acid green hacker terminal aesthetic with code lock gate and digital rain.',
+    author_username: 'swats',
+    background_preview: '#15803d',
+    config: {
+      theme_color: '#22c55e',
+      accent_color: '#4ade80',
+      name_font: 'JetBrains Mono',
+      bio_font: 'JetBrains Mono',
+      display_font: 'JetBrains Mono',
+      layout: 'default',
+      card_style: 'cyber',
+      card_opacity: 92,
+      card_blur: 12,
+      background_color: '#020a04',
+      overlay: 'dotters',
+      overlay_opacity: 40,
+      entry_style: 'codelock',
+      entry_text: '1337',
+      display_name: 'ROOT@MAINFRAME',
+      bio: '$ chmod +x identity\n$ ./explore --stealth'
+    }
+  }
+];
 
-   A template is a look, not a page's furniture. Publishing one used to snapshot
-   the author's whole profile including their links and widgets, so applying it
-   dropped a stranger's Discord invite and their Roblox card onto your page — and
-   replaced the links you had written yourself. They are stripped when a template
-   is PUBLISHED and again when it is APPLIED, so an older row saved before this
-   (or a hand-edited one) cannot smuggle them through either: whatever links and
-   widgets are on the page after an apply are the ones the page already had. */
 const NEVER_COPIED = ['links', 'widgets'];
 
 export const TEMPLATE_NEVER_COPIED = NEVER_COPIED;
 
-/* The groups a visitor may choose between — every group except the two that go
-   with the visitor rather than the template. */
 export const TEMPLATE_GROUPS = PROFILE_GROUPS.map(([name]) => name)
   .filter((name) => !NEVER_COPIED.includes(name))
   .concat('theme');
 
-/* Every group a profile key can land in. `groupForProfileKey` still classifies
-   links and widgets (that is how they are recognised and dropped), so this is
-   the list to check a key against. */
 export const ALL_PROFILE_GROUPS = PROFILE_GROUPS.map(([name]) => name).concat('theme');
 
-/* Drops the groups a template never carries. Used on publish and on apply. */
 export function stripNeverCopied(config) {
   const source = config && typeof config === 'object' ? config : {};
   const kept = {};
@@ -61,25 +193,14 @@ export function stripNeverCopied(config) {
   return kept;
 }
 
-/* ---- Premium and free templates -------------------------------------------
-
-   A template is tagged by what it actually asks you to wear, not by who wrote
-   it: anything the editor would send a free account to the pricing page for
-   makes the template Premium, and a free account can browse it but not apply
-   it. Two mirrored lists — the fonts and the player styles the editor treats as
-   free — are pinned to the frontend by templates.access.test.js, so a font
-   moving between tiers cannot silently retag every template that uses it. */
 export const FREE_FONTS = [
   'Bebas Neue', 'Courier New', 'Georgia', 'Inter', 'JetBrains Mono', 'Lora',
   'Montserrat', 'Oswald', 'Outfit', 'Playfair Display', 'Poppins', 'Space Grotesk',
   'Syne', 'Unbounded', 'system-ui',
 ];
 
-// The three free player styles (TRACK_STYLES in frontend/src/constants/effects.js).
 export const FREE_TRACK_STYLES = ['', 'mini-bar', 'compact', 'corner-icon'];
 
-// A key whose non-empty value is a Premium feature by construction: every
-// effect, overlay, background and cursor in the store is Premium.
 const PREMIUM_VALUE_KEYS = /^(name_effect|bio_effect|avatar_effect|overlay|background_effect|cursor_effect|crosshair_image|crosshair_scale|crosshair_x|crosshair_y|custom_css|custom_html)$/;
 
 export function templateTier(config) {
@@ -97,21 +218,9 @@ export function templateTier(config) {
   return 'free';
 }
 
-/* ---- How many templates an account may publish -----------------------------
-
-   Free accounts publish three, Premium ten; the owner and admins are not
-   counted at all. The number used to be one for a free account, which is what
-   made "posting a free template" feel broken: the first one worked, the second
-   was refused with an upsell, and nothing in the UI said a slot had been used.
-   Whatever these numbers are, the dashboard reads them from the server (see
-   GET /templates/mine) rather than counting the visible marketplace page — a
-   template outside that page's first fifty used to look like an unused slot. */
 export const TEMPLATE_LIMITS = { free: 3, premium: 10 };
 
 export function templateLimitFor(user) {
-  // `tier: 'admin'` counts as staff here, not as a paying customer with a cap:
-  // the rest of the backend already treats that tier as an admin one, and an
-  // admin told to delete their own template to publish another would be silly.
   const unlimited = user?.is_owner || user?.role === 'admin' || user?.tier === 'admin';
   const premium =
     user?.tier === 'premium' || user?.tier === 'admin' || user?.role === 'admin' || !!user?.is_owner;
@@ -127,25 +236,17 @@ export function groupForProfileKey(key) {
   return match ? match[0] : 'theme';
 }
 
-/* Keeps only the groups the visitor left switched on. No `include` means the old
-   behaviour (take everything), which is what the one-click Apply button sends. */
 export function filterTemplateConfig(config, include) {
   const source = config && typeof config === 'object' ? config : {};
 
   const kept = {};
   for (const [key, value] of Object.entries(source)) {
     const group = groupForProfileKey(key);
-    // The visitor's own links and widgets are never part of an apply, whoever
-    // asks for them.
     if (NEVER_COPIED.includes(group)) continue;
-    // No `include` at all is the one-click Apply button: take everything that
-    // can be taken.
     if (!include || typeof include !== 'object') {
       kept[key] = value;
       continue;
     }
-    // A group left out of the payload entirely is a group the caller did not
-    // know about, so it is applied rather than dropped.
     if (!(group in include) || include[group]) kept[key] = value;
   }
   return kept;
@@ -154,7 +255,7 @@ export function filterTemplateConfig(config, include) {
 // GET /api/templates - list all community templates
 router.get('/', async (req, res) => {
   try {
-    const { rows } = await query(`
+    let { rows } = await query(`
       SELECT 
         t.id, t.title, t.description, t.author_username, t.author_avatar,
         t.background_preview, t.config, t.downloads_count, t.created_at,
@@ -163,9 +264,32 @@ router.get('/', async (req, res) => {
       ORDER BY t.downloads_count DESC, t.created_at DESC
       LIMIT 50
     `);
-    // The tag is derived, not stored: a template published before this existed
-    // is tagged by what it contains, and a font or layout that changes tier
-    // retags the templates that use it instead of leaving a stale column behind.
+
+    // If empty, auto-seed default starter templates
+    if (rows.length === 0) {
+      for (const t of DEFAULT_STARTER_TEMPLATES) {
+        try {
+          await query(
+            `INSERT INTO community_templates (creator_id, title, description, author_username, background_preview, config, downloads_count)
+             VALUES (NULL, $1, $2, $3, $4, $5, 12)`,
+            [t.title, t.description, t.author_username, t.background_preview, JSON.stringify(t.config)]
+          );
+        } catch {
+          // Ignore unique / conflict errors during concurrent seed
+        }
+      }
+      const refetched = await query(`
+        SELECT 
+          t.id, t.title, t.description, t.author_username, t.author_avatar,
+          t.background_preview, t.config, t.downloads_count, t.created_at,
+          t.creator_id
+        FROM community_templates t
+        ORDER BY t.downloads_count DESC, t.created_at DESC
+        LIMIT 50
+      `);
+      rows = refetched.rows;
+    }
+
     return res.json(rows.map((row) => ({
       ...row,
       config: stripNeverCopied(row.config),
