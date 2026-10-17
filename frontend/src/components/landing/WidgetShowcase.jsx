@@ -1,6 +1,5 @@
 import { useRef } from "react";
 import { motion, useReducedMotion } from "framer-motion";
-import { LayoutGrid } from "lucide-react";
 import { WidgetCard } from "@/components/WidgetCards";
 
 // The same accounts the site demonstrates with, rendered through the real
@@ -85,10 +84,7 @@ const Tilt = ({ children, index }) => {
 export const WidgetShowcase = () => (
   <section data-testid="widget-showcase" className="relative overflow-hidden border-t border-white/10 py-20">
     <div className="mx-auto mb-12 max-w-xl px-4 text-center">
-      <div className="inline-flex items-center gap-2 rounded-full glass px-3 py-1 text-xs font-mono2 text-brand-300">
-        <LayoutGrid className="h-3.5 w-3.5" /> Real widgets
-      </div>
-      <h2 className="mt-4 font-display text-3xl font-black text-zinc-50 sm:text-4xl">The widgets your page actually renders</h2>
+      <h2 className="font-display text-3xl font-black text-zinc-50 sm:text-4xl">The widgets your page actually renders</h2>
       <p className="mt-2 text-sm text-zinc-400">
         Live data straight from Discord, Spotify, SoundCloud and TikTok through our proxy — the
         same cards you drop on your own page. Move your pointer over them.
