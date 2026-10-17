@@ -1,0 +1,86 @@
+/* BadgeChip styles.
+
+   A badge is a picture (see BadgeChip.jsx and constants/discordBadges.js), so
+   there is almost nothing left to style here. Deliberately so: no plate, no
+   tile, no background, no border, no outline and no drop shadow of the chip —
+   the art's own pixels are the whole mark, and anything added behind or around
+   it shows up as a box on the card.
+
+   The two things that do live here are the two settings:
+
+     • the glow — a drop-shadow that follows the art's silhouette, read from the
+       `--badge-glow` custom property BadgeChip writes inline, so the hover
+       brightening below can still compose with it;
+     • the overlay — a colour masked by the art and blended with the art.
+*/
+
+.badge-chip {
+  position: relative;
+  isolation: isolate;
+  /* `none` until the owner sets a glow: with no custom property there is no
+     filter to paint, and no layer to pay for. */
+  filter: var(--badge-glow, none);
+  transition: transform 0.18s ease;
+}
+
+.badge-chip:hover {
+  transform: translateY(-1px) scale(1.06);
+}
+
+/* ── The art ─────────────────────────────────────────────────────────────── */
+
+.badge-art {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.badge-art-img {
+  display: block;
+  object-fit: contain;
+  pointer-events: none;
+  user-select: none;
+  transition: filter 0.18s ease;
+}
+
+.badge-chip:hover .badge-art-img {
+  filter: brightness(1.12) saturate(1.06);
+}
+
+/* The overlay: one colour, masked by the art's own pixels so it can only ever
+   colour the badge itself, and blended in `color` so the artwork's shading and
+   detail come through underneath. No mask means no square: this element can
+   never paint a box, because outside the silhouette it is fully transparent. */
+.badge-art-overlay {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  mix-blend-mode: color;
+  -webkit-mask-image: var(--badge-mask, none);
+  mask-image: var(--badge-mask, none);
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+  -webkit-mask-position: center;
+  mask-position: center;
+  -webkit-mask-size: contain;
+  mask-size: contain;
+}
+
+/* Reduced motion CALMS the hover, it never removes it.
+
+   It used to be `transition: none; transform: none` plus `filter: none`, which
+   left the badge completely dead on hover — and a large share of machines
+   report reduced motion (Windows ships Animation effects off by default for
+   many people), which is why the badges looked like they had no animation at
+   all. The same blanket switch-off is what effects.css and index.css forbid for
+   the profile, so the hover now keeps its scale and its lift is what goes. */
+@media (prefers-reduced-motion: reduce) {
+  .badge-chip {
+    transition-duration: 0.25s;
+  }
+
+  .badge-chip:hover {
+    transform: scale(1.05);
+  }
+}

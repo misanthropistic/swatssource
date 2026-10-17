@@ -1,0 +1,51 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "framework": "create-react-app",
+  "headers": [
+    {
+      "source": "/(.*)",
+      "headers": [
+        {
+          "key": "Content-Security-Policy",
+          "value": "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; img-src 'self' data: blob: https:; font-src 'self' data: https://fonts.gstatic.com; connect-src 'self' https:; media-src 'self' blob: https:; frame-src 'self' https:; worker-src 'self' blob:; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'self' https://discord.com https://discordapp.com https://*.discord.gg https://*.discordsays.com https://*.discordsnap.co https://*.discordsnap.com"
+        },
+        { "key": "X-Content-Type-Options", "value": "nosniff" },
+        { "key": "Referrer-Policy", "value": "strict-origin-when-cross-origin" },
+        { "key": "Permissions-Policy", "value": "geolocation=(self), microphone=(), camera=(), payment=()" },
+        { "key": "Strict-Transport-Security", "value": "max-age=15552000; includeSubDomains" }
+      ]
+    }
+  ],
+  "installCommand": "cd frontend && npm install --legacy-peer-deps",
+  "buildCommand": "cd frontend && npm run build",
+  "outputDirectory": "frontend/build",
+  "rewrites": [
+    {
+      "source": "/api/(.*)",
+      "destination": "https://swatssource-production.up.railway.app/api/$1"
+    },
+    {
+      "source": "/meta/(.*)",
+      "destination": "https://swatssource-production.up.railway.app/meta/$1"
+    },
+    {
+      "source": "/raw-meta/(.*)",
+      "destination": "https://swatssource-production.up.railway.app/meta/$1"
+    },
+    {
+      "source": "/:username([^/]+)",
+      "has": [
+        {
+          "type": "header",
+          "key": "user-agent",
+          "value": ".*([dD]iscord|[tT]witter|[tT]elegram|[fF]acebook|[wW]hats[aA]pp|[sS]lack|[bB]ot|[cC]rawler|[sS]pider|[eE]mbed|curl|Wget|Google|bing).*"
+        }
+      ],
+      "destination": "https://swatssource-production.up.railway.app/meta/:username"
+    },
+    {
+      "source": "/(.*)",
+      "destination": "/index.html"
+    }
+  ]
+}

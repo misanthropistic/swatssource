@@ -1,0 +1,113 @@
+{
+  "project_name": "swats.bio",
+  "app_type": "marketing_site / landing_page",
+  "persona_and_theme": {
+    "archetype": "THE PERFORMANCE PRO / DARK METALLIC GAMER ELEGANCE",
+    "theme": "Dark Modern (Black, Matte Charcoal, Slate Grey with subtle metallic accent glow)",
+    "aesthetic_notes": "Premium bio-link platform competitor to guns.lol, bio.link, zyo.lol. Deep void blacks (#090a0f, #0d0f14), polished chrome/zinc borders (#27272a, #3f3f46), slate grey text hierarchy, high-contrast crisp white titles, zero cheap rainbow gradient slop."
+  },
+  "typography": {
+    "heading_font": "Unbounded, 'Cabinet Grotesk', sans-serif",
+    "body_font": "Inter, system-ui, sans-serif",
+    "mono_font": "'JetBrains Mono', monospace",
+    "hierarchy": {
+      "hero_3d_title": "text-4xl sm:text-6xl lg:text-7xl font-black tracking-tight leading-none uppercase drop-shadow-[0_10px_20px_rgba(0,0,0,0.8)]",
+      "section_h2": "text-2xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight text-zinc-100",
+      "card_h3": "text-lg sm:text-xl font-bold text-zinc-100",
+      "body_text": "text-sm sm:text-base text-zinc-400 font-normal leading-relaxed",
+      "pill_label": "text-xs sm:text-sm font-mono tracking-wider uppercase text-zinc-300"
+    }
+  },
+  "colors": {
+    "bg_main": "#08080a",
+    "bg_surface": "#0f1015",
+    "bg_surface_hover": "#161820",
+    "bg_pill": "rgba(20, 21, 28, 0.85)",
+    "border_subtle": "rgba(255, 255, 255, 0.08)",
+    "border_active": "rgba(255, 255, 255, 0.25)",
+    "accent_primary": "#a855f7",
+    "accent_glow": "rgba(168, 85, 247, 0.15)",
+    "accent_green_online": "#22c55e",
+    "text_primary": "#f4f4f5",
+    "text_secondary": "#a1a1aa",
+    "text_muted": "#71717a"
+  },
+  "key_components_and_sections": [
+    {
+      "name": "Full Page Loading Screen",
+      "description": "Smooth full-screen overlay with spinning metallic dual-ring loader, sleek logo pulse, and quick percentage/status tick before revealing the page.",
+      "data_testid": "initial-loading-screen"
+    },
+    {
+      "name": "Top Pill Navbar",
+      "description": "Floating rounded-full glassmorphic container (backdrop-blur-xl bg-zinc-900/80 border border-white/10 px-6 py-3 z-50 fixed top-4). Left: Logo icon + 'swats.bio' wordmark. Center: Nav links (Home, Legal, Compare, Pricing). Far Right: Login / Register button or Dashboard button if logged in.",
+      "data_testid": "top-pill-navbar"
+    },
+    {
+      "name": "Hero Section with 3D Headline & Claim Input",
+      "description": "Massive 3D effect gradient-extruded text reading 'THE #1 HOME FOR YOUR DIGITAL IDENTITY'. Subtext bio introduction. Interactive claim pill: 'swats.bio/' + input box + real-time auto-check availability badge + 'Claim' CTA button.",
+      "data_testid": "hero-section"
+    },
+    {
+      "name": "Live Stats Counters",
+      "description": "3 key metric blocks with smooth animated number counters: Bio Links Created (e.g., 148,920+), Total Profile Views (e.g., 12.4M+), Money Funded/Earned (e.g., $450,000+). Crisp glass cards with subtle top border highlight.",
+      "data_testid": "live-stats-counters"
+    },
+    {
+      "name": "Infinite Horizontal User Cards Carousel",
+      "description": "Two-row smooth infinite auto-scroll banner featuring top user cards with high-res avatars, display names, @usernames, verified badges, bio tags, and live view count badges.",
+      "data_testid": "infinite-user-carousel"
+    },
+    {
+      "name": "Features Showcase & Interactive Customizer",
+      "description": "Interactive 'Customize anything you want' section with live font switcher (allows user to select fonts like Unbounded, JetBrains Mono, Syne, Inter, Playfair and see live updates) and color theme toggles.",
+      "data_testid": "features-customizer-section"
+    },
+    {
+      "name": "Four Interactive Widget Preview Panels",
+      "description": "Dedicated grid showcasing 4 custom profile widgets: 1) Discord Widget ('swats.bio Community Server', 269 online, 1.3K members, Join Server CTA), 2) Music Player Widget (album artwork, song title, artist, audio visualizer, play/pause controls), 3) Roblox Profile Widget (avatar render, stats, game badges), 4) TikTok Widget (video card preview, follower count, direct link).",
+      "data_testid": "widget-previews-section"
+    },
+    {
+      "name": "Supported Platforms Showcase (25+ Platforms)",
+      "description": "Interactive platform grid with mini spinning disc visual and 25+ integrated platform icons (Valorant, Spotify, Twitch, YouTube, Roblox, TikTok, Discord, Steam, X/Twitter, Instagram, GitHub, Kick, Soundcloud, Pinterest, Snapchat, Reddit, Epic Games, Telegram, Apple Music, Netflix, Artstation, Behance, OnlyFans, LinkedIn, Paypal). Includes hover custom setting preview tooltips.",
+      "data_testid": "supported-platforms-section"
+    },
+    {
+      "name": "Q&A Accordion Section",
+      "description": "FAQ section with category filter buttons on the right, title + icon on left, smooth Framer Motion height expansion, search bar filter, and crisp glass response cards.",
+      "data_testid": "faq-accordion-section"
+    },
+    {
+      "name": "Footer Section",
+      "description": "High-impact dark footer with massive swats.bio wordmark, system status ping ('All systems operational'), navigation columns, legal links (Terms, Privacy, DMCA), and social media badges.",
+      "data_testid": "site-footer"
+    }
+  ],
+  "image_urls": {
+    "avatars": [
+      "https://images.unsplash.com/photo-1717603907138-e7812002e9fa?crop=entropy&cs=srgb&fm=jpg&q=85",
+      "https://images.unsplash.com/photo-1776898921749-33f75b2b9dce?crop=entropy&cs=srgb&fm=jpg&q=85",
+      "https://images.unsplash.com/photo-1707396174323-dd31d3dd4a97?crop=entropy&cs=srgb&fm=jpg&q=85",
+      "https://images.unsplash.com/photo-1581094360472-0e10ec8889c9?crop=entropy&cs=srgb&fm=jpg&q=85",
+      "https://images.unsplash.com/photo-1721571698362-0605b459948b?crop=entropy&cs=srgb&fm=jpg&q=85"
+    ],
+    "music_albums": [
+      "https://images.unsplash.com/photo-1790799318689-a528052ade32?crop=entropy&cs=srgb&fm=jpg&q=85",
+      "https://images.unsplash.com/photo-1691389694364-cd0570c862ee?crop=entropy&cs=srgb&fm=jpg&q=85",
+      "https://images.unsplash.com/photo-1788005289291-265e9c6cb527?crop=entropy&cs=srgb&fm=jpg&q=85"
+    ]
+  },
+  "instructions_to_main_agent": [
+    "Ensure all code files are in standard React JavaScript (.js / .jsx) as configured in frontend/src.",
+    "Implement the initial spinning circle loading screen that dismisses after assets load or after a brief timeout.",
+    "Build the exact top pill navbar structure: Left logo icon + 'swats.bio', Center links (Home, Legal, Compare, Pricing), Right Login/Register or Dashboard button.",
+    "Implement the 3D hero headline with depth text-shadow, rounded pill claim input box 'swats.bio/[alias]', real-time availability indicator, and Claim CTA.",
+    "Build the 3 animated stat counters with smooth increment animations.",
+    "Create the 2-row infinite horizontal auto-scrolling marquee of user profile cards using Framer Motion or react-fast-marquee.",
+    "Build the 4 interactive widget preview cards: Discord (swats.bio Community, 269 online, 1.3K members, Join button), Music Player (working audio play/pause toggle, seek bar), Roblox, and TikTok.",
+    "Build the 25+ supported platforms section with interactive platform icons (including Valorant) and mini disc visualizer.",
+    "Ensure every single button, link, tab, input, and interactive card has a distinct `data-testid` attribute.",
+    "Use lucide-react or @react-icons for accurate platform icons."
+  ]
+}

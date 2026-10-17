@@ -1,0 +1,22 @@
+# Line endings. The app is built and deployed on Linux (Vercel), so text files
+# are stored and checked out as LF; without this, Git on Windows rewrites every
+# file to CRLF on checkout and the next commit shows the whole tree as changed.
+* text=auto eol=lf
+
+# Real binaries — never diff, never normalise.
+*.png binary
+*.ico binary
+*.jpg binary
+*.jpeg binary
+*.webp binary
+*.gif binary
+*.mp3 binary
+*.woff binary
+*.woff2 binary
+*.ttf binary
+*.otf binary
+
+# Fonts and images are large; keep them out of diffs in review tools too.
+*.png -diff
+*.ico -diff
+*.mp3 -diff

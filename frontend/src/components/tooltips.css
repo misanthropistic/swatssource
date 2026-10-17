@@ -1,0 +1,33 @@
+/* Tooltip entrance.
+
+   Tips used to borrow their entrance from the shared `animate-in` utility
+   bundle (`animate-in fade-in slide-in-from-bottom-*`). Those classes are
+   shared with every dialog, menu and toast, are re-declared by whichever motion
+   plugin happens to be installed, and are caught by blanket reduced-motion
+   rules — so on some machines the bubble simply appeared already in place, with
+   no animation at all. That is the "the tooltip just pops up as soon as it
+   loads, and the animations don't work" report.
+
+   Decorative motion is the product here (the same decision index.css and
+   effects.css document), so the tip owns its two entrances outright and nothing
+   can switch them off behind its back.
+*/
+
+@keyframes sw-tip-in {
+  from { opacity: 0; transform: translate3d(0, 5px, 0); }
+  to   { opacity: 1; transform: translate3d(0, 0, 0); }
+}
+
+@keyframes sw-tip-fade {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+.tip-in-slide { animation: sw-tip-in 0.16s cubic-bezier(0.22, 0.8, 0.3, 1) both; }
+.tip-in-fade  { animation: sw-tip-fade 0.18s ease-out both; }
+
+/* Reduced motion drops the travel but keeps a short fade: a bubble that appears
+   out of nowhere reads as a glitch rather than as a calmed animation. */
+@media (prefers-reduced-motion: reduce) {
+  .tip-in-slide { animation: sw-tip-fade 0.12s ease-out both; }
+}

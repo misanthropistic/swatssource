@@ -1,0 +1,372 @@
+@import url('https://fonts.googleapis.com/css2?family=Unbounded:wght@400;500;600;700;800;900&family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&family=Syne:wght@600;700;800&family=Playfair+Display:ital@0;1&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* swats palette: black, grey and white, with ONE colour — light pink.
+
+   The page is near-black, surfaces are greys, type is white/grey, and light pink
+   (#FF7FBC) is the only accent: links, icons, active states, focus rings and
+   primary buttons. Fills are light enough that they carry near-black ink rather
+   than white (see the `.text-white` rule in the utilities layer below), which is
+   what keeps a light accent usable as a button. */
+:root {
+    --sw-bg: #08080a;          /* page black */
+    --sw-surface: #0e0e12;     /* raised panel */
+    --sw-surface-2: #17171b;   /* top border / overlay layer */
+    --sw-border: rgba(255, 255, 255, 0.075);
+    --sw-border-active: rgba(255, 127, 188, 0.4);
+    --sw-accent: #FF7FBC;      /* light pink — the accent */
+    --sw-accent-2: #F05CA5;    /* pressed pink */
+    --sw-cherry: #A52268;      /* deep pink, gradient tails */
+    --sw-silver: #8C8C95;      /* mid grey */
+    --sw-blush: #FFB8DB;       /* lightest pink, highlights */
+    --sw-radius: 1rem;         /* section radius (same as rounded-2xl) */
+    --sw-text: #f4f4f5;
+    --sw-text-2: #a1a1aa;
+    --sw-text-3: #71717a;
+}
+
+* { scroll-behavior: smooth; }
+
+body {
+    margin: 0;
+    background-color: var(--sw-bg);
+    color: var(--sw-text);
+    font-family: 'Inter', system-ui, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+::selection { background: rgba(255, 127, 188, 0.35); color: #fff; }
+
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-track { background: #070708; }
+::-webkit-scrollbar-thumb { background: #27272a; border-radius: 8px; border: 2px solid #070708; }
+::-webkit-scrollbar-thumb:hover { background: #3f3f46; }
+
+@layer base {
+    :root {
+        /* 331 100% 75% is light pink #FF7FBC. The shadcn tokens follow it so the
+           Radix primitives (slider, switch, tooltip, dialog) match the site
+           instead of staying violet. Neutrals are cast-free greys now, matching
+           the ink ramp in tailwind.config.js. */
+        --background: 240 6% 4%;
+        --foreground: 0 0% 96%;
+        --card: 240 5% 7%;
+        --card-foreground: 0 0% 96%;
+        --popover: 240 5% 7%;
+        --popover-foreground: 0 0% 96%;
+        --primary: 331 100% 75%;
+        /* Dark ink on the light pink fill — white here would be ~1.9:1. */
+        --primary-foreground: 240 6% 5%;
+        --secondary: 240 4% 13%;
+        --secondary-foreground: 0 0% 96%;
+        --muted: 240 4% 14%;
+        --muted-foreground: 240 4% 64%;
+        --accent: 331 100% 75%;
+        --accent-foreground: 240 6% 5%;
+        --destructive: 0 72% 51%;
+        --destructive-foreground: 0 0% 98%;
+        --border: 240 4% 15%;
+        --input: 240 4% 15%;
+        --ring: 331 100% 75%;
+        --radius: 1rem;
+    }
+}
+
+@layer base {
+    * { @apply border-border; }
+}.font-display { font-family: 'Unbounded', sans-serif; }
+ .font-syne { font-family: 'Syne', sans-serif; }
+
+/* Dashboard headings are simpler.
+
+   The public site's display face (Unbounded) is a brand statement on the landing
+   page, but a whole dashboard of font-black Unbounded headings is hard to scan.
+   Everything under the dashboard shell renders the same headings in Inter
+   instead — same sizes and weights, plainer face. Profiles keep Unbounded. */
+.dash-font .font-display,
+.dash-font .font-syne {
+    font-family: 'Inter', system-ui, sans-serif;
+}
+.font-mono2 { font-family: 'JetBrains Mono', monospace; }
+.font-playfair { font-family: 'Playfair Display', serif; }
+
+.text-3d {
+    color: #fafafa;
+    text-shadow:
+        0 1px 0 #d4d4d8,
+        0 2px 0 #a1a1aa,
+        0 3px 0 #71717a,
+        0 4px 0 #52525b,
+        0 5px 0 #3f3f46,
+        0 6px 1px rgba(0,0,0,0.3),
+        0 0 8px rgba(0,0,0,0.3),
+        0 10px 16px rgba(0,0,0,0.6),
+        0 16px 30px rgba(240,92,165,0.25);
+}
+
+.glass {
+    background: rgba(11, 11, 13, 0.72);
+    backdrop-filter: blur(18px);
+    -webkit-backdrop-filter: blur(18px);
+    border: 1px solid var(--sw-border);
+}
+.glass-strong {
+    background: rgba(5, 5, 5, 0.92);
+    backdrop-filter: blur(24px);
+    -webkit-backdrop-filter: blur(24px);
+    border: 1px solid var(--sw-border);
+}
+
+/* ── Surfaces ────────────────────────────────────────────────────────────────
+
+   Every panel is rounded and carries a vertical gradient that darkens downward:
+   the light edge at the top separates it from the page, and the darkening bottom
+   keeps it from looking like a flat grey slab. That gradient only reads as
+   "dark going down" because the cards sit on black, so the sheen is white at very
+   low alpha rather than an actual lighter colour. */
+
+.sw-page-bg {
+    background-color: var(--sw-bg);
+    background-image: linear-gradient(180deg, #131318 0%, #0b0b0f 42%, #060608 100%);
+}
+
+/* ── Slow background drift ───────────────────────────────────────────────────
+
+   A profile's media background used to sit perfectly still, which read as a
+   broken loading state on big monitor-sized artwork. The drift is a 60-second
+   slow zoom, so any picture or sticky slideshow layer gets gentle motion
+   without the cost of a video. Overflow is not an issue: the layers are inset-0
+   behind everything with the card above them, and the scale starts past 1.0 so
+   no edge ever shows. */
+@keyframes sw-bg-drift {
+    0%   { transform: scale(1.04) translate(0, 0); }
+    50%  { transform: scale(1.10) translate(-0.6%, 0.5%); }
+    100% { transform: scale(1.04) translate(0, 0); }
+}
+
+.sw-bg-drift {
+    animation: sw-bg-drift 60s ease-in-out infinite;
+}
+
+/* The resilient card.
+
+   These values used to sit so close to the page black that on some monitors —
+   and on every one with brightness turned down — a `.glass` card was invisible:
+   the background and the border were both ~2% white over 0% white, and the
+   gradient's top light edge only read on OLED-quality screens. A card's whole
+   job is to separate itself from the page, so the border is now three times as
+   strong, the fill is lifted well clear of the page, and a soft shadow drops
+   the card onto the page instead of floating it.
+
+   Elderly browsers without backdrop-filter fall back to the solid surface
+   colour: the @supports block is decorative, not structural. */
+.glass {
+    background-color: var(--sw-surface);
+    background-image: linear-gradient(
+        180deg,
+        rgba(255, 255, 255, 0.075) 0%,
+        rgba(255, 255, 255, 0.02) 40%,
+        rgba(0, 0, 0, 0.28) 100%
+    );
+    backdrop-filter: blur(18px);
+    -webkit-backdrop-filter: blur(18px);
+    border: 1px solid rgba(255, 255, 255, 0.14);
+    box-shadow:
+        0 1px 0 0 rgba(255, 255, 255, 0.05) inset,
+        0 18px 40px -20px rgba(0, 0, 0, 0.65);
+}
+
+/* An inner hairline at the top: the light edge every card in the reference had,
+   kept even when the browser understands the gradient, so the top edge reads on
+   every display rather than only the brightest ones. */
+.glass {
+    position: relative;
+}
+
+@layer components {
+    /* Default radius for a panel, at components-layer priority on purpose.
+
+       Unlayered, this rule beat the utilities layer, so `.glass rounded-full`
+       (the landing navbar pill) rendered as a 16px box instead of a pill. Here it
+       only fills in when the element has no `rounded-*` class of its own. */
+    .glass,
+    .glass-strong {
+        border-radius: var(--sw-radius);
+    }
+}
+
+.glass-strong {
+    background-color: rgba(8, 8, 10, 0.92);
+    background-image: linear-gradient(
+        180deg,
+        rgba(255, 255, 255, 0.065) 0%,
+        rgba(255, 255, 255, 0.02) 45%,
+        rgba(2, 2, 4, 0.5) 100%
+    );
+    backdrop-filter: blur(24px);
+    -webkit-backdrop-filter: blur(24px);
+    border: 1px solid rgba(255, 255, 255, 0.13);
+    box-shadow:
+        0 1px 0 0 rgba(255, 255, 255, 0.04) inset,
+        0 18px 40px -20px rgba(0, 0, 0, 0.7);
+}
+
+/* Reusable brand gradients. Rose is the light-pink accent pair; silver is the
+   grey/black one used behind neutral panels. */
+.sw-gradient-rose {
+    background-image: linear-gradient(135deg, #FF7FBC 0%, #F05CA5 52%, #A52268 100%);
+}
+.sw-gradient-silver {
+    background-image: linear-gradient(135deg, #8C8C95 0%, #333338 52%, #08080A 100%);
+}
+
+@layer utilities {
+    /* A light pink fill cannot carry white text (#FF7FBC on #fff is about 1.9:1),
+       so every solid brand surface is switched to near-black ink here instead of
+       editing the ~100 buttons that were written as `text-white`.
+
+       Two-class specificity is what makes this win over the utilities layer's own
+       `.text-white` (0,1,0) regardless of source order — and it deliberately does
+       NOT match the translucent tints (`bg-brand-500/10`), which are still
+       near-black surfaces where white text is correct. */
+    .bg-brand-500.text-white,
+    .bg-brand-600.text-white,
+    .bg-brand-400.text-white,
+    .bg-brand-500.hover\:text-white:hover,
+    .bg-brand-600.hover\:text-white:hover,
+    .from-brand-500.text-white,
+    .from-brand-600.text-white,
+    .to-brand-500.text-white,
+    .to-brand-600.text-white {
+        color: #08080a;
+    }
+}
+
+/* Accessibility baseline.
+
+   Focus: every keyboard-reachable control gets a visible ring. Elements that
+   already declare a Tailwind `focus-visible:ring-*` are excluded so they don't
+   draw both a ring and an outline. */
+button:focus-visible:not([class*="focus-visible:ring"]),
+a:focus-visible:not([class*="focus-visible:ring"]),
+input:focus-visible,
+textarea:focus-visible,
+select:focus-visible,
+[tabindex]:focus-visible {
+    outline: 2px solid var(--sw-accent);
+    outline-offset: 2px;
+}
+
+/* Motion: honour the OS "reduce motion" setting.
+
+   It must never switch the animations OFF. Windows ships "Animation effects"
+   disabled for a large share of people (Settings → Accessibility → Visual
+   effects), and a blanket `*, *::before, *::after { animation-duration: .001ms
+   !important }` therefore froze the whole landing page — the marquees stopped,
+   the hero never faded in, and the profile FX looked broken. Decorative motion
+   IS the product here (see the same decision in effects.css), so it keeps
+   running; the full-viewport loops and the endless marquees are the only things
+   calmed down, and they stay clearly visible either way. */
+@media (prefers-reduced-motion: reduce) {
+    html {
+        scroll-behavior: auto !important;
+    }
+
+    .animate-marquee-left,
+    .animate-marquee-right {
+        animation-duration: 120s !important;
+    }
+
+    /* The featured-users row is not one of ours: it is react-fast-marquee's own
+       `scroll` keyframe on `.rfm-marquee`, so the rule above never reached it and
+       that row kept its full speed for motion-sensitive visitors. */
+    .rfm-marquee {
+        animation-duration: 120s !important;
+    }
+
+    .animate-float { animation-duration: 14s !important; }
+    .animate-spin-slow,
+    .animate-spin-rev,
+    .animate-disc { animation-duration: 16s !important; }
+    .animate-pulse-glow { animation-duration: 9s !important; }
+}
+
+.grain::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 1;
+    opacity: 0.04;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+@keyframes sw-spin { to { transform: rotate(360deg); } }
+@keyframes sw-spin-rev { to { transform: rotate(-360deg); } }
+.animate-spin-slow { animation: sw-spin 2.2s linear infinite; }
+.animate-spin-rev { animation: sw-spin-rev 1.6s linear infinite; }
+
+@keyframes sw-float { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
+.animate-float { animation: sw-float 6s ease-in-out infinite; }
+
+@keyframes sw-pulse-glow {
+    0%,100% { box-shadow: 0 0 0 0 rgba(255, 127, 188, 0.25); }
+    50% { box-shadow: 0 0 36px 4px rgba(255, 127, 188, 0.35); }
+}
+.animate-pulse-glow { animation: sw-pulse-glow 3s ease-in-out infinite; }
+
+@keyframes sw-disc { to { transform: rotate(360deg); } }
+.animate-disc { animation: sw-disc 4s linear infinite; }
+
+@keyframes sw-fade-up { from { opacity: 0; transform: translateY(24px); } to { opacity: 1; transform: translateY(0); } }
+.fade-up { animation: sw-fade-up 0.7s cubic-bezier(0.16,1,0.3,1) both; }
+
+.glow-ring { box-shadow: 0 0 0 1px rgba(255,127,188,0.4), 0 0 28px rgba(255,127,188,0.3); }
+
+@keyframes sw-eq { 0%,100% { height: 20%; } 50% { height: 100%; } }
+.eq-bar { animation: sw-eq 0.9s ease-in-out infinite; }
+
+@keyframes marquee-left {
+  0% { transform: translateX(0%); }
+  100% { transform: translateX(-50%); }
+}
+@keyframes marquee-right {
+  0% { transform: translateX(-50%); }
+  100% { transform: translateX(0%); }
+}
+
+.animate-marquee-left {
+  display: flex;
+  width: max-content;
+  animation: marquee-left 35s linear infinite;
+}
+
+.animate-marquee-right {
+  display: flex;
+  width: max-content;
+  animation: marquee-right 35s linear infinite;
+}
+
+.pause-on-hover:hover .animate-marquee-left,
+.pause-on-hover:hover .animate-marquee-right {
+  animation-play-state: paused !important;
+}
+
+/* Widget card surface. A hairline of light across the top of every widget card,
+   so a grid of them reads as cards rather than as identical grey slabs. It is a
+   class, not an inline style, so a renderer that drops a `linear-gradient` value
+   cannot quietly take the sheen away. */
+.widget-card-sheen {
+  background-image: linear-gradient(180deg, rgba(255, 255, 255, 0.055), rgba(255, 255, 255, 0) 42%);
+}
+
+/* Notification countdown bar — the toast card is handed its own lifetime as an
+   inline animation-duration, so the bar drains in exactly that long. */
+@keyframes sw-toast-timer {
+  from { width: 100%; }
+  to { width: 0%; }
+}

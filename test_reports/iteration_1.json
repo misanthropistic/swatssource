@@ -1,0 +1,28 @@
+{
+  "summary": "Verified bug-fix for the 'Card Layout & Style' editor sliders (SliderRow onValueCommit). Logged in as admin, opened Editor > Card Layout & Style, toggled advanced mode, exercised all 5 sliders via keyboard + mouse drag, cycled card-style chips, toggled all three switches, and saved. All controls respond correctly, slider values commit on release, and PUT /api/me/profile returns 200.",
+  "tested_scope": ["frontend", "integration"],
+  "passed": [
+    "Login via /!/login with admin credentials (data-testid=login-submit) succeeds; redirect to /!/dashboard",
+    "Navigation to /!/dashboard/editor via sidebar Editor item",
+    "Opening 'Card Layout & Style' subtab (data-testid=editor-subtab-card)",
+    "Advanced mode toggle (data-testid=advanced-mode-toggle) switches false->true and reveals surface dials",
+    "Slider card-blur: keyboard 20->25, drag commit->28 (smooth, value persists on release)",
+    "Slider card-fill-alpha: keyboard 78->83, drag commit->89",
+    "Slider card-outline-alpha: keyboard 33->38, drag commit->46",
+    "Slider card-radius: keyboard 24->29, drag commit->34",
+    "Slider card-width: keyboard 680->780, drag commit->820",
+    "Card style chips cardstyle-classic / frosted / frosted-soft / outlined / aurora / transparent all clickable (individual testids per style)",
+    "card-bg-toggle, card-glow-toggle, name-glow-toggle all toggle true<->false",
+    "Save (data-testid=editor-save) triggers PUT https://.../api/me/profile -> 200 OK, changes persist to backend",
+    "No console errors thrown while interacting with sliders/chips/switches (only 2 pre-login 401s on /api/me which are expected auth probes)"
+  ],
+  "failed": [],
+  "action_items": [],
+  "notes": [
+    "Parent container data-testid='cardstyle' is not present; chip selection is implemented as individual testids cardstyle-<style> (classic/frosted/frosted-soft/outlined/aurora/transparent). Not a bug, just a selector note for future tests.",
+    "The 2 console errors seen are 401s on /api/me fired before login completes, unrelated to the card editor fix."
+  ],
+  "success_rate": {"backend": "100%", "frontend": "100%"},
+  "retest_needed": false,
+  "full_testing_deferred": true
+}

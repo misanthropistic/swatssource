@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64" role="img" aria-label="Halloween">
+  <defs>
+    <radialGradient id="halloween-body" cx="46%" cy="34%" r="74%">
+      <stop offset="0%" stop-color="#fdba74" />
+      <stop offset="58%" stop-color="#f97316" />
+      <stop offset="100%" stop-color="#c2410c" />
+    </radialGradient>
+  </defs>
+  <!-- Stem, drawn behind the body so the join is hidden. -->
+  <path d="M32 6c3 0 5 2 5 5 0 4-2 7-5 8-3-1-5-4-5-8 0-3 2-5 5-5Z" fill="#15803d" />
+  <ellipse cx="32" cy="37" rx="25" ry="21" fill="url(#halloween-body)" />
+  <!-- The two ribs that make it read as a pumpkin rather than a ball. -->
+  <path d="M32 16c7 0 12 9 12 21s-5 21-12 21" fill="none" stroke="#9a3412" stroke-width="2" opacity="0.55" />
+  <path d="M32 16c-7 0-12 9-12 21s5 21 12 21" fill="none" stroke="#9a3412" stroke-width="2" opacity="0.55" />
+  <!-- Eyes and grin, in the carved, unlit colour. -->
+  <path d="M17 35.5 27 28l1.5 11Z" fill="#451a03" />
+  <path d="M47 35.5 37 28l-1.5 11Z" fill="#451a03" />
+  <path d="M20 45c3.5 6 20.5 6 24 0" fill="none" stroke="#451a03" stroke-width="3" stroke-linecap="round" />
+  <path d="M29 45.5v4M35 45.5v4" stroke="#451a03" stroke-width="3" stroke-linecap="round" />
+</svg>

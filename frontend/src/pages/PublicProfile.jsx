@@ -1,0 +1,232 @@
+import { useState, useEffect, useMemo } from "react";
+import { useParams, Link } from "react-router-dom";
+import { api, fileUrl } from "@/lib/api";
+import { useProfileViewTracker } from "@/lib/viewTracker";
+import { ProfilePreview, viewsInCorner, compactCount } from "@/components/ProfilePreview";
+import { CursorEffect } from "@/components/CursorEffect";
+import { Eye } from "lucide-react";
+
+// Where a moved view counter sits. The four corners are the page's, not the
+// card's, so it stays put whatever the card is doing.
+const CORNER_CLASS = {
+  tl: "left-4 top-4",
+  tr: "right-4 top-4",
+  bl: "left-4 bottom-4",
+  br: "right-4 bottom-4",
+};
+
+export default function PublicProfile() {
+  const { alias } = useParams();
+  const [data, setData] = useState(null);
+  const [notFound, setNotFound] = useState(false);
+  const [entered, setEntered] = useState(false);
+
+  useEffect(() => {
+    api.get(`/u/${alias}`).then(({ data }) => setData(data)).catch(() => setNotFound(true));
+  }, [alias]);
+
+  useEffect(() => {
+    // GET /api/u/:alias returns the profile fields at the top level, not nested
+    // under `user` — reading data.user meant this block never ran, so the tab
+    // title and Open Graph tags kept the landing-page defaults on every profile.
+    if (data && data.username) {
+      const name = data.display_name || data.username || alias;
+      const mp = data.profile || {};
+
+      // The Metadata editor wins when its fields are filled; empty fields fall
+      // back to the built-ins (name, bio, avatar) so blank entries are safe.
+      const metaTitle = mp.meta_title || `${name} on swats.bio`;
+      const metaDesc =
+        mp.meta_description || mp.bio || `Check out ${name}'s bio link on swats.bio`;
+      const metaImage = mp.meta_image || mp.avatar_url || "/logo.png";
+
+      document.title = `swats | ${mp.meta_title || name}`;
+
+      const ogTitle = document.querySelector('meta[property="og:title"]');
+      if (ogTitle) ogTitle.setAttribute("content", metaTitle);
+
+      const ogDesc = document.querySelector('meta[property="og:description"]');
+      if (ogDesc) ogDesc.setAttribute("content", metaDesc);
+
+      const ogImage = document.querySelector('meta[property="og:image"]');
+      if (ogImage) ogImage.setAttribute("content", metaImage);
+
+      const themeColor = document.querySelector('meta[name="theme-color"]');
+      if (themeColor && mp.theme_color) themeColor.setAttribute("content", mp.theme_color);
+    } else if (notFound) {
+      document.title = `swats | User Not Found`;
+    }
+  }, [data, alias, notFound]);
+
+  const p = data?.profile || {};
+  const needsEntry = !!p.entry_enabled;
+  const isEntered = !needsEntry || entered;
+  const ready = isEntered;
+
+  // The view count the server reported at load time, replaced once this visit
+  // is registered (after dwell + proof of work). A view is only counted once the
+  // page is genuinely being looked at — entry-gated profiles count after the
+  // visitor clicks in, which also supplies the gesture the browser wants.
+  const [views, setViews] = useState(null);
+  useEffect(() => {
+    if (data && typeof data.views === "number") setViews(data.views);
+  }, [data]);
+  useProfileViewTracker(alias, { enabled: !!data && ready, onCount: setViews });
+  const viewData = useMemo(
+    () => (data && views != null ? { ...data, views } : data),
+    [data, views],
+  );
+
+  // Browsers deny audio-with-sound until the visitor has interacted with the
+  // page, which is why the track silently never started: the one attempt ran on
+  // page load (no gesture yet) and the catch was swallowed. Now: try once in
+  // case the browser allows it, fall back to a muted start (always allowed) so
+  // the track is at least loaded and positioned, and start the real unmuted
+  // playback on the very first click/keypress anywhere on the profile.
+  useEffect(() => {
+    if (!data || !ready) return;
+    const el = document.getElementById("profile-bg-audio");
+    if (!el) return;
+
+    const attempt = (withSound) => {
+      el.muted = !withSound;
+      const res = el.play();
+      if (res && typeof res.catch === "function") {
+        res.catch(() => {
+          if (withSound) attempt(false); // denied with sound → muted start
+        });
+      }
+    };
+    attempt(true);
+
+    const kick = () => {
+      if (el.muted) {
+        el.muted = false;
+        el.play().catch(() => {});
+      }
+      window.removeEventListener("pointerdown", kick);
+      window.removeEventListener("keydown", kick);
+      window.removeEventListener("touchstart", kick);
+    };
+    window.addEventListener("pointerdown", kick, { passive: true });
+    window.addEventListener("keydown", kick);
+    window.addEventListener("touchstart", kick, { passive: true });
+    return () => {
+      window.removeEventListener("pointerdown", kick);
+      window.removeEventListener("keydown", kick);
+      window.removeEventListener("touchstart", kick);
+    };
+  }, [data, ready]);
+
+  // A profile can carry ITS OWN pointer: `cursor_image` is drawn as the mouse
+  // arrow on this page only, tip at the top-left (the hotspot 12 4 puts the
+  // picture's top-left pixel where the click lands, like a drawn arrow's tip).
+  // Native cursor sizes cap at 128, so the upload side recommends a small PNG;
+  // the fallback keeps the arrow on a profile without one and restores it on
+  // the way out so navigating away never leaks the picture onto other pages.
+  useEffect(() => {
+    const img = data?.profile?.cursor_image;
+    if (!img) return undefined;
+    document.body.style.cursor = `url(${fileUrl(img)}) 12 4, auto`;
+    return () => {
+      document.body.style.cursor = "";
+    };
+  }, [data]);
+
+  if (notFound) {
+    return (
+      <div className="min-h-screen sw-page-bg flex flex-col items-center justify-center text-center px-4" data-testid="public-notfound">
+        <img src="/logo.png" alt="swats.bio" className="w-16 h-16 rounded-2xl mb-4 object-contain shadow-[0_0_30px_rgba(255,127,188,0.4)]" />
+        <div className="font-display text-5xl font-black text-zinc-100">404</div>
+        <p className="mt-3 text-zinc-400">swats.bio/{alias} isn't claimed yet.</p>
+        <Link to={`/!/login?claim=${alias}`} className="mt-6 px-5 py-2.5 rounded-full bg-gradient-to-r from-brand-500 to-brand-600 text-white text-sm font-semibold hover:brightness-110 transition">Claim this name</Link>
+      </div>
+    );
+  }
+  if (!data) return <div className="min-h-screen sw-page-bg" />;
+
+  const handleEnter = () => {
+    setEntered(true);
+    // This click IS the user gesture the browser requires, but the <audio>
+    // element only mounts on the render this click triggers, so it does not
+    // exist yet here — the effect above picks it up right after the commit.
+    // Starting the first track still needs this gesture, so it is clicked while
+    // the gesture is fresh rather than 60ms later on a timer.
+    const playBtn = document.querySelector('[data-testid="track-play-btn"]');
+    if (playBtn) playBtn.click();
+  };
+
+  return (
+    <div
+      className="min-h-screen sw-page-bg"
+      data-testid="public-profile-page"
+      data-menu-id="profile"
+      data-menu-name={data.username || ""}
+      data-menu-href={`/${data.username || ""}`}
+    >
+      {needsEntry && !entered && (
+        <div 
+          // `sw-page-bg/95` is not a class Tailwind can build (the opacity
+          // modifier only applies to utilities), so the entry gate painted no
+          // background at all and the profile showed straight through it.
+          className="fixed inset-0 z-[100] flex items-center justify-center bg-[#060608]/95 backdrop-blur-xl transition-opacity duration-500 cursor-pointer"
+          onClick={handleEnter}
+        >
+          {p.entry_style === "text" ? (
+            <div className="text-zinc-300 font-mono2 text-sm uppercase tracking-widest hover:text-white transition-colors">
+              {p.entry_text || "Click to enter"}
+            </div>
+          ) : p.entry_style === "codelock" ? (
+            <div className="text-center space-y-4">
+              <div className="text-zinc-500 font-mono2 text-xs uppercase tracking-widest mb-6">Enter PIN</div>
+              <div className="flex items-center justify-center gap-3">
+                {[1,2,3,4].map(i => (
+                  <div key={i} className="w-4 h-4 rounded-full border-2 border-zinc-700 bg-transparent animate-pulse" style={{ animationDelay: `${i * 150}ms` }} />
+                ))}
+              </div>
+              <div className="mt-8 text-zinc-400 font-mono2 text-[10px] uppercase">Click anywhere to unlock</div>
+            </div>
+          ) : (
+            <div className="px-6 py-3 rounded-full border border-white/10 bg-white/5 text-zinc-200 text-sm font-semibold shadow-[0_0_30px_rgba(255,255,255,0.05)] hover:bg-white/10 transition-all hover:scale-105">
+              {p.entry_text || "Click to enter"}
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* Background Audio */}
+      {p.audio_url && (
+        <audio id="profile-bg-audio" src={fileUrl(p.audio_url)} loop autoPlay={ready} />
+      )}
+
+      {/* The cursor effect and the pet wait behind the entry gate. Painting a
+          click trail or a chase cursor over the "click to enter" screen read as
+          a broken overlay when the visitor had not entered yet — the effects
+          belong to the profile, and the profile is not revealed until the first
+          press lands. */}
+      {ready && <CursorEffect effect={p.cursor_effect} accent={p.accent_color} />}
+      <ProfilePreview data={viewData} backgroundAudio={!!p.audio_url && p.audio_controls !== false} autoPlayAudio={ready} />
+
+      {/* A moved view counter: the four corners are the page's, and "hidden"
+          draws it nowhere at all (the card drops it from its meta line too). */}
+      {viewsInCorner(p.views_position) && views != null && (
+        <div
+          data-testid="views-corner"
+          className={`fixed z-20 flex items-center gap-1.5 rounded-full border border-white/10 bg-black/50 px-3 py-1.5 font-mono2 text-[11px] text-zinc-300 backdrop-blur ${CORNER_CLASS[p.views_position]}`}
+        >
+          <Eye className="h-3.5 w-3.5" />
+          {compactCount(views)}
+        </div>
+      )}
+
+      {p.hide_footer !== true && (
+        // A small pill, not a bar: logo and logotype only, hugging their own
+        // content instead of stretching a glass bar across the bottom of the
+        // page.
+        <Link to="/!/home" className="fixed bottom-3 left-1/2 -translate-x-1/2 z-20 inline-flex w-auto items-center gap-1 rounded-full border border-white/10 bg-black/45 px-2 py-1 text-[10px] font-medium leading-none text-zinc-400 backdrop-blur transition-colors hover:text-zinc-100" data-testid="profile-footer-pill" title="made in swats">
+          <img src="/logo.png" alt="swats.bio" className="h-3 w-3 rounded-sm object-contain" /> swats
+        </Link>
+      )}
+    </div>
+  );
+}

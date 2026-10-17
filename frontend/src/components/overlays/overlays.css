@@ -1,0 +1,465 @@
+/* ---------------------------------------------------------------------------
+   Overlay surfaces: the editor's centered picker dialogs, their tiles and their
+   controls. The old right-edge panel (`.ov-drawer`) is gone — every picker is
+   one modal over a blurred backdrop now — so nothing here positions itself
+   against the viewport edge.
+
+   Scoped to this module rather than dropped into index.css: nothing outside the
+   editor uses them, and they own their own surface vars so the dialog keeps the
+   same elevated look it had while these styles lived in the missing module.
+   --------------------------------------------------------------------------- */
+
+:root {
+  --ov-surface-1: #0b0b0d;   /* panel */
+  --ov-surface-2: #131316;   /* raised row / input */
+  --ov-border: rgba(255, 255, 255, 0.08);
+  --ov-border-strong: rgba(255, 255, 255, 0.16);
+  --ov-accent: #ff2693;
+  --ov-text: #f4f4f5;
+  --ov-text-2: #a1a1aa;
+}
+
+/* ---------- scrim + panel ---------- */
+
+.ov-scrim {
+  position: fixed;
+  inset: 0;
+  z-index: 40;
+  background: rgba(0, 0, 0, 0.65);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  animation: ov-fade 0.18s ease-out both;
+}
+
+/* The picker backdrop blurs the page behind it, so the profile (and the effect
+   you are trying to judge) stays readable as context instead of being hidden. */
+.ov-scrim-blur {
+  z-index: 60;
+  background: rgba(6, 6, 8, 0.62);
+  backdrop-filter: blur(16px) saturate(120%);
+  -webkit-backdrop-filter: blur(16px) saturate(120%);
+}
+
+.ov-modal-wrap {
+  position: fixed;
+  inset: 0;
+  z-index: 61;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+}
+
+.ov-modal {
+  display: flex;
+  width: min(64rem, 100%);
+  max-height: min(88vh, 52rem);
+  flex-direction: column;
+  overflow: hidden;
+  border: 1px solid var(--ov-border-strong);
+  border-radius: 1.25rem;
+  background: color-mix(in srgb, var(--ov-surface-1) 96%, transparent);
+  box-shadow: 0 40px 120px -40px rgba(0, 0, 0, 0.95);
+  animation: ov-pop 0.22s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.ov-modal-top {
+  border-bottom: 1px solid var(--ov-border);
+  padding: 1rem 1.25rem;
+  background: rgba(255, 255, 255, 0.015);
+}
+
+.ov-modal-body {
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+
+.ov-modal-foot {
+  border-top: 1px solid var(--ov-border);
+  padding: 0.9rem 1.25rem;
+}
+
+@keyframes ov-pop {
+  from { opacity: 0; transform: translateY(10px) scale(0.98); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+.ov-head {
+  position: relative;
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  border-bottom: 1px solid var(--ov-border);
+  padding: 1.25rem 1.25rem 1rem;
+}
+
+.ov-head-copy { min-width: 0; flex: 1; }
+
+.ov-eyebrow {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.625rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ov-accent);
+}
+
+.ov-title {
+  margin: 0.25rem 0 0;
+  font-family: 'Unbounded', sans-serif;
+  font-size: 1.05rem;
+  font-weight: 800;
+  letter-spacing: -0.01em;
+  color: var(--ov-text);
+}
+
+.ov-desc {
+  margin: 0.35rem 0 0;
+  font-size: 0.75rem;
+  line-height: 1.5;
+  color: var(--ov-text-2);
+}
+
+.ov-close {
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  width: 2rem;
+  height: 2rem;
+  border-radius: 0.7rem;
+  border: 1px solid var(--ov-border);
+  background: rgba(255, 255, 255, 0.03);
+  color: var(--ov-text-2);
+  cursor: pointer;
+  transition: color 0.2s ease, background-color 0.2s ease;
+}
+.ov-close:hover { color: #fff; background: rgba(255, 255, 255, 0.1); }
+
+/* The picker's fixed header row: what is selected on the left, search on the
+   right, so the list itself is nothing but tiles. */
+.ov-modal-head-row {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.ov-modal-head-row .ov-stage {
+  flex: 1;
+  min-width: 12rem;
+  border: 0;
+  padding: 0;
+}
+
+.ov-modal-head-row .ov-search {
+  flex: 0 1 18rem;
+}
+
+.ov-modal-foot-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.ov-foot-note {
+  font-size: 0.6875rem;
+  line-height: 1.5;
+  color: var(--ov-text-2);
+}
+
+.ov-body {
+  flex: 1;
+  overflow-y: auto;
+  padding: 1.25rem;
+}
+
+.ov-foot {
+  border-top: 1px solid var(--ov-border);
+  padding: 0.85rem 1.25rem;
+  background: rgba(255, 255, 255, 0.02);
+}
+
+/* ---------- picker: stage, search, sections, tiles ---------- */
+
+.ov-popup { display: flex; flex-direction: column; gap: 1rem; }
+
+/* The stage sits ahead of the chip list and shows what the tiles are. */
+.ov-stage {
+  border: 1px solid var(--ov-border);
+  border-radius: 0.9rem;
+  background:
+    radial-gradient(120% 120% at 0% 0%, rgba(255, 127, 188, 0.12), transparent 60%),
+    var(--ov-surface-2);
+  padding: 0.9rem 1rem;
+}
+
+.ov-stage-label {
+  font-family: 'Unbounded', sans-serif;
+  font-size: 0.9rem;
+  font-weight: 800;
+  color: var(--ov-text);
+}
+
+.ov-stage-hint {
+  margin: 0.35rem 0 0;
+  font-size: 0.6875rem;
+  line-height: 1.5;
+  color: var(--ov-text-2);
+}
+
+.ov-stage-name { color: var(--ov-accent); }
+
+.ov-search { position: relative; }
+
+.ov-search-icon {
+  position: absolute;
+  left: 0.85rem;
+  top: 50%;
+  width: 0.9rem;
+  height: 0.9rem;
+  transform: translateY(-50%);
+  color: var(--ov-text-2);
+  pointer-events: none;
+}
+
+.ov-input {
+  width: 100%;
+  border-radius: 0.75rem;
+  border: 1px solid var(--ov-border);
+  background: var(--ov-surface-2);
+  padding: 0.65rem 0.85rem 0.65rem 2.35rem;
+  font-size: 0.8125rem;
+  color: var(--ov-text);
+  outline: none;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+.ov-input::placeholder { color: #71717a; }
+.ov-input:focus {
+  border-color: rgba(255, 127, 188, 0.5);
+  box-shadow: 0 0 0 3px rgba(255, 127, 188, 0.16);
+}
+
+.ov-section { display: flex; flex-direction: column; gap: 0.6rem; }
+
+.ov-section-label {
+  margin: 0;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.625rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--ov-text-2);
+}
+
+.ov-empty {
+  margin: 0;
+  padding: 1.5rem 0;
+  text-align: center;
+  font-size: 0.8125rem;
+  color: var(--ov-text-2);
+}
+
+.ov-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(10.5rem, 1fr));
+  gap: 0.55rem;
+}
+
+/* Every tile is its own little box: the effect drawn in it, the name under it,
+   and the same height all the way across so the grid reads as a table of
+   effects rather than a ragged pile of names. */
+.ov-tile { min-height: 6.4rem; }
+
+@media (max-width: 640px) {
+  .ov-modal { max-height: 92vh; border-radius: 1rem; }
+  .ov-grid { grid-template-columns: repeat(auto-fill, minmax(8.5rem, 1fr)); }
+}
+
+.ov-tile-wrap { position: relative; }
+
+.ov-tile {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 0.4rem;
+  width: 100%;
+  border-radius: 0.65rem;
+  border: 1px solid var(--ov-border);
+  background: rgba(255, 255, 255, 0.025);
+  padding: 0.4rem;
+  text-align: left;
+  cursor: pointer;
+  transition: border-color 0.18s ease, background-color 0.18s ease, color 0.18s ease;
+}
+
+/* ── the effect drawn in the tile (FxTile) ─────────────────────────────── */
+
+.ov-tile-preview {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 3.4rem;
+  overflow: hidden;
+  border-radius: 0.45rem;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  background: #0a0a0e;
+}
+
+.ov-tile-meta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.35rem;
+  padding: 0 0.2rem 0.15rem;
+}
+
+/* Text: the sample word wears the effect, exactly as a name does. */
+.ov-tile-word {
+  font-size: 0.95rem;
+  font-weight: 800;
+  letter-spacing: -0.01em;
+  line-height: 1.1;
+  color: #e4e4e7;
+  white-space: nowrap;
+}
+
+/* Background and overlay: a miniature of the card the effect sits on. */
+.ov-tile-stage { position: absolute; inset: 0; }
+.ov-tile-ambience { position: absolute; inset: 0; }
+.ov-tile-card {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.05rem;
+  border-radius: 0.4rem;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(0, 0, 0, 0.42);
+  padding: 0.2rem 0.45rem;
+}
+.ov-tile-card-name { font-size: 0.62rem; font-weight: 700; color: #f4f4f5; }
+.ov-tile-card-handle { font-family: 'JetBrains Mono', monospace; font-size: 0.5rem; color: #a1a1aa; }
+
+/* Cursor: the pointer's own stage, with the effect's markers on it. */
+.ov-tile-pointer { position: absolute; inset: 0; }
+.ov-tile-pointer .fx-cursor-demo { position: absolute; inset: 0; border-radius: 0; }
+
+/* Avatar: the circle a decoration is layered over. */
+.ov-tile-avatar { position: relative; width: 2.3rem; height: 2.3rem; }
+.ov-tile-avatar-pic {
+  position: absolute;
+  inset: 0;
+  border-radius: 9999px;
+  background-size: cover;
+  background-position: center;
+}
+.ov-tile-avatar-fx {
+  position: absolute;
+  inset: 0;
+  border-radius: 9999px;
+  overflow: hidden;
+  pointer-events: none;
+}
+/* Cursor buddy: the pet stands on a floor, so a tile of eight of them reads as
+   eight little creatures rather than eight floating sprites. */
+.ov-tile-pet {
+  position: relative;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  height: 100%;
+  padding-bottom: 0.55rem;
+}
+.ov-tile-pet::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  bottom: 0.35rem;
+  width: 1.7rem;
+  height: 0.18rem;
+  transform: translateX(-50%);
+  border-radius: 9999px;
+  background: rgba(255, 255, 255, 0.14);
+}
+
+.ov-tile:hover { border-color: var(--ov-border-strong); background: rgba(255, 255, 255, 0.08); }
+
+.ov-tile-active {
+  border-color: rgba(255, 127, 188, 0.7);
+  background: rgba(255, 127, 188, 0.14);
+}
+
+.ov-tile-locked { border-color: rgba(255, 255, 255, 0.05); background: rgba(0, 0, 0, 0.4); }
+.ov-tile-locked .ov-tile-label { color: #71717a; }
+
+.ov-tile-label {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--ov-text);
+}
+.ov-tile-active .ov-tile-label { color: #ffd0e8; }
+
+.ov-tile-lock { width: 0.8rem; height: 0.8rem; flex-shrink: 0; color: #f59e0b; }
+.ov-tile-check { width: 0.9rem; height: 0.9rem; flex-shrink: 0; color: var(--ov-accent); }
+
+.ov-star {
+  position: absolute;
+  top: -0.3rem;
+  right: -0.3rem;
+  display: grid;
+  place-items: center;
+  width: 1.1rem;
+  height: 1.1rem;
+  border-radius: 999px;
+  border: 1px solid var(--ov-border);
+  background: var(--ov-surface-1);
+  color: #71717a;
+  cursor: pointer;
+  transition: color 0.18s ease, transform 0.18s ease;
+}
+.ov-star:hover { color: #fbbf24; transform: scale(1.1); }
+.ov-star-on { color: #fbbf24; }
+
+/* ---------- buttons (used by the pickers' triggers) ---------- */
+
+.ov-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+  border-radius: 0.75rem;
+  border: 1px solid var(--ov-border);
+  background: rgba(255, 255, 255, 0.04);
+  font-weight: 600;
+  color: var(--ov-text);
+  cursor: pointer;
+  transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease;
+}
+.ov-btn:hover { background: rgba(255, 255, 255, 0.09); }
+
+.ov-btn-primary {
+  border-color: transparent;
+  background-image: linear-gradient(135deg, #ff2693 0%, #d81772 100%);
+  color: #fff;
+  box-shadow: 0 6px 22px -10px rgba(255, 127, 188, 0.8);
+}
+.ov-btn-primary:hover { filter: brightness(1.1); background-image: linear-gradient(135deg, #ff2693 0%, #d81772 100%); }
+
+@keyframes ov-fade {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+/* Keep the dialog's motion usable for people who ask for less of it: the pop
+   becomes a fade rather than disappearing (see the note in index.css). */
+@media (prefers-reduced-motion: reduce) {
+  .ov-modal { animation: ov-fade 0.2s ease-out both; }
+}
