@@ -55,11 +55,14 @@ async function runRequest(key, request, { force = false } = {}) {
       return value;
     })
     .catch((err) => {
-      const detail =
+      let detail =
         err?.response?.data?.detail ||
         (typeof err?.response?.data === "string" ? err.response.data : null) ||
         err?.message ||
         "Could not reach the live data service";
+      if (/429/i.test(String(detail)) || err?.response?.status === 429) {
+        detail = "Service is temporarily busy. Retrying in a moment…";
+      }
       store.set(key, { at: Date.now(), status: "error", data: null, error: detail, promise: null });
       notify(key);
       return null;

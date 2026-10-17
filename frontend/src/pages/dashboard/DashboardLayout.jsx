@@ -280,10 +280,15 @@ function UserCard({ user, onLogout }) {
    the sign-out. The paired accounts stay mutual-only, so the menu can never
    show an account the other side has not agreed to. */
 function AccountMenu({ user }) {
-  const { switchable, loadSwitchable, switchAccount, startPair, unlinkAccount, logout } = useAuth();
+  const { switchable, loadSwitchable, switchAccount, linkAccount, startPair, unlinkAccount, logout } = useAuth();
   const [open, setOpen] = useState(false);
   const [busy, setBusy] = useState(false);
   const [adding, setAdding] = useState(false);
+  const [addMode, setAddMode] = useState("credentials"); // "credentials" | "discord"
+  const [ident, setIdent] = useState("");
+  const [password, setPassword] = useState("");
+  const [code, setCode] = useState("");
+  const [needsCode, setNeedsCode] = useState(false);
   const [error, setError] = useState("");
   const menuRef = useRef(null);
   const buttonRef = useRef(null);
@@ -328,13 +333,34 @@ function AccountMenu({ user }) {
     window.location.reload();
   };
 
-  /* Add another account the only way this site has accounts: Discord.
-   *
-   * It used to ask for an email and password, which could never work here — an
-   * account created through Discord has no password hash at all, so the server
-   * refused every attempt with "This account signs in with Discord". The button
-   * now starts a Discord sign-in for the SECOND account; the callback links the
-   * two, and the session on screen does not change. */
+  const doLinkCredentials = async (e) => {
+    e?.preventDefault?.();
+    if (!ident.trim() || !password) {
+      setError("Enter username/email and password");
+      return;
+    }
+    setBusy(true);
+    setError("");
+    const res = await linkAccount(ident.trim(), password, needsCode ? code.trim() : undefined);
+    setBusy(false);
+    if (!res.ok) {
+      if (res.code === "totp_required") {
+        setNeedsCode(true);
+        setError("Enter 6-digit two-factor authentication code");
+      } else {
+        setError(res.error || "Failed to link account");
+      }
+      return;
+    }
+    toast.success("Account paired! You can switch between them anytime.");
+    setAdding(false);
+    setIdent("");
+    setPassword("");
+    setCode("");
+    setNeedsCode(false);
+  };
+
+  /* Add another account via Discord: stages a pair intent and redirects to OAuth callback */
   const doPair = async () => {
     setBusy(true);
     setError("");
@@ -411,32 +437,109 @@ function AccountMenu({ user }) {
                 <button
                   type="button"
                   data-testid="add-account"
-                  onClick={() => { setAdding(true); setError(""); }}
+                  onClick={() => { setAdding(true); setError(""); setAddMode("credentials"); }}
                   className="mt-1 flex w-full items-center gap-2.5 rounded-xl px-2.5 py-2 text-xs font-semibold text-zinc-300 transition hover:bg-white/[0.04]"
                 >
                   <Plus className="h-3.5 w-3.5 text-brand-400" /> Add another account
                 </button>
               ) : (
-                <div data-testid="link-account-form" className="mt-1 space-y-2 rounded-xl border border-white/10 bg-white/[0.03] p-3">
-                  <p className="text-[11px] leading-relaxed text-zinc-400">
-                    Sign in with the <span className="font-semibold text-zinc-200">other Discord account</span>. We link
-                    the two accounts so you can switch between them here — no password needed.
-                  </p>
-                  {error && <p className="text-[10px] text-red-400">{error}</p>}
-                  <div className="flex gap-2">
+                <div data-testid="link-account-form" className="mt-1 space-y-2.5 rounded-xl border border-white/10 bg-white/[0.03] p-3">
+                  <div className="flex rounded-lg border border-white/10 bg-black/40 p-0.5 text-[11px] font-semibold">
                     <button
                       type="button"
-                      data-testid="pair-discord"
-                      onClick={doPair}
-                      disabled={busy}
-                      className="flex flex-1 items-center justify-center gap-1.5 rounded-lg bg-[#5865F2] px-3 py-1.5 text-[11px] font-bold text-white transition hover:brightness-110 disabled:opacity-50"
+                      onClick={() => { setAddMode("credentials"); setError(""); }}
+                      className={`flex-1 py-1 rounded-md transition ${addMode === "credentials" ? "bg-brand-500/25 text-brand-200" : "text-zinc-400 hover:text-zinc-200"}`}
                     >
-                      {busy ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <FaDiscord className="h-3.5 w-3.5" />}
-                      Continue with Discord
+                      Password
                     </button>
-                    <button type="button" onClick={() => { setAdding(false); setError(""); }} className="rounded-lg border border-white/10 px-3 py-1.5 text-[11px] font-semibold text-zinc-400 hover:text-zinc-200">
-                      Cancel
+                    <button
+                      type="button"
+                      onClick={() => { setAddMode("discord"); setError(""); }}
+                      className={`flex-1 py-1 rounded-md transition ${addMode === "discord" ? "bg-brand-500/25 text-brand-200" : "text-zinc-400 hover:text-zinc-200"}`}
+                    >
+                      Discord
                     </button>
+                  </div>
+
+                  {error && <p className="text-[10px] text-red-400 font-medium">{error}</p>}
+
+                  {addMode === "credentials" ? (
+                    <form onSubmit={doLinkCredentials} className="space-y-2">
+                      <input
+                        type="text"
+                        placeholder="Username or email"
+                        value={ident}
+                        onChange={(e) => setIdent(e.target.value)}
+                        className="w-full rounded-lg border border-white/10 bg-black/50 px-2.5 py-1.5 text-xs text-zinc-100 placeholder:text-zinc-600 outline-none focus:border-brand-500/50"
+                      />
+                      <input
+                        type="password"
+                        placeholder="Password"
+                        value={password}
+                        onChange={(e) => setPassword(e.target.value)}
+                        className="w-full rounded-lg border border-white/10 bg-black/50 px-2.5 py-1.5 text-xs text-zinc-100 placeholder:text-zinc-600 outline-none focus:border-brand-500/50"
+                      />
+                      {needsCode && (
+                        <input
+                          type="text"
+                          placeholder="6-digit 2FA code"
+                          value={code}
+                          onChange={(e) => setCode(e.target.value)}
+                          className="w-full rounded-lg border border-amber-500/40 bg-black/50 px-2.5 py-1.5 text-xs text-zinc-100 placeholder:text-zinc-600 outline-none focus:border-amber-400"
+                        />
+                      )}
+                      <div className="flex gap-2 pt-1">
+                        <button
+                          type="submit"
+                          disabled={busy}
+                          className="flex flex-1 items-center justify-center gap-1.5 rounded-lg bg-gradient-to-r from-brand-500 to-brand-600 px-3 py-1.5 text-[11px] font-bold text-white transition hover:brightness-110 disabled:opacity-50"
+                        >
+                          {busy ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : "Link account"}
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => { setAdding(false); setError(""); }}
+                          className="rounded-lg border border-white/10 px-3 py-1.5 text-[11px] font-semibold text-zinc-400 hover:text-zinc-200"
+                        >
+                          Cancel
+                        </button>
+                      </div>
+                    </form>
+                  ) : (
+                    <div className="space-y-2">
+                      <p className="text-[11px] leading-relaxed text-zinc-400">
+                        Sign in with the <span className="font-semibold text-zinc-200">other Discord account</span>. We link the two accounts so you can switch between them here.
+                      </p>
+                      <div className="flex gap-2">
+                        <button
+                          type="button"
+                          data-testid="pair-discord"
+                          onClick={doPair}
+                          disabled={busy}
+                          className="flex flex-1 items-center justify-center gap-1.5 rounded-lg bg-[#5865F2] px-3 py-1.5 text-[11px] font-bold text-white transition hover:brightness-110 disabled:opacity-50"
+                        >
+                          {busy ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <FaDiscord className="h-3.5 w-3.5" />}
+                          Continue with Discord
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => { setAdding(false); setError(""); }}
+                          className="rounded-lg border border-white/10 px-3 py-1.5 text-[11px] font-semibold text-zinc-400 hover:text-zinc-200"
+                        >
+                          Cancel
+                        </button>
+                      </div>
+                    </div>
+                  )}
+
+                  <div className="pt-1 text-center">
+                    <Link
+                      to="/!/register"
+                      onClick={() => setOpen(false)}
+                      className="text-[10px] text-zinc-500 hover:text-brand-300 transition"
+                    >
+                      Need to create a new profile? Register here →
+                    </Link>
                   </div>
                 </div>
               )}

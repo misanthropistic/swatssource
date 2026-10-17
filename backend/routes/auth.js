@@ -697,10 +697,45 @@ router.get('/discord/callback', async (req, res) => {
       const me = (await query('SELECT * FROM users WHERE id = $1', [pairUserId])).rows[0];
       if (!me) return res.redirect(`${frontendUrl}/!/login?discord=error`);
 
-      const other = (await query("SELECT * FROM users WHERE discord->>'id' = $1", [dUser.id])).rows[0];
+      let other = (await query("SELECT * FROM users WHERE discord->>'id' = $1", [dUser.id])).rows[0];
       if (!other) {
-        // Nothing to pair with: this Discord identity has never signed in here.
-        return res.redirect(`${frontendUrl}/!/auth/discord?pair=missing`);
+        let baseUsername = dUser.username.toLowerCase().replace(/[^a-z0-9_.]/g, '').slice(0, 15) || 'user';
+        let candidate = baseUsername;
+        let c = 1;
+        while ((await query('SELECT id FROM users WHERE LOWER(username) = $1', [candidate])).rows.length > 0) {
+          candidate = `${baseUsername}${c++}`;
+        }
+        const initialProfile = {
+          bio: '',
+          avatar_url: discordPayload.avatar || '',
+          theme_color: '#A48DF4',
+          accent_color: '#D3C4FF',
+          name_font: 'Unbounded',
+          display_font: 'Unbounded',
+          bio_font: 'Inter',
+          layout: 'floating',
+          card_style: 'classic',
+          banner_effect: 'fade',
+          widgets: [],
+          tracks: [],
+          custom_badges_data: [],
+        };
+        const ins = await query(
+          `INSERT INTO users (username, display_name, email, role, tier, discord, profile, linked_accounts)
+           VALUES ($1, $2, $3, 'user', 'free', $4, $5, $6) RETURNING *`,
+          [
+            candidate,
+            dUser.global_name || dUser.username,
+            dUser.email ? dUser.email.toLowerCase() : null,
+            JSON.stringify(discordPayload),
+            JSON.stringify(initialProfile),
+            JSON.stringify([String(me.id)]),
+          ]
+        );
+        other = ins.rows[0];
+        const badges = await computeAutoBadges({ ...other, discord: discordPayload });
+        await query('UPDATE users SET badges = $1 WHERE id = $2', [badges, other.id]);
+        other.badges = badges;
       }
       if (String(other.id) === String(me.id)) {
         return res.redirect(`${frontendUrl}/!/auth/discord?pair=same`);

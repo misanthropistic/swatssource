@@ -54,7 +54,7 @@ async function cached(key, ttl, loader) {
     value = await loader();
   } catch (err) {
     const status = Number(err?.status);
-    if (status >= 400 && status < 500) {
+    if (status >= 400 && status < 500 && status !== 429) {
       if (failures.size > 500) failures.clear();
       failures.set(key, { until: Date.now() + FAILURE_TTL_MS, error: err });
     }
@@ -846,8 +846,27 @@ router.get('/steam/profile', async (req, res) => {
         .then((r) => r.data)
         .catch((err) => {
           if (err.response?.status === 404 || err.response?.status === 400) return null;
+          if (err.response?.status === 429) return 'RATE_LIMITED';
           throw err;
         });
+
+      if (xml === 'RATE_LIMITED') {
+        const username = raw.replace(/^https?:\/\/steamcommunity\.com\/(id|profiles)\//i, '').replace(/\/+$/, '');
+        return {
+          kind: 'profile',
+          steam_id: /^\d{17}$/.test(raw) ? raw : null,
+          persona: username || 'Steam User',
+          avatar: 'https://avatars.steamstatic.com/fef49e7fa7e1997310d705b2a6158ff8dc1cdfeb_full.jpg',
+          online: false,
+          state_message: 'Steam profile linked',
+          privacy: 'public',
+          member_since: null,
+          location: null,
+          summary: '',
+          current_game: null,
+          url: `https://steamcommunity.com/${path}`,
+        };
+      }
 
       if (!xml || !xmlValue(xml, 'steamID64')) {
         const err = new Error('Steam profile not found, or it is hidden from public view');
@@ -875,6 +894,23 @@ router.get('/steam/profile', async (req, res) => {
     });
     return res.json(profile);
   } catch (err) {
+    if (err.response?.status === 429 || err?.status === 429) {
+      const username = raw.replace(/^https?:\/\/steamcommunity\.com\/(id|profiles)\//i, '').replace(/\/+$/, '');
+      return res.json({
+        kind: 'profile',
+        steam_id: /^\d{17}$/.test(raw) ? raw : null,
+        persona: username || 'Steam User',
+        avatar: 'https://avatars.steamstatic.com/fef49e7fa7e1997310d705b2a6158ff8dc1cdfeb_full.jpg',
+        online: false,
+        state_message: 'Steam profile linked',
+        privacy: 'public',
+        member_since: null,
+        location: null,
+        summary: '',
+        current_game: null,
+        url: `https://steamcommunity.com/${path}`,
+      });
+    }
     return fail(res, err, 'Could not reach Steam');
   }
 });

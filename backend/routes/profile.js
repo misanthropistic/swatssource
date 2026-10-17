@@ -168,6 +168,7 @@ router.put('/profile', requireAuth, requireDiscordToEdit, async (req, res) => {
 
     const currentProfile = req.user.profile || {};
     const mergedProfile = { ...currentProfile, ...profileData };
+    delete mergedProfile.cursor_image;
     for (const key of ['badges', 'equipped_badges', 'custom_badges', 'custom_badges_data']) {
       delete mergedProfile[key];
     }

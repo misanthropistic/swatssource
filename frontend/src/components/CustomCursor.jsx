@@ -22,7 +22,12 @@ export function CustomCursor({ profile }) {
   const imgSrc = settings.image ? fileUrl(settings.image) : "";
 
   useEffect(() => {
-    if (!imgSrc || typeof window === "undefined") return undefined;
+    if (!imgSrc || typeof window === "undefined") {
+      if (typeof document !== "undefined") {
+        document.body.classList.remove("custom-cursor-active");
+      }
+      return undefined;
+    }
 
     // Check if device has fine pointer (mouse/trackpad, not touch)
     const isFinePointer = window.matchMedia("(pointer: fine)").matches;

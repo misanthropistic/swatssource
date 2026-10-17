@@ -166,7 +166,16 @@ export function CrosshairPicker({ value, onChange, isPremium, onLocked, testid =
     setUploading(false);
   };
 
-  const clear = () => patch({ crosshair_image: "", crosshair_scale: 1, crosshair_x: 0, crosshair_y: 0 });
+  const clear = () => {
+    patch({
+      crosshair_image: "",
+      cursor_image: "",
+      crosshair_scale: 1,
+      crosshair_x: 0,
+      crosshair_y: 0,
+    });
+    toast.success("Custom cursor removed. Save profile changes to apply.");
+  };
 
   const reset = () =>
     patch({

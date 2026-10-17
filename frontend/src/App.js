@@ -129,6 +129,7 @@ function App() {
               <Route path="/!/donate" element={<Donations />} />
               <Route path="/donate" element={<Navigate to="/!/donate" replace />} />
               <Route path="/!/login" element={<Login />} />
+              <Route path="/!/register" element={<Login initialMode="register" />} />
               {/* The Compare tab is gone. Old links and bookmarks must not fall
                   through to the /:alias profile route and land on a "not
                   claimed" page for a username nobody can register. */}
@@ -151,6 +152,7 @@ function App() {
               <Route path="/legal" element={<Legal />} />
               <Route path="/pricing" element={<Pricing />} />
               <Route path="/login" element={<Login />} />
+              <Route path="/register" element={<Navigate to="/!/register" replace />} />
               <Route path="/auth/discord" element={<DiscordCallback />} />
 
               {/* Dashboard routes */}

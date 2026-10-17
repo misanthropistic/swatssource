@@ -21,11 +21,13 @@ const Field = ({ icon: Icon, ...props }) => (
   </div>
 );
 
-export default function Login() {
+export default function Login({ initialMode = "login" }) {
   const [params] = useSearchParams();
   const navigate = useNavigate();
   const { login, register, user } = useAuth();
-  const [mode, setMode] = useState("login");
+  const [mode, setMode] = useState(
+    params.get("mode") === "register" || params.get("register") === "true" ? "register" : initialMode
+  );
   const [showPremium, setShowPremium] = useState(false);
   const [showPw, setShowPw] = useState(false);
   const [busy, setBusy] = useState(false);
@@ -53,9 +55,17 @@ export default function Login() {
   useEffect(() => {
     if (params.get("discord") === "error") toast.error("Discord sign-in failed. Try again.");
     if (claim) { setMode("register"); setForm((f) => ({ ...f, username: claim })); }
+    if (params.get("mode") === "register" || params.get("register") === "true") {
+      setMode("register");
+    }
   }, [claim, params]);
 
-  useEffect(() => { if (user && user !== false) navigate("/!/dashboard"); }, [user, navigate]);
+  useEffect(() => {
+    const isRegistering = mode === "register" || params.get("mode") === "register" || initialMode === "register";
+    if (user && user !== false && !isRegistering) {
+      navigate("/!/dashboard");
+    }
+  }, [user, navigate, mode, params, initialMode]);
 
   const set = (k) => (e) => setForm({ ...form, [k]: e.target.value });
 
@@ -132,6 +142,18 @@ export default function Login() {
         <div className="flex justify-center mb-6"><Logo size="text-xl" /></div>
         <h1 className="text-center font-display text-2xl font-extrabold text-zinc-50">{mode === "login" ? "Welcome back" : "Create your account"}</h1>
         <p className="text-center text-sm text-zinc-500 mt-1">{mode === "login" ? "Log in to manage your page" : "Claim your digital identity"}</p>
+
+        {user && mode === "register" && (
+          <div className="mt-4 flex items-center justify-between gap-2 rounded-xl border border-brand-500/30 bg-brand-500/10 p-3 text-xs text-brand-200">
+            <div>
+              <span>Currently signed in as <strong className="text-white">@{user.username}</strong>.</span>
+              <span className="block text-[10px] text-zinc-400 mt-0.5">Creating an account will register your new username.</span>
+            </div>
+            <Link to="/!/dashboard" className="shrink-0 rounded-lg border border-white/10 bg-white/5 px-2.5 py-1 text-[10px] font-semibold text-zinc-200 hover:bg-white/10">
+              Dashboard
+            </Link>
+          </div>
+        )}
 
         <button data-testid="discord-login-btn" onClick={discordAuth}
           className="mt-7 w-full flex items-center justify-center gap-2.5 py-3 rounded-xl text-sm font-semibold bg-white hover:bg-white/90 text-[#0A0A0D] transition">
