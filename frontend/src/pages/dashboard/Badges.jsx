@@ -417,29 +417,35 @@ export default function Badges() {
               key={b.id}
               className={`group relative p-4 rounded-2xl border transition duration-300 flex items-center justify-between gap-4 ${
                 isOwned
-                  ? "glass border-brand-500/30 bg-brand-500/5 hover:border-brand-500/50"
-                  : "bg-white/[0.02] border-white/10 opacity-75"
+                  ? "glass border-brand-500/30 bg-gradient-to-r from-brand-500/[0.08] via-white/[0.02] to-transparent hover:border-brand-500/60 shadow-[0_4px_20px_rgba(0,0,0,0.3)]"
+                  : "bg-white/[0.02] border-white/10 opacity-75 hover:opacity-90 hover:border-white/20"
               }`}
             >
-              <div className="flex items-center gap-3.5 min-w-0 flex-1">
-                <BadgeChip
-                  id={b.id}
-                  meta={M}
-                  {...globalChip}
-                  size="xl"
-                  className="shrink-0"
-                />
+              <div className="flex items-center gap-4 min-w-0 flex-1">
+                <div className={`relative flex h-13 w-13 shrink-0 items-center justify-center rounded-2xl border transition-all duration-300 ${
+                  isOwned
+                    ? "border-brand-500/30 bg-gradient-to-b from-brand-500/15 to-black/40 shadow-[inset_0_1px_0_rgba(255,255,255,0.15),0_0_20px_rgba(164,141,244,0.15)] group-hover:border-brand-400/60 group-hover:shadow-[inset_0_1px_0_rgba(255,255,255,0.25),0_0_28px_rgba(164,141,244,0.3)]"
+                    : "border-white/10 bg-white/[0.03] group-hover:border-white/20"
+                }`}>
+                  <BadgeChip
+                    id={b.id}
+                    meta={M}
+                    {...globalChip}
+                    size="lg"
+                    className="shrink-0 transition-transform duration-300 group-hover:scale-115"
+                  />
+                </div>
 
                 <div className="min-w-0 flex-1">
                   <div className="text-xs font-bold text-zinc-100 flex items-center gap-2">
-                    <span>{b.name || M.label || b.id}</span>
+                    <span className="font-display tracking-tight text-sm text-zinc-100 group-hover:text-white transition-colors">{b.name || M.label || b.id}</span>
                     {isOwned && (
-                      <span className="inline-flex items-center gap-1 rounded-full border border-emerald-400/30 bg-emerald-400/15 px-2 py-0.5 text-[9px] font-bold uppercase tracking-wide text-emerald-300">
+                      <span className="inline-flex items-center gap-1 rounded-full border border-emerald-400/35 bg-emerald-400/15 px-2 py-0.5 text-[9px] font-bold uppercase tracking-wide text-emerald-300 shadow-[0_0_12px_rgba(52,211,153,0.2)]">
                         <Check className="h-2.5 w-2.5" /> Owned
                       </span>
                     )}
                   </div>
-                  <p className="text-[11px] text-zinc-400 mt-0.5 line-clamp-1">{b.description || M.desc}</p>
+                  <p className="text-[11px] text-zinc-400 mt-1 line-clamp-1 group-hover:text-zinc-300 transition-colors">{b.description || M.desc}</p>
                 </div>
               </div>
 
@@ -447,10 +453,10 @@ export default function Badges() {
               {isOwned ? (
                 <button
                   onClick={() => toggleEquip(b.id)}
-                  className={`flex shrink-0 items-center gap-1.5 rounded-xl text-xs font-bold transition ${
+                  className={`flex shrink-0 items-center gap-1.5 rounded-xl text-xs font-bold transition shadow-sm ${
                     isEquipped
-                      ? "bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 hover:bg-emerald-500/30"
-                      : "bg-white/5 text-zinc-400 border border-white/10 hover:text-white hover:bg-white/10"
+                      ? "bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 hover:bg-emerald-500/30 shadow-[0_0_15px_rgba(16,185,129,0.15)]"
+                      : "bg-white/5 text-zinc-300 border border-white/10 hover:text-white hover:bg-white/10 hover:border-white/20"
                   } px-3.5 py-1.5`}
                 >
                   {isEquipped ? (
@@ -459,23 +465,23 @@ export default function Badges() {
                     </>
                   ) : (
                     <>
-                      <EyeOff className="w-3.5 h-3.5" /> Equip
+                      <EyeOff className="w-3.5 h-3.5 text-zinc-400" /> Equip
                     </>
                   )}
                 </button>
               ) : (
-                <span className="inline-flex items-center gap-1.5 rounded-lg border border-white/10 bg-white/5 px-2.5 py-1 text-[11px] font-medium text-zinc-500">
+                <span className="inline-flex items-center gap-1.5 rounded-xl border border-white/10 bg-white/5 px-2.5 py-1.5 text-[11px] font-medium text-zinc-500">
                   <Lock className="h-3 w-3" /> Locked
                 </span>
               )}
 
               {/* Tooltip Box */}
               <div className="pointer-events-none absolute bottom-full left-1/2 -translate-x-1/2 mb-2 hidden group-hover:flex flex-col items-center z-50 animate-in fade-in duration-150">
-                <div className="px-3 py-1.5 rounded-xl bg-black/90 backdrop-blur border border-white/15 text-xs text-white shadow-xl max-w-xs text-center">
+                <div className="px-3 py-1.5 rounded-xl bg-black/95 backdrop-blur-md border border-white/15 text-xs text-white shadow-2xl max-w-xs text-center">
                   <div className="font-bold text-brand-300">{b.name || M.label}</div>
                   <div className="text-[10px] text-zinc-300 mt-0.5">{b.description || M.desc}</div>
                 </div>
-                <div className="w-2 h-2 bg-black/90 rotate-45 -mt-1 border-r border-b border-white/15" />
+                <div className="w-2 h-2 bg-black/95 rotate-45 -mt-1 border-r border-b border-white/15" />
               </div>
             </div>
           );

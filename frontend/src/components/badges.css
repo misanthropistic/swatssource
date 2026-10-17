@@ -20,11 +20,11 @@
   /* `none` until the owner sets a glow: with no custom property there is no
      filter to paint, and no layer to pay for. */
   filter: var(--badge-glow, none);
-  transition: transform 0.18s ease;
+  transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), filter 0.2s ease;
 }
 
 .badge-chip:hover {
-  transform: translateY(-1px) scale(1.06);
+  transform: translateY(-1.5px) scale(1.08);
 }
 
 /* ── The art ─────────────────────────────────────────────────────────────── */
@@ -41,11 +41,11 @@
   object-fit: contain;
   pointer-events: none;
   user-select: none;
-  transition: filter 0.18s ease;
+  transition: filter 0.2s ease;
 }
 
 .badge-chip:hover .badge-art-img {
-  filter: brightness(1.12) saturate(1.06);
+  filter: brightness(1.15) saturate(1.1);
 }
 
 /* The overlay: one colour, masked by the art's own pixels so it can only ever

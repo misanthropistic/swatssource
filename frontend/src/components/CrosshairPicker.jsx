@@ -12,6 +12,39 @@ import {
   validateCrosshairFile,
 } from "@/lib/crosshair";
 
+export const CROSSHAIR_PRESETS = [
+  {
+    id: "dot",
+    name: "Dot",
+    src: "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24'><circle cx='12' cy='12' r='3' fill='%23A48DF4'/><circle cx='12' cy='12' r='4.5' fill='none' stroke='%230A0A0D' stroke-width='1.5'/></svg>",
+  },
+  {
+    id: "tactical",
+    name: "Tactical",
+    src: "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24'><line x1='12' y1='2' x2='12' y2='9' stroke='%23A48DF4' stroke-width='2'/><line x1='12' y1='15' x2='12' y2='22' stroke='%23A48DF4' stroke-width='2'/><line x1='2' y1='12' x2='9' y2='12' stroke='%23A48DF4' stroke-width='2'/><line x1='15' y1='12' x2='22' y2='12' stroke='%23A48DF4' stroke-width='2'/></svg>",
+  },
+  {
+    id: "circle_dot",
+    name: "Circle",
+    src: "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24'><circle cx='12' cy='12' r='7' fill='none' stroke='%23A48DF4' stroke-width='1.5'/><circle cx='12' cy='12' r='2' fill='%23D3C4FF'/></svg>",
+  },
+  {
+    id: "valorant",
+    name: "Cyan",
+    src: "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24'><rect x='11' y='4' width='2' height='5' fill='%2300f0ff'/><rect x='11' y='15' width='2' height='5' fill='%2300f0ff'/><rect x='4' y='11' width='5' height='2' fill='%2300f0ff'/><rect x='15' y='11' width='5' height='2' fill='%2300f0ff'/></svg>",
+  },
+  {
+    id: "cs2",
+    name: "Green",
+    src: "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24'><rect x='11' y='2' width='2' height='7' fill='%2334d399'/><rect x='11' y='15' width='2' height='7' fill='%2334d399'/><rect x='2' y='11' width='7' height='2' fill='%2334d399'/><rect x='15' y='11' width='7' height='2' fill='%2334d399'/><circle cx='12' cy='12' r='1.5' fill='%2334d399'/></svg>",
+  },
+  {
+    id: "diamond",
+    name: "Diamond",
+    src: "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24'><polygon points='12,4 20,12 12,20 4,12' fill='none' stroke='%23D3C4FF' stroke-width='2'/><circle cx='12' cy='12' r='2' fill='%23ffffff'/></svg>",
+  },
+];
+
 const Preview = ({ src, settings, natural, setNatural }) => {
   const { width, height } = scaledCrosshairSize(natural.width, natural.height, settings.scale);
   const left = Math.min(settings.x, width - 1);
@@ -198,6 +231,45 @@ export function CrosshairPicker({ value, onChange, isPremium, onLocked, testid =
             automatically sized to normal mouse cursor dimensions (~28px) and centered on your profile.
             Animated GIFs play at full 60fps! {!isPremium ? "Custom cursors are a Premium feature." : ""}
           </p>
+        </div>
+
+        {/* Presets Row */}
+        <div className="space-y-2">
+          <span className="text-[11px] font-semibold text-zinc-300 block">Quick Presets</span>
+          <div className="flex flex-wrap gap-2">
+            {CROSSHAIR_PRESETS.map((p) => {
+              const active = settings.image === p.src;
+              return (
+                <button
+                  key={p.id}
+                  type="button"
+                  data-testid={`crosshair-preset-${p.id}`}
+                  onClick={() => {
+                    if (!isPremium) {
+                      onLocked?.();
+                      return;
+                    }
+                    setNatural({ width: 24, height: 24 });
+                    patch({
+                      crosshair_image: p.src,
+                      crosshair_scale: 1,
+                      crosshair_x: 12,
+                      crosshair_y: 12,
+                    });
+                    toast.success(`Applied ${p.name} crosshair`);
+                  }}
+                  className={`flex items-center gap-2 rounded-xl border px-3 py-1.5 text-xs font-medium transition ${
+                    active
+                      ? "border-brand-500/60 bg-brand-500/20 text-brand-200 shadow-[0_0_12px_rgba(164,141,244,0.3)]"
+                      : "border-white/10 bg-white/[0.03] text-zinc-300 hover:border-white/20 hover:bg-white/[0.06]"
+                  }`}
+                >
+                  <img src={p.src} alt="" className="h-4 w-4 object-contain" />
+                  <span>{p.name}</span>
+                </button>
+              );
+            })}
+          </div>
         </div>
 
         <div className="grid gap-4 sm:grid-cols-3">

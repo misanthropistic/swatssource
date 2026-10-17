@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { NavLink, Outlet, useNavigate, Link, useLocation } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { useAuth } from "@/context/AuthContext";
@@ -285,6 +285,34 @@ function AccountMenu({ user }) {
   const [busy, setBusy] = useState(false);
   const [adding, setAdding] = useState(false);
   const [error, setError] = useState("");
+  const menuRef = useRef(null);
+  const buttonRef = useRef(null);
+
+  // Auto-close menu when clicking outside or pressing Escape
+  useEffect(() => {
+    if (!open) return undefined;
+    const onMouseDown = (e) => {
+      if (
+        menuRef.current &&
+        !menuRef.current.contains(e.target) &&
+        !buttonRef.current?.contains(e.target)
+      ) {
+        setOpen(false);
+      }
+    };
+    const onKeyDown = (e) => {
+      if (e.key === "Escape") setOpen(false);
+    };
+    document.addEventListener("mousedown", onMouseDown);
+    document.addEventListener("touchstart", onMouseDown);
+    document.addEventListener("keydown", onKeyDown);
+    return () => {
+      document.removeEventListener("mousedown", onMouseDown);
+      document.removeEventListener("touchstart", onMouseDown);
+      document.removeEventListener("keydown", onKeyDown);
+    };
+  }, [open]);
+
   // Re-read the pairing when the menu opens, so a link made in another tab is
   // here too.
   useEffect(() => {
@@ -329,6 +357,7 @@ function AccountMenu({ user }) {
   return (
     <div className="relative">
       <button
+        ref={buttonRef}
         type="button"
         data-testid="account-menu-button"
         onClick={() => setOpen((o) => !o)}
@@ -347,6 +376,7 @@ function AccountMenu({ user }) {
         <>
           <div className="fixed inset-0 z-40" onClick={() => setOpen(false)} />
           <div
+            ref={menuRef}
             data-testid="account-menu"
             className="absolute right-0 top-10 z-50 w-72 overflow-hidden rounded-2xl border border-white/10 bg-[#101014] shadow-[0_20px_60px_rgba(0,0,0,0.7)]"
           >

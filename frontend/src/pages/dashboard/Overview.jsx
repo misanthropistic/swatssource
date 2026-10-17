@@ -209,64 +209,8 @@ export default function Overview() {
   };
 
   const trialEnds = user.premium_until ? new Date(user.premium_until).toLocaleDateString() : null;
-  const [copied, setCopied] = useState(false);
-
-  const copyProfileUrl = () => {
-    const url = `${window.location.origin}/${user.username}`;
-    navigator.clipboard?.writeText(url).then(() => {
-      setCopied(true);
-      toast.success("Profile URL copied to clipboard!");
-      setTimeout(() => setCopied(false), 2000);
-    }).catch(() => {
-      toast.error("Could not copy URL");
-    });
-  };
-
   return (
     <div className="space-y-6" data-testid="overview-page">
-      {/* Bio Link Banner */}
-      <div className="relative overflow-hidden rounded-3xl border border-white/10 bg-gradient-to-r from-brand-950/40 via-purple-950/20 to-black/60 p-5 shadow-[0_10px_30px_rgba(0,0,0,0.5)] backdrop-blur-xl">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-          <div className="flex items-center gap-3">
-            <div className="grid h-12 w-12 shrink-0 place-items-center rounded-2xl bg-gradient-to-tr from-brand-500 to-purple-600 text-white shadow-[0_0_20px_rgba(164, 141, 244,0.4)]">
-              <Globe className="h-6 w-6" />
-            </div>
-            <div>
-              <div className="flex items-center gap-2">
-                <span className="font-display text-base font-bold text-zinc-100">Your bio page is live</span>
-                <span className="flex items-center gap-1 rounded-full border border-emerald-500/30 bg-emerald-500/10 px-2 py-0.5 text-[10px] font-bold text-emerald-300">
-                  <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 animate-pulse" />
-                  Online
-                </span>
-              </div>
-              <p className="mt-0.5 font-mono2 text-xs text-brand-300">
-                swats.bio/{user.username}
-              </p>
-            </div>
-          </div>
-
-          <div className="flex items-center gap-2">
-            <button
-              type="button"
-              onClick={copyProfileUrl}
-              className="inline-flex items-center gap-1.5 rounded-xl border border-white/10 bg-white/[0.04] px-3.5 py-2 text-xs font-semibold text-zinc-200 transition hover:bg-white/[0.08] hover:text-white"
-            >
-              {copied ? <Check className="h-3.5 w-3.5 text-emerald-400" /> : <Copy className="h-3.5 w-3.5 text-zinc-400" />}
-              {copied ? "Copied Link!" : "Copy Link"}
-            </button>
-            <a
-              href={`/${user.username}`}
-              target="_blank"
-              rel="noreferrer"
-              className="inline-flex items-center gap-1.5 rounded-xl bg-gradient-to-r from-brand-500 to-brand-600 px-4 py-2 text-xs font-semibold text-white shadow-md transition hover:brightness-110"
-            >
-              <ExternalLink className="h-3.5 w-3.5" />
-              View Page
-            </a>
-          </div>
-        </div>
-      </div>
-
       {/* The facts, one quiet strip: profile, tier, views, badges, rank. */}
       <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 xl:grid-cols-5">
         <StatChip

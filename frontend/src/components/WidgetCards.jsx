@@ -78,6 +78,64 @@ const widgetBorder = (w, outlineAlpha) => {
   };
 };
 
+export function resolveWidgetUrl(w, data) {
+  if (w?.url && typeof w.url === "string" && w.url.startsWith("http")) return w.url;
+  if (w?.target_url && typeof w.target_url === "string" && w.target_url.startsWith("http")) return w.target_url;
+  if (w?.link && typeof w.link === "string" && w.link.startsWith("http")) return w.link;
+  const t = (w?.type || "").toLowerCase();
+  const sub = (w?.subtype || "").toLowerCase();
+  if (t === "spotify") {
+    if (w?.track_id) return `https://open.spotify.com/track/${w.track_id}`;
+    if (data?.page_url) return data.page_url;
+    if (data?.url) return data.url;
+  }
+  if (t === "soundcloud") {
+    if (w?.track_url) return w.track_url;
+    if (data?.page_url) return data.page_url;
+    if (data?.url) return data.url;
+  }
+  if (t === "youtube") {
+    if (w?.video_id) return `https://www.youtube.com/watch?v=${w.video_id}`;
+    if (w?.channel_id) return `https://www.youtube.com/channel/${w.channel_id}`;
+    if (data?.url) return data.url;
+  }
+  if (t === "twitch") {
+    if (w?.channel) return `https://twitch.tv/${w.channel}`;
+    if (data?.url) return data.url;
+  }
+  if (t === "github") {
+    if (sub === "repo" && (w?.repo || w?.repository)) return `https://github.com/${w.repo || w.repository}`;
+    if (w?.username) return `https://github.com/${w.username}`;
+    if (data?.html_url) return data.html_url;
+  }
+  if (t === "roblox") {
+    if (sub === "game" && w?.game_id) return `https://www.roblox.com/games/${w.game_id}`;
+    if (sub === "group" && w?.group_id) return `https://www.roblox.com/groups/${w.group_id}`;
+    if (w?.user_id) return `https://www.roblox.com/users/${w.user_id}/profile`;
+    if (w?.username) return `https://www.roblox.com/search/users?keyword=${encodeURIComponent(w.username)}`;
+    if (data?.url) return data.url;
+  }
+  if (t === "steam") {
+    if (w?.steam_id) return `https://steamcommunity.com/profiles/${w.steam_id}`;
+    if (w?.custom_url) return `https://steamcommunity.com/id/${w.custom_url}`;
+    if (data?.profileurl) return data.profileurl;
+  }
+  if (t === "tiktok") {
+    if (w?.username) return `https://www.tiktok.com/@${String(w.username).replace(/^@/, '')}`;
+    if (data?.url) return data.url;
+  }
+  if (t === "kick") {
+    if (w?.channel) return `https://kick.com/${w.channel}`;
+  }
+  if (t === "discord") {
+    if (w?.invite_url) return w.invite_url;
+    if (w?.invite) return `https://discord.gg/${w.invite}`;
+    if (data?.instant_invite) return data.instant_invite;
+  }
+  if (w?.value && typeof w.value === "string" && w.value.startsWith("http")) return w.value;
+  return null;
+}
+
 function WidgetShell({
   w,
   accent,
@@ -88,29 +146,16 @@ function WidgetShell({
   innerClassName = "",
   innerStyle,
   raw = false,
+  data,
 }) {
   const full = Number(w.span ?? 2) === 2;
-  // Density is the owner's call. A tall profile of six cards was reading as six
-  // oversized boxes because every card carried the same generous padding; this
-  // dials that padding (and the corner it sits in) down without changing what
-  // the card says.
   const tight = w?.compact === true;
-  const pad = tight ? "p-2.5 sm:p-3" : "p-3.5 sm:p-4";
-  const Icon = HeaderIcon || BRAND_ICON[w?.type] || Globe;
-  const title = headerTitle || w?.title || `${(w?.type || "Widget").toUpperCase()} PREVIEW`;
+  // Modern, sleek card sizing without bloated padding
+  const pad = tight ? "p-2.5 sm:p-3" : "p-3 sm:p-3.5";
   const bgEnabled = w?.background !== false && w?.bg_enabled !== false && w?.show_bg !== false && !w?.transparent && w?.card_style !== "transparent";
   const fillAlpha = clampPct(w?.card_fill_alpha, WIDGET_SURFACE_DEFAULTS.fillAlpha);
-  const tint = w?.color || accent;
-  // The header the shell was already computing and then throwing away: the icon
-  // and title were resolved on every render and never reached the page, so every
-  // card opened on bare content with no way to tell a Steam card from a Spotify
-  // one at a glance. It is a title bar now — a tinted icon tile and the name —
-  // and it sits above a hairline so the card reads as one card, not a floating
-  // block of text.
-  const showHeader = !raw;
-  // Optional owner-authored tooltip. Attached to the card itself (a hook, not a
-  // wrapper) so the full-width col-span and grid placement stay untouched.
   const { tipProps, tipNode } = useTooltip(w?.tooltip);
+  const popoutUrl = resolveWidgetUrl(w, data);
 
   const surface = {
     ...widgetBorder(w, w?.card_outline_alpha),
@@ -131,36 +176,29 @@ function WidgetShell({
       {...tipProps}
       className={`${full ? "col-span-2" : ""} flex flex-col text-left transition duration-300 ${className}`}
     >
-
-
-      {/* Inner Preview Card */}
+      {/* Inner Card */}
       {raw ? (
         children
       ) : (
         <div
-          // `widget-card-sheen` is a whisper of light across the top of the card:
-          // at the old flat fill six cards in a grid read as six identical grey
-          // slabs. It lives in index.css rather than inline because a
-          // `linear-gradient` in a style attribute is dropped by some renderers.
           className={`${pad} text-left relative overflow-hidden transition duration-300 ${bgEnabled ? "widget-card-sheen" : ""} ${innerClassName}`}
           style={{ ...surface, ...innerStyle }}
         >
-          {showHeader && (
-            <div className={`flex items-center gap-2 ${tight ? "mb-2" : "mb-2.5"}`} data-testid="widget-header">
-              <span
-                className="flex h-6 w-6 shrink-0 items-center justify-center rounded-lg"
-                style={{ background: `${tint}1f`, border: `1px solid ${tint}33` }}
-              >
-                <Icon className="h-3.5 w-3.5" style={{ color: tint }} />
-              </span>
-              <span className="min-w-0 flex-1 truncate text-[10px] font-bold uppercase tracking-[0.14em] text-zinc-400">
-                {title}
-              </span>
-            </div>
+          {/* Top right sleek popout button for widgets that support it */}
+          {popoutUrl && (
+            <a
+              href={popoutUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              data-testid="widget-popout-link"
+              title="Open link"
+              onClick={(e) => e.stopPropagation()}
+              className="absolute top-2.5 right-2.5 z-20 flex h-6 w-6 items-center justify-center rounded-lg bg-black/50 text-zinc-400 hover:text-white hover:bg-white/10 hover:border-white/20 border border-white/10 backdrop-blur-md transition-all duration-150 shadow-sm"
+            >
+              <ExternalLink className="h-3 w-3" />
+            </a>
           )}
-          <div className={showHeader ? (tight ? "pt-2" : "pt-2.5") : ""} style={showHeader ? { borderTop: "1px solid rgba(255,255,255,0.06)" } : undefined}>
-            {children}
-          </div>
+          {children}
         </div>
       )}
       {tipNode}
@@ -1425,7 +1463,7 @@ export function WidgetCard({ w, accent = "#A48DF4", ownerCreated, owner = "", pr
     const title = sub === "group" ? "Roblox Group Preview" : sub === "game" ? "Roblox Game Preview" : "Roblox Profile Preview";
     const inner = sub === "group" ? <RobloxGroup {...props} /> : sub === "game" ? <RobloxGame {...props} /> : <RobloxProfile {...props} />;
     return (
-      <WidgetShell w={w} accent={accent} headerTitle={w.title || title} HeaderIcon={SiRoblox}>
+      <WidgetShell w={w} accent={accent} data={data} headerTitle={w.title || title} HeaderIcon={SiRoblox}>
         {inner}
       </WidgetShell>
     );
@@ -1435,19 +1473,15 @@ export function WidgetCard({ w, accent = "#A48DF4", ownerCreated, owner = "", pr
     const isRepo = sub === "repo";
     const title = isRepo ? "Github Repo Preview" : "Github Profile Preview";
     return (
-      <WidgetShell w={w} accent={accent} headerTitle={w.title || title} HeaderIcon={FaGithub}>
+      <WidgetShell w={w} accent={accent} data={data} headerTitle={w.title || title} HeaderIcon={FaGithub}>
         {isRepo ? <GitHubRepo {...props} /> : <GitHubUser {...props} />}
       </WidgetShell>
     );
   }
 
   if (type === "spotify") {
-    // Not `raw`: the Spotify card used to opt out of the shell and paint its own
-    // hard-coded purple plate, which is why the music widget ignored the owner's
-    // fill, radius and border and looked like a different product from every
-    // other card on the page. It wears the same surface as the rest now.
     return (
-      <WidgetShell w={w} accent={accent} headerTitle={w.title || "Spotify Track Preview"} HeaderIcon={FaSpotify}>
+      <WidgetShell w={w} accent={accent} data={data} headerTitle={w.title || "Spotify Track Preview"} HeaderIcon={FaSpotify}>
         <SpotifyTrackCard {...props} />
       </WidgetShell>
     );
@@ -1457,7 +1491,7 @@ export function WidgetCard({ w, accent = "#A48DF4", ownerCreated, owner = "", pr
     const HeaderIcon = type === "tiktok" ? FaTiktok : FaSoundcloud;
     const title = type === "tiktok" ? "TikTok Preview" : "SoundCloud Preview";
     return (
-      <WidgetShell w={w} accent={accent} headerTitle={w.title || title} HeaderIcon={HeaderIcon}>
+      <WidgetShell w={w} accent={accent} data={data} headerTitle={w.title || title} HeaderIcon={HeaderIcon}>
         <MediaCard {...props} provider={type} HeaderIcon={HeaderIcon} />
       </WidgetShell>
     );
@@ -1467,7 +1501,7 @@ export function WidgetCard({ w, accent = "#A48DF4", ownerCreated, owner = "", pr
     const isProfile = sub === "profile";
     const title = isProfile ? "Discord Presence Preview" : "Discord Invite Preview";
     return (
-      <WidgetShell w={w} accent={accent} headerTitle={w.title || title} HeaderIcon={FaDiscord}>
+      <WidgetShell w={w} accent={accent} data={data} headerTitle={w.title || title} HeaderIcon={FaDiscord}>
         {isProfile ? <DiscordProfile {...props} /> : <DiscordServer {...props} />}
       </WidgetShell>
     );
@@ -1475,7 +1509,7 @@ export function WidgetCard({ w, accent = "#A48DF4", ownerCreated, owner = "", pr
 
   if (type === "youtube") {
     return (
-      <WidgetShell w={w} accent={accent} headerTitle={w.title || "YouTube Channel Preview"} HeaderIcon={FaYoutube}>
+      <WidgetShell w={w} accent={accent} data={data} headerTitle={w.title || "YouTube Channel Preview"} HeaderIcon={FaYoutube}>
         <YouTubeChannel {...props} />
       </WidgetShell>
     );
@@ -1483,7 +1517,7 @@ export function WidgetCard({ w, accent = "#A48DF4", ownerCreated, owner = "", pr
 
   if (type === "steam") {
     return (
-      <WidgetShell w={w} accent={accent} headerTitle={w.title || "Steam Profile Preview"} HeaderIcon={FaSteam}>
+      <WidgetShell w={w} accent={accent} data={data} headerTitle={w.title || "Steam Profile Preview"} HeaderIcon={FaSteam}>
         <SteamProfile {...props} />
       </WidgetShell>
     );
@@ -1491,7 +1525,7 @@ export function WidgetCard({ w, accent = "#A48DF4", ownerCreated, owner = "", pr
 
   if (type === "valorant") {
     return (
-      <WidgetShell w={w} accent={accent} headerTitle={w.title || "Valorant Stats Preview"} HeaderIcon={SiValorant}>
+      <WidgetShell w={w} accent={accent} data={data} headerTitle={w.title || "Valorant Stats Preview"} HeaderIcon={SiValorant}>
         <ValorantCard {...props} />
       </WidgetShell>
     );
@@ -1499,7 +1533,7 @@ export function WidgetCard({ w, accent = "#A48DF4", ownerCreated, owner = "", pr
 
   if (type === "timezone" || type === "clock") {
     return (
-      <WidgetShell w={w} accent={accent} headerTitle={w.title || "Timezone Clock Preview"} HeaderIcon={Clock}>
+      <WidgetShell w={w} accent={accent} data={data} headerTitle={w.title || "Timezone Clock Preview"} HeaderIcon={Clock}>
         <TimezoneClock w={w} accent={accent} />
       </WidgetShell>
     );
@@ -1507,7 +1541,7 @@ export function WidgetCard({ w, accent = "#A48DF4", ownerCreated, owner = "", pr
 
   if (type === "countdown") {
     return (
-      <WidgetShell w={w} accent={accent} headerTitle={w.title || "Countdown Preview"} HeaderIcon={Calendar}>
+      <WidgetShell w={w} accent={accent} data={data} headerTitle={w.title || "Countdown Preview"} HeaderIcon={Calendar}>
         <CountdownCard w={w} accent={accent} />
       </WidgetShell>
     );
@@ -1515,7 +1549,7 @@ export function WidgetCard({ w, accent = "#A48DF4", ownerCreated, owner = "", pr
 
   if (type === "account-date") {
     return (
-      <WidgetShell w={w} accent={accent} headerTitle={w.title || "Account Date Preview"} HeaderIcon={Calendar}>
+      <WidgetShell w={w} accent={accent} data={data} headerTitle={w.title || "Account Date Preview"} HeaderIcon={Calendar}>
         <AccountDateCard w={w} accent={accent} ownerCreated={ownerCreated} />
       </WidgetShell>
     );

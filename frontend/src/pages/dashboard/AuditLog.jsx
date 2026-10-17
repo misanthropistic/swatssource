@@ -200,25 +200,31 @@ export default function AuditLog() {
             placeholder="Actor username"
             className="w-40 rounded-xl border border-white/10 bg-black/40 px-3 py-2 text-xs text-zinc-100 outline-none placeholder:text-zinc-600 focus:border-brand-500/50"
           />
-          <select
-            data-testid="audit-action"
-            value={action}
-            onChange={(e) => resetTo(setAction)(e.target.value)}
-            className="w-52 rounded-xl border border-white/10 bg-black/40 px-3 py-2 text-xs text-zinc-100 outline-none focus:border-brand-500/50"
-          >
-            <option value="">Every kind of event</option>
-            {actions.map((a) => (
-              <option key={a} value={a}>{actionLabel(a)} — {a}</option>
-            ))}
-          </select>
-          <select
-            data-testid="audit-limit"
-            value={limit}
-            onChange={(e) => resetTo(setLimit)(Number(e.target.value))}
-            className="rounded-xl border border-white/10 bg-black/40 px-3 py-2 text-xs text-zinc-100 outline-none focus:border-brand-500/50"
-          >
-            {PAGE_SIZES.map((n) => <option key={n} value={n}>{n} / page</option>)}
-          </select>
+          <div className="relative">
+            <select
+              data-testid="audit-action"
+              value={action}
+              onChange={(e) => resetTo(setAction)(e.target.value)}
+              className="w-52 appearance-none rounded-xl border border-white/10 bg-[#0c0d12]/90 pl-3 pr-8 py-2 text-xs font-medium text-zinc-200 outline-none transition hover:border-brand-500/30 focus:border-brand-500/60 focus:ring-1 focus:ring-brand-500/20 cursor-pointer shadow-sm"
+            >
+              <option value="" className="bg-[#0c0d12] text-zinc-300">Every kind of event</option>
+              {actions.map((a) => (
+                <option key={a} value={a} className="bg-[#0c0d12] text-zinc-200">{actionLabel(a)} — {a}</option>
+              ))}
+            </select>
+            <ChevronDown className="pointer-events-none absolute right-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-zinc-400" />
+          </div>
+          <div className="relative">
+            <select
+              data-testid="audit-limit"
+              value={limit}
+              onChange={(e) => resetTo(setLimit)(Number(e.target.value))}
+              className="appearance-none rounded-xl border border-white/10 bg-[#0c0d12]/90 pl-3 pr-7 py-2 text-xs font-medium text-zinc-200 outline-none transition hover:border-brand-500/30 focus:border-brand-500/60 focus:ring-1 focus:ring-brand-500/20 cursor-pointer shadow-sm"
+            >
+              {PAGE_SIZES.map((n) => <option key={n} value={n} className="bg-[#0c0d12] text-zinc-200">{n} / page</option>)}
+            </select>
+            <ChevronDown className="pointer-events-none absolute right-2 top-1/2 -translate-y-1/2 h-3 w-3 text-zinc-400" />
+          </div>
         </div>
       </div>
 

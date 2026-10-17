@@ -149,31 +149,25 @@ it("no longer paints a badge overlay on a link, even for saved badge data", () =
   expect(html).not.toContain("-bottom-1.5 -left-1.5");
 });
 
-// The card shell resolved an icon and a title on every render and then drew
-// neither, so a grid of widgets was a grid of untitled blocks. This pins the
-// header, and the sheen that stopped every card reading as the same grey slab.
-it("gives every card a titled header and a lit surface", () => {
+// The card shell removes the cluttered titled headers in favour of sleek, clean cards
+// with lit surfaces and pop-out buttons for external links.
+it("renders clean widget cards without top header clutter and with lit sheen and popout links", () => {
   globalThis.__WIDGET_DATA__ = SERVER;
 
-  const named = render({ type: "discord", subtype: "server", span: 2, title: "My server" });
-  expect(named).toContain('data-testid="widget-header"');
-  expect(named).toContain("My server");
-  // The header carries the widget's own glyph, tinted to the card.
-  expect(named).toContain("svg");
-  // The sheen is a real rule in index.css, not a value a renderer may drop.
+  const named = render({ type: "discord", subtype: "server", span: 2, title: "My server", invite_url: "https://discord.gg/swats" });
+  expect(named).not.toContain('data-testid="widget-header"');
+  // External popout link button is rendered
+  expect(named).toContain('data-testid="widget-popout-link"');
+  // The sheen is a real rule in index.css
   expect(named).toContain("widget-card-sheen");
   expect(read("..", "index.css")).toContain(".widget-card-sheen");
 
-  // With no title of its own the card still names itself.
+  // With no title of its own the card still renders its content cleanly.
   expect(render({ type: "discord", subtype: "server", span: 2 })).toContain("Discord");
 
-  // The Spotify card used to be handed to the shell "raw" so it could paint
-  // its own purple plate. That is the one card that then ignored the owner's
-  // fill, radius and border and read as a different product from the rest of
-  // the grid, so it wears the same shell (and the same header) now.
+  // The Spotify card wears the same streamlined shell without header clutter
   const spotify = render({ type: "spotify", subtype: "media", span: 2 });
-  expect(spotify).toContain('data-testid="widget-header"');
-  expect(spotify).toContain("Spotify Track Preview");
+  expect(spotify).not.toContain('data-testid="widget-header"');
 });
 
 it("only glows a widget when its glow switch is on", () => {

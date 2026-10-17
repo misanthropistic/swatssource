@@ -24,7 +24,6 @@ const SETTINGS_TABS = [
   { id: "account", label: "Account", icon: UserCheck },
   { id: "security", label: "Security & 2FA", icon: KeyRound },
   { id: "integrations", label: "Integrations", icon: Plug },
-  { id: "preferences", label: "Preferences", icon: Volume2 },
   { id: "danger", label: "Danger Zone", icon: AlertTriangle },
 ];
 
@@ -186,28 +185,16 @@ export default function Settings() {
   return (
     <div data-testid="settings-page" className="max-w-3xl mx-auto space-y-6 pb-16">
       {/* Header */}
-      <div className="relative overflow-hidden rounded-3xl border border-white/10 bg-gradient-to-r from-brand-950/40 via-purple-950/20 to-black/60 p-6 shadow-[0_10px_35px_rgba(0,0,0,0.5)] backdrop-blur-xl">
-        <div className="flex flex-col sm:flex-row items-center gap-4 text-center sm:text-left">
-          <img
-            src="/logo.png"
-            alt="swats.bio"
-            className="w-14 h-14 rounded-2xl object-contain shadow-[0_0_25px_rgba(164, 141, 244,0.45)] border border-brand-500/20"
-          />
-          <div className="flex-1">
-            <h1 className="font-display text-3xl font-black text-zinc-50 flex items-center justify-center sm:justify-start gap-2.5">
-              Settings & Preferences
-              <span className="text-xs font-mono2 font-bold px-2 py-0.5 rounded-full bg-brand-500/20 text-brand-300 border border-brand-500/30">
-                v2.6
-              </span>
-            </h1>
-            <p className="text-xs text-zinc-400 mt-1">
-              Configure your credentials, profile identity, third-party integrations, and UI preferences
-            </p>
-          </div>
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 pb-2 border-b border-white/5">
+        <div>
+          <h1 className="font-display text-2xl font-bold text-zinc-100">Settings</h1>
+          <p className="text-xs text-zinc-400 mt-0.5">
+            Manage your credentials, public identity, security, and connected integrations.
+          </p>
         </div>
 
         {/* Category Tabs */}
-        <div className="flex flex-wrap items-center gap-1.5 mt-6 pt-5 border-t border-white/10">
+        <div className="flex flex-wrap items-center gap-1.5">
           {SETTINGS_TABS.map((t) => {
             const Icon = t.icon;
             const active = activeTab === t.id;
@@ -216,9 +203,9 @@ export default function Settings() {
                 key={t.id}
                 type="button"
                 onClick={() => setActiveTab(t.id)}
-                className={`flex items-center gap-2 px-3.5 py-1.5 rounded-xl text-xs font-semibold transition-all duration-200 ${
+                className={`flex items-center gap-2 px-3.5 py-1.5 rounded-xl text-xs font-semibold transition-all duration-150 ${
                   active
-                    ? "bg-gradient-to-r from-brand-500 to-brand-600 text-white shadow-[0_0_15px_rgba(164, 141, 244,0.35)]"
+                    ? "bg-brand-500/20 text-brand-300 border border-brand-500/30"
                     : "bg-white/[0.03] text-zinc-400 hover:text-zinc-200 hover:bg-white/[0.07] border border-white/5"
                 }`}
               >
@@ -621,57 +608,6 @@ export default function Settings() {
         </div>
       )}
 
-      {/* PREFERENCES SECTION */}
-      {showSection("preferences") && (
-        <div className="space-y-4">
-          <div className="flex items-center gap-2 px-1">
-            <Volume2 className="w-4 h-4 text-brand-400" />
-            <h2 className="text-sm font-bold uppercase tracking-wider text-zinc-300 font-mono2">Experience & Audio</h2>
-          </div>
-
-          <div className="glass rounded-2xl p-5 space-y-5 shadow-[0_10px_40px_rgba(0,0,0,0.4)]">
-            <div>
-              <h3 className="text-base font-bold text-zinc-100">Playback & Accessibility</h3>
-              <p className="text-xs text-zinc-400 mt-0.5">Customize how audio and visuals behave across your dashboard and profile</p>
-            </div>
-
-            <div className="divide-y divide-white/5">
-              {/* Autoplay toggle */}
-              <div className="py-3.5 flex items-center justify-between gap-4">
-                <div className="space-y-0.5">
-                  <span className="text-sm font-semibold text-zinc-200">Autoplay Music on Entry</span>
-                  <p className="text-xs text-zinc-400">
-                    Immediately start playing profile audio when visitors click through the entry screen
-                  </p>
-                </div>
-                <Switch checked={autoplayAudio} onCheckedChange={toggleAutoplay} />
-              </div>
-
-              {/* UI Sound Effects */}
-              <div className="py-3.5 flex items-center justify-between gap-4">
-                <div className="space-y-0.5">
-                  <span className="text-sm font-semibold text-zinc-200">Dashboard Sound Effects</span>
-                  <p className="text-xs text-zinc-400">
-                    Play subtle micro-audio pings on button interactions and notifications
-                  </p>
-                </div>
-                <Switch checked={soundEffects} onCheckedChange={toggleSoundEffects} />
-              </div>
-
-              {/* Reduced Motion */}
-              <div className="py-3.5 flex items-center justify-between gap-4">
-                <div className="space-y-0.5">
-                  <span className="text-sm font-semibold text-zinc-200">Reduced Motion</span>
-                  <p className="text-xs text-zinc-400">
-                    Tone down 3D tilt effects, parallax backgrounds, and continuous particle animations
-                  </p>
-                </div>
-                <Switch checked={reducedMotion} onCheckedChange={toggleReducedMotion} />
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
 
       {/* DANGER ZONE SECTION */}
       {showSection("danger") && (

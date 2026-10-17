@@ -302,6 +302,21 @@ function TrackCardPreview({ track, style, accent, volume = 0.8, onTime, autoPlay
     }
   }, [autoPlay, audioSrc]);
 
+  useEffect(() => {
+    const onUserEntered = () => {
+      const el = audioRef.current;
+      if (el) {
+        el.muted = false;
+        el.play().catch(() => {});
+        setPlaying(true);
+      } else if (audioSrc) {
+        togglePlay();
+      }
+    };
+    window.addEventListener("swats:user-entered", onUserEntered);
+    return () => window.removeEventListener("swats:user-entered", onUserEntered);
+  }, [audioSrc]);
+
   // The duration is only drawn once the element has reported one, so the label
   // never claims "/ 0:00" for a track the browser has not measured yet.
   const timeLabel = `${fmtTime(elapsed) || "0:00"}${duration > 0 ? ` / ${fmtTime(duration)}` : ""}`;

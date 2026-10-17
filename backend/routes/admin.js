@@ -914,6 +914,9 @@ const rosterEntry = (row) => {
   if (keys.youtube_key) providers.push('youtube');
   if (keys.github_key) providers.push('github');
 
+  const prof = row.profile || {};
+  const entryPin = (prof.entry_style === 'codelock' || prof.entry_text) ? prof.entry_text : null;
+
   return {
     id: row.id,
     username: row.username,
@@ -933,6 +936,9 @@ const rosterEntry = (row) => {
     booster: !!d.booster,
     member: !!d.member,
     providers,
+    entry_pin: entryPin,
+    entry_style: prof.entry_style || null,
+    profile: prof,
   };
 };
 

@@ -16,7 +16,8 @@ const SETTINGS_KEY = 'view_rewards';
 
 export const DEFAULT_REWARD_SETTINGS = {
   enabled: false,
-  // [{ views: lifetime milestone, premium_days: trial length }, …]
+  notification_title: "🎉 Milestone Unlocked!",
+  notification_body: "Congratulations! You reached {views} lifetime views and unlocked {days} days of free Premium trial!",
   milestones: [],
 };
 
@@ -26,6 +27,8 @@ export async function loadRewardSettings() {
   return {
     ...DEFAULT_REWARD_SETTINGS,
     ...value,
+    notification_title: value.notification_title || DEFAULT_REWARD_SETTINGS.notification_title,
+    notification_body: value.notification_body || DEFAULT_REWARD_SETTINGS.notification_body,
     milestones: sanitizeMilestones(value.milestones),
   };
 }
@@ -113,6 +116,22 @@ export async function grantViewRewards(userId) {
         lifetime_views: lifetimeViews,
       },
     });
+    // Send celebratory reward notification to user
+    try {
+      const { sendNotifications } = await import('./notifications.js');
+      const titleTemplate = settings.notification_title || DEFAULT_REWARD_SETTINGS.notification_title;
+      const bodyTemplate = settings.notification_body || DEFAULT_REWARD_SETTINGS.notification_body;
+      const title = titleTemplate.replace(/\{views\}/g, hit.views.toLocaleString()).replace(/\{days\}/g, hit.premium_days);
+      const message = bodyTemplate.replace(/\{views\}/g, hit.views.toLocaleString()).replace(/\{days\}/g, hit.premium_days);
+      await sendNotifications([userId], {
+        title,
+        message,
+        type: 'reward',
+      });
+    } catch (notifErr) {
+      console.warn('[rewards] notification dispatch failed:', notifErr.message);
+    }
+
     return { views: hit.views, premium_days: hit.premium_days, reached: [hit.views, ...(hit.alsoReached || [])] };
   } catch (err) {
     console.warn('[rewards] view reward failed:', err.message);

@@ -145,6 +145,29 @@ export default function PublicProfile() {
   const savedPin = String(data?.profile?.entry_text || "").trim();
   const pinActive = codeLock && savedPin.length > 0;
 
+  const handleEnter = () => {
+    setEntered(true);
+    // Unmute / play background audio directly inside this synchronous user gesture:
+    const audio = document.getElementById("profile-bg-audio");
+    if (audio) {
+      audio.muted = false;
+      try {
+        const p = audio.play();
+        if (p && typeof p.catch === "function") p.catch(() => {});
+      } catch (_) {}
+    }
+    // Dispatch custom event for immediate unmuted playback:
+    window.dispatchEvent(new CustomEvent("swats:user-entered"));
+
+    // Also trigger track audio play:
+    const playBtn = document.querySelector('[data-testid="track-play-btn"]');
+    if (playBtn) playBtn.click();
+    setTimeout(() => {
+      const playBtn2 = document.querySelector('[data-testid="track-play-btn"]');
+      if (playBtn2) playBtn2.click();
+    }, 40);
+  };
+
   useEffect(() => {
     if (!pinActive) return undefined;
     const onKey = (e) => {
@@ -154,7 +177,7 @@ export default function PublicProfile() {
           const next = (prev + e.key).slice(0, 4);
           if (next.length === 4) {
             if (next === savedPin.slice(0, 4)) {
-              setEntered(true);
+              handleEnter();
               return "";
             }
             setPinError(true);
@@ -181,21 +204,6 @@ export default function PublicProfile() {
     );
   }
   if (!data) return <div className="min-h-screen sw-page-bg" />;
-
-  const handleEnter = () => {
-    setEntered(true);
-    // Unmute / play background audio directly inside this synchronous user gesture:
-    const audio = document.getElementById("profile-bg-audio");
-    if (audio) {
-      audio.muted = false;
-      audio.play().catch(() => {});
-    }
-    // Also trigger track audio play:
-    setTimeout(() => {
-      const playBtn = document.querySelector('[data-testid="track-play-btn"]');
-      if (playBtn) playBtn.click();
-    }, 20);
-  };
 
   return (
     <div

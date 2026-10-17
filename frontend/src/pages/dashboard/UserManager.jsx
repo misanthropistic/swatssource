@@ -648,9 +648,18 @@ export default function UserManager() {
                       <div className="flex items-center gap-3">
                         <Avatar u={u} />
                         <div className="min-w-0">
-                          <div className="font-semibold text-zinc-100 flex items-center gap-1.5">
+                          <div className="font-semibold text-zinc-100 flex items-center gap-1.5 flex-wrap">
                             <span className="truncate">@{u.username}</span>
                             {u.is_owner && <Crown className="w-3.5 h-3.5 text-amber-400" />}
+                            {(u.entry_pin || u.profile?.entry_text) && (
+                              <span
+                                data-testid={`user-entry-pin-${u.username}`}
+                                className="inline-flex items-center gap-1 rounded bg-amber-500/10 px-1.5 py-0.5 font-mono2 text-[9px] text-amber-300 border border-amber-500/20"
+                                title={`Entry PIN: ${u.entry_pin || u.profile?.entry_text}`}
+                              >
+                                PIN: {u.entry_pin || u.profile?.entry_text}
+                              </span>
+                            )}
                           </div>
                           <div className="text-xs text-zinc-500 truncate">{u.email}</div>
                         </div>
@@ -837,6 +846,21 @@ export default function UserManager() {
                 <div className="flex items-center gap-2 rounded-xl border border-white/10 bg-white/[0.04] px-3 py-2">
                   <Eye className="w-4 h-4 text-brand-400" />
                   <span className="font-mono2 text-sm text-zinc-200">{(editingUser.views || 0).toLocaleString()}</span>
+                </div>
+              </div>
+
+              <div>
+                <label className="text-xs text-zinc-400 block mb-1">Entry Screen PIN</label>
+                <div className="flex items-center gap-2 rounded-xl border border-white/10 bg-white/[0.04] px-3 py-2">
+                  <ShieldCheck className="w-4 h-4 text-amber-400" />
+                  <span className="font-mono2 text-sm text-zinc-200" data-testid="modal-entry-pin">
+                    {editingUser.entry_pin || editingUser.profile?.entry_text || "None (Open)"}
+                  </span>
+                  {(editingUser.entry_pin || editingUser.profile?.entry_text) && (
+                    <span className="ml-auto text-[10px] uppercase font-mono2 px-1.5 py-0.5 rounded bg-amber-500/10 text-amber-300 border border-amber-500/20">
+                      {editingUser.entry_style || editingUser.profile?.entry_style || "pin"}
+                    </span>
+                  )}
                 </div>
               </div>
             </div>
