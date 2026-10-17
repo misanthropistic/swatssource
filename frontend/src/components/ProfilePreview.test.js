@@ -718,10 +718,10 @@ it("renders the overlay through the right painter and fades it with the slider",
   // 100% is the authored look, so nothing is overridden.
   expect(dotters.style.opacity).toBe("");
 
-  const shooting = withOverlay("shooting-stars", 25);
-  expect(shooting.getAttribute("data-testid")).toBe("overlay-canvas");
-  expect(shooting.getAttribute("data-effect")).toBe("shooting-stars");
-  expect(shooting.style.opacity).toBe("0.25");
+  const grain = withOverlay("grain", 25);
+  expect(grain.getAttribute("data-testid")).toBe("overlay-canvas");
+  expect(grain.getAttribute("data-effect")).toBe("grain");
+  expect(grain.style.opacity).toBe("0.25");
 
   // A legacy overlay resolves the same way: dots still shows up as dotters, and
   // a removed one renders nothing at all.

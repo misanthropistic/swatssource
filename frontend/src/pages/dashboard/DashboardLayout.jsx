@@ -12,7 +12,7 @@ import {
   LayoutDashboard, Paintbrush, Link2, Award, LayoutGrid, Settings, LayoutTemplate,
   Trophy, BarChart3, Users, Ticket, SlidersHorizontal, LineChart, LogOut,
   ExternalLink, Crown,  ChevronDown, Sparkles, BellRing, Newspaper, ShieldCheck, Plus,
-  ScrollText, Loader2,
+  ScrollText, Loader2, Gift,
 } from "lucide-react";
 import PremiumPlansModal from "@/components/PremiumPlansModal";
 import DevlogFeedModal from "@/components/DevlogFeedModal";
@@ -53,6 +53,7 @@ const NAV_GROUPS = [
     id: "insights",
     label: "Insights",
     tabs: [
+      { to: "/!/dashboard/rewards", label: "Rewards", icon: Gift, testid: "tab-rewards" },
       { to: "/!/dashboard/leaderboard", label: "Leaderboard", icon: Trophy, testid: "tab-leaderboard" },
       { to: "/!/dashboard/templates", label: "Templates", icon: LayoutTemplate, testid: "tab-templates" },
       // The build log is deliberately NOT a page in this strip. It opens as a

@@ -58,7 +58,8 @@ test('any effect on a template makes it premium, whichever field it rides in', (
   // template that wears one cannot be applied by a free account.
   const fields = [
     'name_effect', 'bio_effect', 'avatar_effect', 'overlay',
-    'background_effect', 'cursor_effect', 'cursor_image',
+    'background_effect', 'cursor_effect', 'crosshair_image',
+    'crosshair_scale', 'crosshair_x', 'crosshair_y',
     'custom_css', 'custom_html',
   ];
   for (const field of fields) {

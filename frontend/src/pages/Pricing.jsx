@@ -2,12 +2,43 @@ import { useEffect, useState } from "react";
 import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import { Navbar } from "@/components/landing/Navbar";
 import { Footer } from "@/components/landing/Footer";
-import { Check, Crown, ExternalLink, Heart, Loader2, Sparkles, Zap } from "lucide-react";
+import { Check, Crown, ExternalLink, Heart, Loader2, Minus, Sparkles, Zap } from "lucide-react";
 import { useAuth } from "@/context/AuthContext";
 import { api } from "@/lib/api";
 import { toast } from "@/lib/notify";
 
 import { FREE_PERKS as FREE, PREMIUM_PERKS as PREMIUM, PREMIUM_PRICE } from "@/constants/plans";
+
+const COMPARISON = [
+  ["Your own swats.bio page", true, true],
+  ["Links, platform icons and standard widgets", true, true],
+  ["Validated profile views and analytics", true, true],
+  ["Badges, leaderboard and rewards", true, true],
+  ["Card layouts", "3 layouts", "All 4, including Slideshow"],
+  ["Fonts", "Free set", "Full library"],
+  ["Background, overlay, text and cursor effects", "Free effects", "Full catalogue"],
+  ["Custom crosshair image", false, true],
+  ["Video backgrounds, banners and avatars", false, true],
+  ["Custom code widgets", false, true],
+  ["Custom badges", false, true],
+  ["Templates you can save", "Limited", "Up to 5"],
+  ["Messaging", "Friends & received", "Send anywhere + groups"],
+  ["Remove the swats.bio footer", false, true],
+];
+
+const FAQ = [
+  ["Can I cancel any time?", "Yes. Manage billing opens the Stripe portal, where cancellation stops the renewal. You keep Premium until the end of the period you already paid for."],
+  ["What happens when Premium ends?", "Your page stays online and keeps every free feature. Premium-only settings are not rendered, so nothing breaks — re-subscribing restores them exactly as you saved them."],
+  ["Do view rewards stack with a subscription?", "Yes. A reward milestone extends a running Premium period rather than replacing it, and a permanent subscription simply collects the milestone without adding days."],
+  ["How are payments processed?", "Checkout and the billing portal are hosted by Stripe. Card details never reach our servers; we store only the subscription state and a transaction reference."],
+  ["Are there refunds?", "Premium unlocks immediately, so purchases are generally non-refundable. The Refund Policy lists the exceptions and how to ask."],
+];
+
+const Cell = ({ value }) => {
+  if (value === true) return <Check className="mx-auto h-4 w-4 text-emerald-400" aria-label="Included" />;
+  if (value === false) return <Minus className="mx-auto h-4 w-4 text-zinc-700" aria-label="Not included" />;
+  return <span className="text-xs text-zinc-400">{value}</span>;
+};
 
 /* The Premium page.
  *
@@ -122,6 +153,42 @@ export default function Pricing() {
             </ul>
           </div>
         </div>
+
+        <section className="mt-16" data-testid="pricing-comparison">
+          <h2 className="text-center font-display text-2xl font-black text-zinc-50">Compare the plans</h2>
+          <p className="mt-2 text-center text-sm text-zinc-500">Every difference between Free and Premium, in one place.</p>
+          <div className="mt-7 overflow-hidden rounded-3xl border border-white/10 glass">
+            <div className="grid grid-cols-[1fr_90px_110px] gap-2 border-b border-white/10 bg-white/[0.03] px-4 py-3 font-mono2 text-[10px] uppercase tracking-widest text-zinc-500 sm:grid-cols-[1fr_120px_160px] sm:px-6">
+              <span>Feature</span>
+              <span className="text-center">Free</span>
+              <span className="text-center text-brand-300">Premium</span>
+            </div>
+            {COMPARISON.map(([label, free, paid]) => (
+              <div key={label} className="grid grid-cols-[1fr_90px_110px] items-center gap-2 border-b border-white/5 px-4 py-3 text-sm last:border-0 hover:bg-white/[0.02] sm:grid-cols-[1fr_120px_160px] sm:px-6">
+                <span className="text-zinc-300">{label}</span>
+                <span className="text-center"><Cell value={free} /></span>
+                <span className="text-center"><Cell value={paid} /></span>
+              </div>
+            ))}
+          </div>
+        </section>
+
+        <section className="mt-14" data-testid="pricing-faq">
+          <h2 className="text-center font-display text-2xl font-black text-zinc-50">Billing questions</h2>
+          <div className="mx-auto mt-7 max-w-3xl space-y-3">
+            {FAQ.map(([q, a]) => (
+              <details key={q} className="group rounded-2xl border border-white/10 glass px-5 py-4 transition hover:border-brand-500/25">
+                <summary className="cursor-pointer list-none text-sm font-semibold text-zinc-100 marker:hidden">
+                  <span className="flex items-center justify-between gap-3">
+                    {q}
+                    <span className="text-brand-400 transition-transform duration-200 group-open:rotate-45">+</span>
+                  </span>
+                </summary>
+                <p className="mt-2 text-sm leading-relaxed text-zinc-400">{a}</p>
+              </details>
+            ))}
+          </div>
+        </section>
 
         {/* The one-time cousin of the subscription: a donation, for people who
             want to help without paying monthly. */}

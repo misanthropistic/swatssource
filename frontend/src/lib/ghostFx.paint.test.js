@@ -163,7 +163,10 @@ describe("the ghost overlay painters", () => {
  * catalogue looked like it painted nothing while it was in fact painting. */
 describe("the background layer's blending", () => {
   const css = fs.readFileSync(path.join(__dirname, "..", "effects.css"), "utf8");
-  const plateEffects = ["window-rain", "vhs-tape", "thunder", "spotlight"];
+  const plateEffects = [
+    "rain", "shooting-stars", "thunder", "constellation", "galaxy",
+    "rain-fall", "bleeding", "tv", "snow-flake", "frosted",
+  ];
 
   it("keeps the particle effects screen-blended so the page shows through", () => {
     expect(css).toMatch(/\.sw-bg-canvas\s*\{[^}]*mix-blend-mode:\s*screen/);

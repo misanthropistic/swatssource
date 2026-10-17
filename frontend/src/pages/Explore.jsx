@@ -16,6 +16,12 @@ const TIERS = [
   { key: "premium", label: "Premium" },
   { key: "free", label: "Free" },
 ];
+const BADGES = [
+  { key: "", label: "Any badge" },
+  { key: "verified", label: "Verified" },
+  { key: "og", label: "OG" },
+  { key: "media", label: "Media" },
+];
 
 const fmt = (n) => (n >= 1000 ? `${(n / 1000).toFixed(1)}k` : String(n));
 
@@ -32,6 +38,9 @@ const ProfileCard = ({ u, onOpen }) => {
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.35 }}
       data-testid={`explore-card-${u.username}`}
+      data-menu-id="profile"
+      data-menu-name={u.username}
+      data-menu-href={`/${u.username}`}
       onClick={() => onOpen(u)}
       className="group relative rounded-2xl glass border border-white/10 overflow-hidden cursor-pointer hover:border-brand-500/40 hover:-translate-y-1 transition-all duration-300"
     >
@@ -76,20 +85,21 @@ export default function Explore() {
   const [q, setQ] = useState("");
   const [sort, setSort] = useState("views");
   const [tier, setTier] = useState("");
+  const [badge, setBadge] = useState("");
   const [items, setItems] = useState([]);
   const [loading, setLoading] = useState(true);
 
   const load = useCallback(async () => {
     setLoading(true);
     try {
-      const { data } = await api.get("/explore", { params: { q: q.trim(), sort, tier, limit: 60 } });
+      const { data } = await api.get("/explore", { params: { q: q.trim(), sort, tier, badge, limit: 60 } });
       setItems(Array.isArray(data) ? data : []);
     } catch {
       setItems([]);
     } finally {
       setLoading(false);
     }
-  }, [q, sort, tier]);
+  }, [q, sort, tier, badge]);
 
   useEffect(() => {
     const t = setTimeout(load, 300);
@@ -128,6 +138,25 @@ export default function Explore() {
               <button key={t.key || "all"} data-testid={`explore-tier-${t.key || "all"}`} onClick={() => setTier(t.key)} className={`px-4 py-1.5 rounded-full text-xs font-semibold transition ${tier === t.key ? "bg-brand-500 text-white" : "text-zinc-400 hover:text-zinc-100"}`}>{t.label}</button>
             ))}
           </div>
+        </div>
+
+        <div className="mb-8 flex flex-wrap items-center justify-center gap-2">
+          <span className="font-mono2 text-[10px] uppercase tracking-widest text-zinc-600">Badge</span>
+          {BADGES.map((b) => (
+            <button
+              key={b.key || "any"}
+              data-testid={`explore-badge-${b.key || "any"}`}
+              onClick={() => setBadge(b.key)}
+              className={`rounded-full border px-3 py-1 text-[11px] font-semibold transition ${
+                badge === b.key
+                  ? "border-brand-400/40 bg-brand-500/15 text-brand-200"
+                  : "border-white/10 bg-white/[0.02] text-zinc-400 hover:border-white/20 hover:text-zinc-100"
+              }`}
+            >
+              {b.label}
+            </button>
+          ))}
+          <span className="ml-2 font-mono2 text-[10px] text-zinc-600">{items.length} profiles</span>
         </div>
 
         {loading ? (

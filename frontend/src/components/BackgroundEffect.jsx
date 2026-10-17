@@ -3,9 +3,9 @@ import { createGhostBgPainter } from "@/lib/ghostFx";
 import { resolveBackground } from "@/constants/effects";
 
 /* ---------------------------------------------------------------------------
-   BackgroundEffect — the background layer, painting the exact ghost.html set:
-   window-rain, snow-v1, snow-v2, cash-fall, heart-fall, vhs-tape, spotlight,
-   thunder (lib/ghostFx, ported verbatim; "version 1" is ghost's default).
+   BackgroundEffect — the background layer: rain, snow v1, snow v2, shooting
+   stars, thunder, constellation, galaxy, rain fall, love fall, bleeding, TV,
+   snow flake and frosted (lib/ghostFx).
 
    One canvas, one painter instance, one clear per frame — no DOM star fields, no
    double-painted CSS copy, no per-frame layout reads. The painters fill their
@@ -35,15 +35,6 @@ export function BackgroundEffect({ effect }) {
     let w = 0;
     let h = 0;
     let painter = null;
-    // Spotlight chases the pointer in canvas coordinates; every other painter
-    // ignores it. Reset to the "never seen" state on (re)mount, as ghost does.
-    const pointer = { current: { x: -99, y: -99 } };
-
-    const onMove = (e) => {
-      const rect = canvas.getBoundingClientRect();
-      pointer.current.x = e.clientX - rect.left;
-      pointer.current.y = e.clientY - rect.top;
-    };
 
     const resize = () => {
       const parent = canvas.parentElement;
@@ -60,7 +51,7 @@ export function BackgroundEffect({ effect }) {
       canvas.style.height = `${h}px`;
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
       // Rebuild the painter for the new box, exactly like ghost's setBg().
-      painter = createGhostBgPainter(id, w, h, pointer);
+      painter = createGhostBgPainter(id, w, h);
       ctx.clearRect(0, 0, w, h);
     };
 
@@ -70,9 +61,6 @@ export function BackgroundEffect({ effect }) {
       raf = requestAnimationFrame(frame);
     };
 
-    if (id === "spotlight" && typeof window !== "undefined") {
-      window.addEventListener("pointermove", onMove, { passive: true });
-    }
     window.addEventListener("resize", resize);
     const observer =
       typeof ResizeObserver === "function" && canvas.parentElement
@@ -85,9 +73,6 @@ export function BackgroundEffect({ effect }) {
     return () => {
       cancelAnimationFrame(raf);
       window.removeEventListener("resize", resize);
-      if (id === "spotlight" && typeof window !== "undefined") {
-        window.removeEventListener("pointermove", onMove);
-      }
       observer?.disconnect();
     };
   }, [id]);

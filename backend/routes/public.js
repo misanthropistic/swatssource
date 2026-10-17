@@ -246,6 +246,13 @@ router.get('/explore', async (req, res) => {
     }
     if (tier === 'premium') where.push(`tier = 'premium'`);
     if (tier === 'free') where.push(`tier = 'free'`);
+    // A badge filter: only ids the platform actually grants, so a caller cannot
+    // probe arbitrary array contents through this endpoint.
+    const badge = String(req.query.badge || '').trim();
+    if (['verified', 'og', 'media', 'premium', 'staff', 'owner'].includes(badge)) {
+      params.push(badge);
+      where.push(`$${params.length} = ANY(COALESCE(badges, '{}'))`);
+    }
     const whereSql = where.length ? `WHERE ${where.join(' AND ')}` : '';
     const { rows } = await query(
       `SELECT id, username, display_name, tier, views, badges, profile, created_at

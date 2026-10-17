@@ -1,6 +1,7 @@
 import { useState, useEffect, useMemo } from "react";
 import { useParams, Link } from "react-router-dom";
 import { api, fileUrl } from "@/lib/api";
+import { buildCrosshairCursor, crosshairSettings } from "@/lib/crosshair";
 import { useProfileViewTracker } from "@/lib/viewTracker";
 import { ProfilePreview, viewsInCorner, compactCount } from "@/components/ProfilePreview";
 import { CursorEffect } from "@/components/CursorEffect";
@@ -20,6 +21,8 @@ export default function PublicProfile() {
   const [data, setData] = useState(null);
   const [notFound, setNotFound] = useState(false);
   const [entered, setEntered] = useState(false);
+  const [pin, setPin] = useState("");
+  const [pinError, setPinError] = useState(false);
 
   useEffect(() => {
     api.get(`/u/${alias}`).then(({ data }) => setData(data)).catch(() => setNotFound(true));
@@ -118,20 +121,53 @@ export default function PublicProfile() {
     };
   }, [data, ready]);
 
-  // A profile can carry ITS OWN pointer: `cursor_image` is drawn as the mouse
-  // arrow on this page only, tip at the top-left (the hotspot 12 4 puts the
-  // picture's top-left pixel where the click lands, like a drawn arrow's tip).
-  // Native cursor sizes cap at 128, so the upload side recommends a small PNG;
-  // the fallback keeps the arrow on a profile without one and restores it on
-  // the way out so navigating away never leaks the picture onto other pages.
+  // The owner's crosshair replaces the arrow on this page only. The image is
+  // drawn through a canvas so the saved scale can go beyond the browser's own
+  // 128px cursor limit, and the hotspot is the saved click point.
   useEffect(() => {
-    const img = data?.profile?.cursor_image;
-    if (!img) return undefined;
-    document.body.style.cursor = `url(${fileUrl(img)}) 12 4, auto`;
+    const settings = crosshairSettings(data?.profile || {});
+    if (!settings.image) return undefined;
+    let cancelled = false;
+    buildCrosshairCursor(fileUrl(settings.image), settings).then((cursor) => {
+      if (cancelled || !cursor) return;
+      document.body.style.cursor = cursor.value;
+    });
     return () => {
+      cancelled = true;
       document.body.style.cursor = "";
     };
   }, [data]);
+
+  // The Code Lock gate. The PIN is the profile's own entry_text; with no PIN
+  // saved the gate stays click-to-enter so a page can never lock its owner out.
+  const codeLock = (data?.profile?.entry_style || "") === "codelock" && !!needsEntry && !entered;
+  const savedPin = String(data?.profile?.entry_text || "").trim();
+  const pinActive = codeLock && savedPin.length > 0;
+
+  useEffect(() => {
+    if (!pinActive) return undefined;
+    const onKey = (e) => {
+      if (/^[0-9]$/.test(e.key)) {
+        setPinError(false);
+        setPin((prev) => {
+          const next = (prev + e.key).slice(0, 4);
+          if (next.length === 4) {
+            if (next === savedPin.slice(0, 4)) {
+              setEntered(true);
+              return "";
+            }
+            setPinError(true);
+            return "";
+          }
+          return next;
+        });
+      } else if (e.key === "Backspace") {
+        setPin((prev) => prev.slice(0, -1));
+      }
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [pinActive, savedPin]);
 
   if (notFound) {
     return (
@@ -165,26 +201,33 @@ export default function PublicProfile() {
       data-menu-href={`/${data.username || ""}`}
     >
       {needsEntry && !entered && (
-        <div 
-          // `sw-page-bg/95` is not a class Tailwind can build (the opacity
-          // modifier only applies to utilities), so the entry gate painted no
-          // background at all and the profile showed straight through it.
-          className="fixed inset-0 z-[100] flex items-center justify-center bg-[#060608]/95 backdrop-blur-xl transition-opacity duration-500 cursor-pointer"
-          onClick={handleEnter}
+        <div
+          data-testid="entry-gate"
+          className={`fixed inset-0 z-[100] flex items-center justify-center bg-[#060608]/95 backdrop-blur-xl transition-opacity duration-500 ${pinActive ? "" : "cursor-pointer"}`}
+          onClick={pinActive ? undefined : handleEnter}
         >
           {p.entry_style === "text" ? (
             <div className="text-zinc-300 font-mono2 text-sm uppercase tracking-widest hover:text-white transition-colors">
               {p.entry_text || "Click to enter"}
             </div>
           ) : p.entry_style === "codelock" ? (
-            <div className="text-center space-y-4">
+            <div className="text-center space-y-4" data-testid="codelock-gate">
               <div className="text-zinc-500 font-mono2 text-xs uppercase tracking-widest mb-6">Enter PIN</div>
-              <div className="flex items-center justify-center gap-3">
-                {[1,2,3,4].map(i => (
-                  <div key={i} className="w-4 h-4 rounded-full border-2 border-zinc-700 bg-transparent animate-pulse" style={{ animationDelay: `${i * 150}ms` }} />
+              <div className={`flex items-center justify-center gap-3 ${pinError ? "pin-shake" : ""}`}>
+                {[0, 1, 2, 3].map((i) => (
+                  <div
+                    key={i}
+                    className={`h-4 w-4 rounded-full border-2 transition-colors ${pin.length > i ? "border-brand-400 bg-brand-400" : pinError ? "border-red-500" : "border-zinc-700 bg-transparent"}`}
+                  />
                 ))}
               </div>
-              <div className="mt-8 text-zinc-400 font-mono2 text-[10px] uppercase">Click anywhere to unlock</div>
+              {pinError ? (
+                <div className="font-mono2 text-[10px] uppercase tracking-widest text-red-400" data-testid="codelock-error">Incorrect PIN</div>
+              ) : pinActive ? (
+                <div className="mt-8 font-mono2 text-[10px] uppercase text-zinc-400">Type the 4-digit PIN</div>
+              ) : (
+                <div className="mt-8 font-mono2 text-[10px] uppercase text-zinc-400">Click anywhere to unlock</div>
+              )}
             </div>
           ) : (
             <div className="px-6 py-3 rounded-full border border-white/10 bg-white/5 text-zinc-200 text-sm font-semibold shadow-[0_0_30px_rgba(255,255,255,0.05)] hover:bg-white/10 transition-all hover:scale-105">

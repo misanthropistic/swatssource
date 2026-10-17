@@ -33,6 +33,7 @@ const Widgets = lazy(() => import("@/pages/dashboard/Widgets"));
 const Templates = lazy(() => import("@/pages/dashboard/Templates"));
 const Settings = lazy(() => import("@/pages/dashboard/Settings"));
 const Stats = lazy(() => import("@/pages/dashboard/Stats"));
+const Rewards = lazy(() => import("@/pages/dashboard/Rewards"));
 const UserManager = lazy(() => import("@/pages/dashboard/UserManager"));
 const InviteCodes = lazy(() => import("@/pages/dashboard/InviteCodes"));
 const SiteSettings = lazy(() => import("@/pages/dashboard/SiteSettings"));
@@ -138,7 +139,9 @@ function App() {
               <Route path="/!/explore" element={<Explore />} />
               <Route path="/explore" element={<Explore />} />
               <Route path="/!/docs" element={<Docs />} />
+              <Route path="/!/docs/:section" element={<Docs />} />
               <Route path="/docs" element={<Docs />} />
+              <Route path="/docs/:section" element={<Docs />} />
               <Route path="/!/ranked" element={<Ranked />} />
               <Route path="/ranked" element={<Ranked />} />
               <Route path="/!/devlogs" element={<DevlogFeed />} />
@@ -164,6 +167,7 @@ function App() {
                     from the public changelog at /!/devlogs. */}
                 <Route path="devlogs" element={<DashboardDevlog />} />
                 <Route path="stats" element={<Stats />} />
+                <Route path="rewards" element={<Rewards />} />
                 {/* Admin: one entry point, its pages as the section's own tabs. */}
                 <Route path="admin" element={<RequireAdmin><AdminHub /></RequireAdmin>} />
                 {/* The Bot tab is the Users tab now: the roster endpoint carries the

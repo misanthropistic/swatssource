@@ -14,7 +14,6 @@ import widgetsRouter from './routes/widgets.js';
 import templatesRouter from './routes/templates.js';
 import viewsRouter from './routes/views.js';
 import notificationsRouter from './routes/notifications.js';
-import downloadRouter from './routes/download.js';
 import { rateLimit, securityHeaders, privateNoStore, PRIVATE_API_PREFIXES } from './security.js';
 import { startBotPresence, stopBotPresence } from './discordBot.js';
 
@@ -156,8 +155,6 @@ app.use('/api', viewsRouter);
 app.use('/api', notificationsRouter);
 // Live widget data: real third-party API proxies (Roblox, Discord, GitHub, ...)
 app.use('/api/widgets', widgetsRouter);
-// Full source download ("Download Site" button on the homepage).
-app.use('/api', downloadRouter);
 
 // Health check endpoint
 app.get('/api/health', (req, res) => {

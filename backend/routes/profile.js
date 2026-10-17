@@ -6,6 +6,7 @@ import { startSetup, completeSetup, disable as disableTwoFactor } from '../twoFa
 import { rankForUser } from '../ranks.js';
 import { sanitizeBadgeGrants } from '../badges.js';
 import { upcomingEvents } from '../eventBadges.js';
+import { loadRewardSettings } from '../rewards.js';
 
 const router = express.Router();
 
@@ -73,9 +74,13 @@ router.put('/profile', requireAuth, requireDiscordToEdit, async (req, res) => {
       // holding settings its own editor refuses to show.
       profileData.advanced_mode = false;
       profileData.section_fold = false;
-      // The custom pointer image is Premium; the upload is stripped rather than
-      // stored, so a lapsed account cannot keep rendering an image its editor
-      // now refuses to show.
+      // A custom crosshair image is Premium; the upload and its geometry are
+      // stripped rather than stored, so a lapsed account cannot keep rendering
+      // an image its editor now refuses to show.
+      delete profileData.crosshair_image;
+      delete profileData.crosshair_scale;
+      delete profileData.crosshair_x;
+      delete profileData.crosshair_y;
       delete profileData.cursor_image;
       if (['blur', 'cascade'].includes(profileData.reveal_animation)) {
         profileData.reveal_animation = '';
@@ -137,6 +142,28 @@ router.put('/profile', requireAuth, requireDiscordToEdit, async (req, res) => {
     if (typeof profileData.meta_image === 'string') {
       const img = profileData.meta_image.trim().slice(0, 2048);
       profileData.meta_image = img === '' || img.startsWith('/') || /^https:\/\//i.test(img) ? img : '';
+    }
+
+    // Crosshair. `cursor_image` is the old field name; it is migrated rather
+    // than kept, so one value owns the pointer. Geometry is bounded to the
+    // native cursor budget (128px) and the image must be an http(s) or
+    // site-relative URL — never a data: URI, which would ride in every read.
+    const legacyCursor = profileData.cursor_image;
+    delete profileData.cursor_image;
+    if (profileData.crosshair_image === undefined && typeof legacyCursor === 'string') {
+      profileData.crosshair_image = legacyCursor;
+    }
+    if (typeof profileData.crosshair_image === 'string') {
+      const img = profileData.crosshair_image.trim().slice(0, 2048);
+      profileData.crosshair_image = img === '' || img.startsWith('/') || /^https:\/\//i.test(img) ? img : '';
+    }
+    const crosshairScale = Number(profileData.crosshair_scale);
+    profileData.crosshair_scale = Number.isFinite(crosshairScale)
+      ? Math.min(2.5, Math.max(0.4, crosshairScale))
+      : 1;
+    for (const axis of ['crosshair_x', 'crosshair_y']) {
+      const n = parseInt(profileData[axis], 10);
+      profileData[axis] = Number.isFinite(n) ? Math.min(127, Math.max(0, n)) : 0;
     }
 
     const currentProfile = req.user.profile || {};
@@ -426,6 +453,79 @@ router.post('/logout-all', requireAuth, async (req, res) => {
 // far outside the 100 rows the page itself loads. The rank is computed in
 // Postgres with the same ordering routes/public.js uses (most views first, then
 // username), so "#412" here and "#412" on someone else's screen cannot disagree.
+// GET /api/me/rewards — the account's real view-reward state: the milestones
+// the admin configured, which of them this account has already been paid, and
+// the next one. No copy of the ladder is stored on the client.
+router.get('/rewards', requireAuth, async (req, res) => {
+  try {
+    const settings = await loadRewardSettings();
+    const { rows } = await query(
+      'SELECT views, rewarded_milestones, premium_until, tier FROM users WHERE id = $1',
+      [req.user.id]
+    );
+    const row = rows[0] || {};
+    const awarded = (row.rewarded_milestones || []).map(Number);
+    const views = Number(row.views) || 0;
+    const milestones = settings.milestones.map((m) => ({
+      views: m.views,
+      premium_days: m.premium_days,
+      claimed: awarded.includes(m.views),
+      progress: Math.min(100, Math.round((views / m.views) * 100)),
+    }));
+    const next = milestones.find((m) => !m.claimed) || null;
+    return res.json({
+      enabled: !!settings.enabled,
+      views,
+      tier: row.tier || req.user.tier,
+      premium_until: row.premium_until || null,
+      milestones,
+      claimed: milestones.filter((m) => m.claimed),
+      next,
+      remaining: next ? Math.max(0, next.views - views) : 0,
+    });
+  } catch (err) {
+    console.error('Rewards read error:', err.message);
+    return res.status(500).json({ detail: 'Failed to load rewards' });
+  }
+});
+
+// GET /api/me/activity — what actually happened on this account lately: the
+// last validated views per day plus the account's own audit events.
+router.get('/activity', requireAuth, async (req, res) => {
+  try {
+    const [daily, events] = await Promise.all([
+      query(
+        `SELECT to_char(date_trunc('day', viewed_at), 'YYYY-MM-DD') AS day, COUNT(*)::int AS views
+           FROM profile_views
+          WHERE user_id = $1 AND viewed_at > NOW() - INTERVAL '14 days'
+          GROUP BY 1 ORDER BY 1`,
+        [req.user.id]
+      ).catch(() => ({ rows: [] })),
+      query(
+        `SELECT action, detail, created_at
+           FROM audit_events
+          WHERE actor_id = $1
+          ORDER BY created_at DESC
+          LIMIT 10`,
+        [req.user.id]
+      ).catch(() => ({ rows: [] })),
+    ]);
+    const total = daily.rows.reduce((sum, d) => sum + Number(d.views || 0), 0);
+    return res.json({
+      days: daily.rows,
+      total_last_14: total,
+      events: events.rows.map((e) => ({
+        action: e.action,
+        detail: e.detail || {},
+        created_at: e.created_at,
+      })),
+    });
+  } catch (err) {
+    console.error('Activity read error:', err.message);
+    return res.status(500).json({ detail: 'Failed to load activity' });
+  }
+});
+
 router.get('/leaderboard', requireAuth, async (req, res) => {
   try {
     const { rows } = await query(

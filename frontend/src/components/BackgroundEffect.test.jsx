@@ -181,8 +181,8 @@ describe("the ghost backgrounds render", () => {
     }
   });
 
-  it("window rain paints falling streaks, not the old bubble lenses", () => {
-    act(() => root.render(<BackgroundEffect effect="window-rain" />));
+  it("rain paints falling streaks, not the old bubble lenses", () => {
+    act(() => root.render(<BackgroundEffect effect="rain" />));
     advance(3);
     // Rain is lines chasing down the plate: many lineTo points, and none of
     // the elliptical lenses that used to read as bubbles.
@@ -207,8 +207,8 @@ describe("the ghost backgrounds render", () => {
     expect(drawn.fills).toBeGreaterThan(0); // falling flakes
   });
 
-  it("vhs tape paints its plate and its scanlines, and burns no text", () => {
-    act(() => root.render(<BackgroundEffect effect="vhs-tape" />));
+  it("tv paints its plate and its scanlines, and burns no text", () => {
+    act(() => root.render(<BackgroundEffect effect="tv" />));
     advance(3);
     // The tape look is the effect itself: no "PLAY ▶" or timecode written
     // over the page, and no sparkle-noise either.
@@ -216,21 +216,22 @@ describe("the ghost backgrounds render", () => {
     expect(drawn.fillRects).toBeGreaterThan(0); // the plate, band and scanlines
   });
 
-  it("legacy ids resolve instead of half-working: rain becomes window-rain", () => {
-    expect(resolveBackground("rain")).toBe("window-rain");
-    expect(resolveBackground("vhs")).toBe("vhs-tape");
-    expect(resolveBackground("cash")).toBe("cash-fall");
+  it("legacy ids resolve onto their replacement instead of half-working", () => {
+    expect(resolveBackground("window-rain")).toBe("rain");
+    expect(resolveBackground("vhs-tape")).toBe("tv");
+    expect(resolveBackground("heart-fall")).toBe("love-fall");
     expect(resolveBackground("snow-v1")).toBe("snow-v1");
+    expect(resolveBackground("galaxy")).toBe("galaxy");
     // Anything with no twin renders as none, not as a broken painter.
-    expect(resolveBackground("galaxy")).toBe("");
     expect(resolveBackground("aurora")).toBe("");
+    expect(resolveBackground("cash-fall")).toBe("");
     expect(resolveBackground("")).toBe("");
 
-    act(() => root.render(<BackgroundEffect effect="rain" />));
+    act(() => root.render(<BackgroundEffect effect="window-rain" />));
     expect(container.querySelector('[data-testid="bg-canvas"]').getAttribute("data-effect")).toBe(
-      "window-rain",
+      "rain",
     );
-    act(() => root.render(<BackgroundEffect effect="galaxy" />));
+    act(() => root.render(<BackgroundEffect effect="aurora" />));
     expect(container.querySelector('[data-testid="bg-canvas"]')).toBeNull();
   });
 
@@ -257,25 +258,6 @@ describe("the ghost backgrounds render", () => {
       if (realRO) global.ResizeObserver = realRO;
       else delete global.ResizeObserver;
       root = createRoot(container);
-    }
-  });
-
-  it("keeps the pointer feed for the spotlight specifically", () => {
-    const added = [];
-    const removed = [];
-    const realAdd = window.addEventListener;
-    const realRemove = window.removeEventListener;
-    window.addEventListener = (type, fn) => added.push(type);
-    window.removeEventListener = (type, fn) => removed.push(type);
-    try {
-      act(() => root.render(<BackgroundEffect effect="spotlight" />));
-      expect(added).toContain("pointermove");
-      act(() => root.render(<BackgroundEffect effect="snow-v1" />));
-      expect(removed).toContain("pointermove");
-      expect(added.filter((t) => t === "pointermove").length).toBe(1);
-    } finally {
-      window.addEventListener = realAdd;
-      window.removeEventListener = realRemove;
     }
   });
 });

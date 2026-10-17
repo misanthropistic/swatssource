@@ -97,6 +97,37 @@ it("renders a profile that has background audio instead of crashing", async () =
   expect(mockFileUrl).toHaveBeenCalledWith("/api/uploads/song.mp3");
 });
 
+it("keeps the page closed until the correct entry PIN is typed", async () => {
+  api.get.mockResolvedValue({
+    data: {
+      ...payload,
+      profile: { ...payload.profile, entry_enabled: true, entry_style: "codelock", entry_text: "1234" },
+    },
+  });
+  await mount();
+
+  expect(container.querySelector('[data-testid="codelock-gate"]')).toBeTruthy();
+
+  const type = async (key) => {
+    await act(async () => {
+      window.dispatchEvent(new window.KeyboardEvent("keydown", { key }));
+    });
+  };
+
+  await type("9");
+  await type("9");
+  await type("9");
+  await type("9");
+  expect(container.querySelector('[data-testid="codelock-error"]')).toBeTruthy();
+  expect(container.querySelector("[data-testid=\"codelock-gate\"]")).toBeTruthy();
+
+  await type("1");
+  await type("2");
+  await type("3");
+  await type("4");
+  expect(container.querySelector('[data-testid="codelock-gate"]')).toBeNull();
+});
+
 it("titles the tab and fills Open Graph tags from the flat API payload", async () => {
   await mount();
 

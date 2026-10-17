@@ -7,11 +7,18 @@ import { toast } from "@/lib/notify";
 import RankCard from "@/components/RankCard";
 import { FaDiscord } from "react-icons/fa6";
 import {
-  AtSign, Award, Check, ChevronRight, Crown, Eye, Image as ImageIcon,
+  AtSign, Award, Check, ChevronRight, Crown, Eye, Gift, Image as ImageIcon,
   LayoutTemplate, Loader2, Pencil, Settings, ShieldCheck, Sparkles, UserRound,
 } from "lucide-react";
+import { actionLabel } from "@/constants/audit";
 
 const EASE = [0.16, 1, 0.3, 1];
+
+const fmtDay = (day) => {
+  if (!day) return "";
+  const d = new Date(`${day}T00:00:00`);
+  return Number.isNaN(d.getTime()) ? "" : d.toLocaleDateString(undefined, { month: "short", day: "numeric" });
+};
 
 /* The dashboard's front door, kept deliberately quiet.
  *
@@ -111,12 +118,26 @@ export default function Overview() {
      board and the position a visitor sees on your profile are then the same
      number, even when you are far outside the loaded window. */
   const [placement, setPlacement] = useState(null);
+  const [rewards, setRewards] = useState(null);
+  const [activity, setActivity] = useState(null);
 
   useEffect(() => {
     api.get("/me/leaderboard")
       .then(({ data }) => setPlacement(data || null))
       .catch(() => {});
   }, [user.username]);
+
+  // Real reward state and real recent activity, both from the account's own
+  // rows — never a made-up counter.
+  useEffect(() => {
+    let alive = true;
+    Promise.allSettled([api.get("/me/rewards"), api.get("/me/activity")]).then(([r, a]) => {
+      if (!alive) return;
+      if (r.status === "fulfilled") setRewards(r.value.data);
+      if (a.status === "fulfilled") setActivity(a.value.data);
+    });
+    return () => { alive = false; };
+  }, [user.username, user.views]);
 
   const rank = placement?.rank ? `#${placement.rank}` : "—";
 
@@ -209,6 +230,112 @@ export default function Overview() {
           testid="stat-badges"
         />
         <StatChip icon={ShieldCheck} label="Rank" value={rank} to="/!/dashboard/leaderboard" testid="stat-rank" />
+      </div>
+
+      {/* Rewards and activity: the two things the strip above cannot say.
+          Both read the account's real rows; a new account sees the honest
+          empty states instead of a fabricated chart. */}
+      <div className="grid gap-4 lg:grid-cols-[minmax(0,3fr)_minmax(0,2fr)]">
+        <Reveal>
+          <div className="rounded-3xl glass p-5" data-testid="overview-activity">
+            <div className="flex items-center justify-between gap-3">
+              <h2 className="flex items-center gap-2 font-display text-base font-bold text-zinc-100">
+                <Eye className="h-4 w-4 text-brand-300" /> Recent activity
+              </h2>
+              <Link to="/!/dashboard/stats" className="font-mono2 text-[10px] uppercase tracking-wider text-zinc-500 transition hover:text-brand-300">
+                View stats
+              </Link>
+            </div>
+
+            {!activity ? (
+              <div className="mt-4 h-24 animate-pulse rounded-2xl bg-white/[0.03]" />
+            ) : (
+              <>
+                <div className="mt-4 flex items-end gap-1.5" data-testid="activity-bars">
+                  {(activity.days || []).length === 0 ? (
+                    <p className="text-xs text-zinc-500">No validated views in the last 14 days.</p>
+                  ) : (
+                    (activity.days || []).map((d) => {
+                      const peak = Math.max(...activity.days.map((x) => Number(x.views) || 0), 1);
+                      const h = Math.max(6, Math.round((Number(d.views) / peak) * 56));
+                      return (
+                        <span
+                          key={d.day}
+                          title={`${d.views} view${Number(d.views) === 1 ? "" : "s"} on ${d.day}`}
+                          className="flex-1 rounded-t bg-gradient-to-t from-brand-600/40 to-brand-400 transition-all hover:from-brand-500 hover:to-brand-300"
+                          style={{ height: h }}
+                        />
+                      );
+                    })
+                  )}
+                </div>
+                <div className="mt-2 flex items-center justify-between font-mono2 text-[10px] text-zinc-500">
+                  <span>{activity.total_last_14 || 0} views · 14 days</span>
+                  <span>{fmtDay((activity.days || [])[0]?.day)}</span>
+                </div>
+
+                <ul className="mt-4 space-y-1.5 border-t border-white/5 pt-3">
+                  {(activity.events || []).length === 0 ? (
+                    <li className="text-xs text-zinc-500">No account events yet — sign-ins, linking and rewards appear here.</li>
+                  ) : (
+                    (activity.events || []).slice(0, 4).map((e, i) => (
+                      <li key={`${e.action}-${i}`} className="flex items-center justify-between gap-3 text-xs">
+                        <span className="truncate text-zinc-300">{actionLabel(e.action)}</span>
+                        <span className="shrink-0 font-mono2 text-[10px] text-zinc-600">
+                          {fmtDay(String(e.created_at || "").slice(0, 10))}
+                        </span>
+                      </li>
+                    ))
+                  )}
+                </ul>
+              </>
+            )}
+          </div>
+        </Reveal>
+
+        <Reveal delay={0.05}>
+          <div className="flex h-full flex-col rounded-3xl glass p-5" data-testid="overview-rewards">
+            <div className="flex items-center justify-between gap-3">
+              <h2 className="flex items-center gap-2 font-display text-base font-bold text-zinc-100">
+                <Gift className="h-4 w-4 text-brand-300" /> Next reward
+              </h2>
+              <Link to="/!/dashboard/rewards" className="font-mono2 text-[10px] uppercase tracking-wider text-zinc-500 transition hover:text-brand-300">
+                All rewards
+              </Link>
+            </div>
+            {!rewards ? (
+              <div className="mt-4 h-20 animate-pulse rounded-2xl bg-white/[0.03]" />
+            ) : !rewards.enabled ? (
+              <p className="mt-3 text-xs leading-relaxed text-zinc-500">
+                View rewards are paused right now. Your views still count toward the leaderboard.
+              </p>
+            ) : rewards.next ? (
+              <>
+                <div className="mt-3 font-display text-2xl font-black text-zinc-50">
+                  {rewards.next.premium_days}d <span className="text-sm font-semibold text-zinc-400">Premium</span>
+                </div>
+                <p className="mt-1 text-xs text-zinc-500">
+                  at {rewards.next.views.toLocaleString()} views — {(rewards.remaining || 0).toLocaleString()} to go
+                </p>
+                <div className="mt-3 h-2 overflow-hidden rounded-full bg-black/40">
+                  <motion.div
+                    className="h-full rounded-full bg-gradient-to-r from-brand-500 to-brand-300"
+                    initial={{ width: 0 }}
+                    animate={{ width: `${Math.min(100, rewards.next.progress)}%` }}
+                    transition={{ duration: 0.8, ease: EASE }}
+                  />
+                </div>
+                <p className="mt-auto pt-3 text-[11px] text-zinc-500">
+                  {rewards.claimed.length} of {rewards.milestones.length} milestones claimed.
+                </p>
+              </>
+            ) : (
+              <p className="mt-3 text-xs text-emerald-300">
+                Every milestone is claimed on this account.
+              </p>
+            )}
+          </div>
+        </Reveal>
       </div>
 
       {/* Rank and the badges behind it, then the page itself. The rank box sits

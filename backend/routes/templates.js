@@ -80,7 +80,7 @@ export const FREE_TRACK_STYLES = ['', 'mini-bar', 'compact', 'corner-icon'];
 
 // A key whose non-empty value is a Premium feature by construction: every
 // effect, overlay, background and cursor in the store is Premium.
-const PREMIUM_VALUE_KEYS = /^(name_effect|bio_effect|avatar_effect|overlay|background_effect|cursor_effect|cursor_image|custom_css|custom_html)$/;
+const PREMIUM_VALUE_KEYS = /^(name_effect|bio_effect|avatar_effect|overlay|background_effect|cursor_effect|crosshair_image|crosshair_scale|crosshair_x|crosshair_y|custom_css|custom_html)$/;
 
 export function templateTier(config) {
   const c = config && typeof config === 'object' ? config : {};

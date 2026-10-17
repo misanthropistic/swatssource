@@ -5,6 +5,7 @@ import { api, fileUrl } from "@/lib/api";
 import { ProfilePreview } from "@/components/ProfilePreview";
 import AvatarDecorationModal from "@/components/AvatarDecorationModal";
 import { ColorPicker } from "@/components/ColorPicker";
+import { CrosshairPicker } from "@/components/CrosshairPicker";
 import { BackgroundEffect } from "@/components/BackgroundEffect";
 import { OverlayEffect } from "@/components/OverlayEffect";
 import { FxText } from "@/components/FxText";
@@ -1056,33 +1057,13 @@ export default function Editor() {
                 </div>
               </ProfileRow>
 
-              {/* The custom pointer lives with the other uploads now. It used to
-                  sit inside the Effects tab under the raw cursor-effect picker —
-                  the one place nobody thought to look, and the same page that had
-                  the buddy's own uploader. It shares the `cursor_image` field,
-                  renders on the public page instead of the browser's arrow, and
-                  stays Premium like every other self-submitted artwork. */}
-              <ProfileRow label="Custom cursor">
-                {/* Same compact pill as the Avatar and Banner rows — the big
-                    square here was three times the height of everything around
-                    it. Clicking a free account's upload opens the Premium gate
-                    instead of silently doing nothing. */}
-                <div className="flex flex-wrap items-center gap-2.5">
-                  <QuickUpload
-                    testid="asset-cursor-image"
-                    label="Cursor image"
-                    buttonLabel="Upload Cursor"
-                    value={p.cursor_image}
-                    accept="image/*"
-                    onUploaded={(u) => (isPremium ? set("cursor_image", u) : askPremium("A custom cursor")())}
-                    onRemove={() => set("cursor_image", "")}
-                    premiumHint={!isPremium ? "Custom cursors are Premium" : null}
-                  />
-                  <span className="text-[11px] leading-relaxed text-zinc-500">
-                    Replaces the mouse arrow on your public page. Small PNGs with
-                    transparency look best — roughly 32×32 to 64×64.
-                  </span>
-                </div>
+              <ProfileRow label="Crosshair">
+                <CrosshairPicker
+                  value={p}
+                  onChange={(next) => setP((prev) => ({ ...prev, ...next }))}
+                  isPremium={isPremium}
+                  onLocked={askPremium("Custom crosshairs")}
+                />
               </ProfileRow>
 
               <ProfileRow label="Display Name">
@@ -1752,11 +1733,19 @@ export default function Editor() {
                     ))}
                   </div>
                   <input
+                    data-testid="entry-text"
                     value={p.entry_text || ""}
-                    onChange={(e) => set("entry_text", e.target.value)}
-                    placeholder={p.entry_style === "codelock" ? "Set PIN (e.g. 1234)" : "Button text (e.g. Click to enter)"}
+                    onChange={(e) => set("entry_text", p.entry_style === "codelock" ? e.target.value.replace(/\D/g, "").slice(0, 4) : e.target.value)}
+                    inputMode={p.entry_style === "codelock" ? "numeric" : "text"}
+                    maxLength={p.entry_style === "codelock" ? 4 : 60}
+                    placeholder={p.entry_style === "codelock" ? "4-digit PIN (e.g. 1234)" : "Button text (e.g. Click to enter)"}
                     className="w-full px-3.5 py-2.5 rounded-xl bg-white/[0.03] border border-white/10 text-xs text-zinc-100 outline-none focus:border-brand-500/50"
                   />
+                  <p className="text-[11px] leading-relaxed text-zinc-500">
+                    {p.entry_style === "codelock"
+                      ? "Visitors type this PIN to open the page. Leave it empty and the gate opens on click instead."
+                      : "The label on the entry button or text prompt."}
+                  </p>
                 </div>
               )}
             </Section>

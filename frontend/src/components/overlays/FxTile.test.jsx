@@ -77,7 +77,7 @@ it("draws each family in the miniature it belongs to", () => {
   expect(bg.querySelector("canvas")).toBeTruthy();
   expect(bg.querySelector(".ov-tile-card")).toBeTruthy();
 
-  expect(draw({ variant: "overlay", id: "shooting-stars" }).querySelector("canvas")).toBeTruthy();
+  expect(draw({ variant: "overlay", id: "grain" }).querySelector("canvas")).toBeTruthy();
 
   // A decoration is layered over the avatar circle, and the picture it is drawn
   // over comes from the profile.

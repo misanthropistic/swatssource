@@ -44,12 +44,10 @@ export const TEXT_EFFECTS = [
 export const OVERLAYS = [
   { id: "", label: "None", premium: false },
   { id: "snow", label: "Snow", premium: false },
-  { id: "vhs", label: "VHS", premium: true },
   { id: "rain", label: "Rain", premium: false },
-  { id: "hearts", label: "Hearts", premium: false },
-  { id: "snow-flakes", label: "Snow Flakes", premium: true },
-  { id: "frost-bite", label: "Frost Bite", premium: true },
-  { id: "shooting-stars", label: "Shooting Stars", premium: true },
+  { id: "vhs", label: "VHS", premium: true },
+  { id: "grain", label: "Grain", premium: true },
+  { id: "spotlight", label: "Spotlight", premium: true },
   { id: "dotters", label: "Dotters", premium: true },
 ];
 
@@ -86,14 +84,19 @@ export const AVATAR_EFFECTS = [
 
 export const BACKGROUND_EFFECTS = [
   { id: "", label: "None", premium: false },
-  { id: "window-rain", label: "Window Rain", premium: false },
-  { id: "snow-v1", label: "Snow v1", premium: true },
+  { id: "rain", label: "Rain", premium: false },
+  { id: "snow-v1", label: "Snow v1", premium: false },
   { id: "snow-v2", label: "Snow v2", premium: true },
-  { id: "cash-fall", label: "Cash Fall", premium: true },
-  { id: "heart-fall", label: "Heart Fall", premium: true },
-  { id: "vhs-tape", label: "VHS Tape", premium: true },
-  { id: "spotlight", label: "Spotlight", premium: true },
-  { id: "thunder", label: "Thunder", premium: true },
+  { id: "shooting-stars", label: "Shooting Stars", premium: true },
+  { id: "thunder", label: "Thunder", premium: false },
+  { id: "constellation", label: "Constellation", premium: true },
+  { id: "galaxy", label: "Galaxy", premium: true },
+  { id: "rain-fall", label: "Rain Fall", premium: true },
+  { id: "love-fall", label: "Love Fall", premium: true },
+  { id: "bleeding", label: "Bleeding", premium: true },
+  { id: "tv", label: "TV", premium: true },
+  { id: "snow-flake", label: "Snow Flake", premium: false },
+  { id: "frosted", label: "Frosted", premium: true },
 ];
 
 /* Profiles saved on the pre-ghost set still name those effects. Each maps to
@@ -101,17 +104,31 @@ export const BACKGROUND_EFFECTS = [
    anything with no reasonable twin resolves to none, exactly like
    REMOVED_LAYOUTS resolve to DEFAULT_LAYOUT. */
 export const REMOVED_EFFECTS = [
-  // backgrounds
-  "cherry", "galaxy", "matrix", "aurora", "fireflies", "stars", "neon-wave",
-  // overlays
-  "noise", "retro", "scanlines", "vignette", "sparkle", "embers",
+  // backgrounds that no longer exist
+  "window-rain", "cash-fall", "heart-fall", "vhs-tape", "cherry", "matrix", "aurora",
+  "fireflies", "stars", "neon-wave",
+  // overlays that no longer exist
+  "noise", "retro", "scanlines", "vignette", "sparkle", "embers", "hearts",
+  "snow-flakes", "frost-bite",
   // cursor
   "smooth-flow", "rainbow", "falling-particles", "falling-snow", "trailing",
-  "spotlight", "fire", "hearts", "matrix", "neon-glow", "laser", "bubbles", "confetti",
+  "spotlight", "fire", "matrix", "neon-glow", "laser", "bubbles", "confetti",
 ];
 
-const LEGACY_BG_IDS = { rain: "window-rain", vhs: "vhs-tape", cash: "cash-fall" };
-const LEGACY_OVERLAY_IDS = { dots: "dotters", stars: "shooting-stars" };
+const LEGACY_BG_IDS = {
+  "window-rain": "rain",
+  "vhs-tape": "tv",
+  "heart-fall": "love-fall",
+  "snow-v1": "snow-v1",
+  "snowflake": "snow-flake",
+  "frost-bite": "frosted",
+  "stars": "shooting-stars",
+};
+const LEGACY_OVERLAY_IDS = {
+  dots: "dotters",
+  stars: "dotters",
+  "frost-bite": "grain",
+};
 
 const resolveWith = (id, legacyMap, catalog) => {
   const raw = String(id || "");

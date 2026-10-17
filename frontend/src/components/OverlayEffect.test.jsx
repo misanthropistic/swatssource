@@ -156,6 +156,12 @@ it("moves the particles between frames", () => {
           ctx.__frame.push(`${m}:${args.join(",")}|${ctx.fillStyle}|${ctx.globalAlpha}`);
         });
       }
+      for (const g of ["createRadialGradient", "createLinearGradient"]) {
+        ctx[g].mockImplementation((...args) => {
+          ctx.__frame.push(`${g}:${args.join(",")}`);
+          return { addColorStop: () => undefined };
+        });
+      }
       ctx.__frame = [];
 
       step(2);
@@ -204,9 +210,9 @@ it("fades below the Editor's 100% transparency and stays full at default", () =>
   }
 });
 
-it("legacy ids resolve: dots becomes dotters, stars becomes shooting-stars", () => {
+it("legacy ids resolve: dots becomes dotters, frost-bite becomes grain", () => {
   expect(resolveOverlay("dots")).toBe("dotters");
-  expect(resolveOverlay("stars")).toBe("shooting-stars");
+  expect(resolveOverlay("frost-bite")).toBe("grain");
   expect(resolveOverlay("snow")).toBe("snow");
   expect(resolveOverlay("rain")).toBe("rain");
   expect(resolveOverlay("noise")).toBe("");
@@ -223,8 +229,28 @@ it("legacy ids resolve: dots becomes dotters, stars becomes shooting-stars", () 
   none.el.remove();
 });
 
+it("keeps the pointer feed for the spotlight overlay specifically", () => {
+  const added = [];
+  const removed = [];
+  const realAdd = window.addEventListener;
+  const realRemove = window.removeEventListener;
+  window.addEventListener = (type) => added.push(type);
+  window.removeEventListener = (type) => removed.push(type);
+  try {
+    const { el, root } = mount({ effect: "spotlight" });
+    expect(added).toContain("pointermove");
+    act(() => root.unmount());
+    el.remove();
+    expect(removed).toContain("pointermove");
+    expect(added.filter((t) => t === "pointermove").length).toBe(1);
+  } finally {
+    window.addEventListener = realAdd;
+    window.removeEventListener = realRemove;
+  }
+});
+
 it("removed overlay ids are gone from every catalog on purpose", () => {
-  const gone = ["noise", "retro", "scanlines", "vignette", "sparkle", "embers"];
+  const gone = ["noise", "retro", "scanlines", "vignette", "sparkle", "embers", "hearts", "snow-flakes"];
   for (const id of gone) {
     expect(REMOVED_EFFECTS).toContain(id);
     expect(OVERLAYS.some((o) => o.id === id)).toBe(false);

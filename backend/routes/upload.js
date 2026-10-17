@@ -107,6 +107,20 @@ router.post('/', requireAuth, upload.single('file'), async (req, res) => {
     const isPremium = req.user.tier === 'premium' || req.user.tier === 'admin' || req.user.role === 'admin' || req.user.is_owner;
     const isVideo = file.mimetype.startsWith('video/');
 
+    // A crosshair is a cursor: pictures only, and small. Native cursors are
+    // capped at 128px, so a 25MB "crosshair" is storage abuse, not artwork.
+    if (/crosshair/i.test(String(kind))) {
+      if (!file.mimetype.startsWith('image/')) {
+        return res.status(415).json({ detail: 'Crosshair images must be PNG, WEBP, GIF or JPEG.' });
+      }
+      if (file.size > 1024 * 1024) {
+        return res.status(413).json({ detail: 'Crosshair images must be 1MB or smaller.' });
+      }
+      if (!isPremium) {
+        return res.status(403).json({ detail: 'Custom crosshairs are a premium feature' });
+      }
+    }
+
     if (isVideo && !isPremium) {
       return res.status(403).json({ detail: 'MP4 and video uploads are premium features' });
     }

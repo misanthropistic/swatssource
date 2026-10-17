@@ -235,21 +235,9 @@
 }
 
 /* ------------------------------------------------- BACKGROUND BLENDING ---
-
-   The background canvas gets its blend mode PER EFFECT, because the catalogue
-   contains two different kinds of painter:
-
-     • particle layers (snow, cash, hearts) — bright dots over their own dark
-       plate. `screen` lets the plate's near-black pixels drop out, so the
-       owner's background image or colour still reads through them.
-     • plate layers (window-rain's rain-streaked window, vhs-tape, thunder,
-       spotlight) — the plate IS the effect. Under `screen` their dark content
-       contributed almost nothing, which is why half the background effects
-       looked like they did nothing at all: they were painting, and the blend
-       mode was throwing the result away.
-
-   `isolation: isolate` keeps the blend inside the layer's own stacking context
-   so screen cannot reach through to the page behind the profile.
+   Particle layers (snow-v1, snow-v2, love-fall) are bright marks on a
+   transparent canvas, so `screen` lets the owner's backdrop read through.
+   Plate layers paint their own dark backdrop and must not be blended away.
    -------------------------------------------------------------------------- */
 
 .sw-bg-canvas {
@@ -257,10 +245,16 @@
   isolation: isolate;
 }
 
-.sw-bg-canvas[data-effect="window-rain"],
-.sw-bg-canvas[data-effect="vhs-tape"],
+.sw-bg-canvas[data-effect="rain"],
+.sw-bg-canvas[data-effect="shooting-stars"],
 .sw-bg-canvas[data-effect="thunder"],
-.sw-bg-canvas[data-effect="spotlight"] {
+.sw-bg-canvas[data-effect="constellation"],
+.sw-bg-canvas[data-effect="galaxy"],
+.sw-bg-canvas[data-effect="rain-fall"],
+.sw-bg-canvas[data-effect="bleeding"],
+.sw-bg-canvas[data-effect="tv"],
+.sw-bg-canvas[data-effect="snow-flake"],
+.sw-bg-canvas[data-effect="frosted"] {
   mix-blend-mode: normal;
 }
 

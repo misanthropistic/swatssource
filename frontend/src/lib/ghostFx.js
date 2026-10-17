@@ -178,38 +178,6 @@ const pile = (W, H, N, cap) => {
   };
 };
 
-/* E.cash: falling bills (k != 1) — version 1 is 34 notes at the slower speed. */
-const cash = (W, H) => {
-  const nb = (i) => ({ x: R() * W, y: i ? R() * H : -30, s: 0.8 + R() * 1.6, r: R() * 6, vr: (R() - 0.5) * 0.03, f: R() * 6, z: 0.7 + R() * 0.6 });
-  const b = [...Array(34)].map(() => nb(1));
-  return (c) => {
-    c.textAlign = 'center';
-    c.textBaseline = 'middle';
-    for (const o of b) {
-      o.y += o.s;
-      o.r += o.vr;
-      o.f += 0.03;
-      o.x += Math.sin(o.f * 0.7) * 0.5;
-      if (o.y > H + 30) Object.assign(o, nb(0));
-      const fl = Math.max(0.2, Math.abs(Math.cos(o.f)));
-      c.save();
-      c.translate(o.x, o.y);
-      const w = 34 * o.z, h = 16 * o.z;
-      c.rotate(o.r);
-      c.scale(1, fl);
-      c.fillStyle = '#4d8a5a';
-      c.fillRect(-w / 2, -h / 2, w, h);
-      c.strokeStyle = '#2b5736';
-      c.lineWidth = 1;
-      c.strokeRect(-w / 2 + 2, -h / 2 + 2, w - 4, h - 4);
-      c.fillStyle = '#cfe6d3';
-      c.font = `bold ${9 * o.z}px Georgia,serif`;
-      c.fillText('$', 0, 1);
-      c.restore();
-    }
-  };
-};
-
 const hearts = (W, H, n, sz) => {
   const a = [...Array(n)].map(() => ({ x: R() * W, y: R() * H, s: sz * (0.5 + R()), v: 0.5 + R(), p: R() * 6, h: R() < 0.5 ? 350 : 335 + R() * 15 }));
   return (c, t) => {
@@ -249,28 +217,6 @@ const vhs = (W, H, o, l) => {
     }
     c.fillStyle = `rgba(0,0,0,${0.22 * a})`;
     for (let yy = 0; yy < H; yy += 3) c.fillRect(0, yy, W, 1);
-  };
-};
-
-/* E.spot: follows the pointer through `pointer` ({x, y} in canvas space, null
-   until seen — exactly ghost's mx/my < 0 fallback to the centre). */
-const spot = (W, H, pointer) => {
-  let x = W / 2, y = H / 2;
-  const at = () => (pointer.current.x < 0 ? W / 2 : pointer.current.x);
-  const atY = () => (pointer.current.y < 0 ? H / 2 : pointer.current.y);
-  return (c, t) => {
-    x += (at() - x) * 0.12;
-    y += (atY() - y) * 0.12;
-    c.fillStyle = '#020202';
-    c.fillRect(0, 0, W, H);
-    const r = Math.max(280, W * 0.18);
-    const g = c.createRadialGradient(x, y, 0, x, y, r);
-    g.addColorStop(0, 'rgba(255,248,230,.34)');
-    g.addColorStop(0.5, 'rgba(255,248,230,.119)');
-    g.addColorStop(1, 'rgba(255,248,230,0)');
-    c.fillStyle = g;
-    c.fillRect(0, 0, W, H);
-    void t;
   };
 };
 
@@ -460,6 +406,239 @@ const dots = (W, H) => {
   };
 };
 
+/* A dark plate for the effects that are their own full backdrop. */
+const plate = (c, W, H, top = '#0b0e13', bottom = '#05070a') => {
+  const g = c.createLinearGradient(0, 0, 0, H);
+  g.addColorStop(0, top);
+  g.addColorStop(1, bottom);
+  c.fillStyle = g;
+  c.fillRect(0, 0, W, H);
+};
+
+/* constellation: a slow drifting star field whose nearest neighbours are
+   joined by hairlines, so the page reads as a night sky map rather than
+   another snow field. */
+const constellation = (W, H) => {
+  const n = Math.max(28, Math.min(72, Math.round((W * H) / 16000)));
+  const pts = [...Array(n)].map(() => ({
+    x: R() * W,
+    y: R() * H,
+    r: 0.7 + R() * 1.4,
+    p: R() * 6,
+    vx: (R() - 0.5) * 0.18,
+    vy: (R() - 0.5) * 0.12,
+  }));
+  const reach = Math.min(150, Math.max(90, Math.hypot(W, H) * 0.12));
+  const reach2 = reach * reach;
+  return (c, t) => {
+    plate(c, W, H, '#070a12', '#02030a');
+    for (const o of pts) {
+      o.x += o.vx + Math.sin(t / 4200 + o.p) * 0.04;
+      o.y += o.vy + Math.cos(t / 5300 + o.p) * 0.03;
+      if (o.x < -4) o.x = W + 4;
+      if (o.x > W + 4) o.x = -4;
+      if (o.y < -4) o.y = H + 4;
+      if (o.y > H + 4) o.y = -4;
+    }
+    c.strokeStyle = 'rgba(150,190,255,.16)';
+    c.lineWidth = 0.7;
+    c.beginPath();
+    for (let i = 0; i < pts.length; i += 1) {
+      const a = pts[i];
+      for (let j = i + 1; j < pts.length; j += 1) {
+        const b = pts[j];
+        const dx = a.x - b.x;
+        const dy = a.y - b.y;
+        const d2 = dx * dx + dy * dy;
+        if (d2 < reach2 && d2 > 900) {
+          c.moveTo(a.x, a.y);
+          c.lineTo(b.x, b.y);
+        }
+      }
+    }
+    c.stroke();
+    for (const o of pts) {
+      c.fillStyle = `rgba(226,236,255,${(0.45 + 0.4 * (0.5 + 0.5 * Math.sin(t / 800 + o.p))).toFixed(3)})`;
+      c.beginPath();
+      c.arc(o.x, o.y, o.r, 0, TAU7);
+      c.fill();
+    }
+  };
+};
+
+/* galaxy: a nebula baked once into an offscreen plate (the expensive part),
+   then drifted and twinkled in the loop. */
+const galaxy = (W, H) => {
+  const cv = document.createElement('canvas');
+  cv.width = Math.max(2, Math.floor(W));
+  cv.height = Math.max(2, Math.floor(H));
+  const g = cv.getContext('2d');
+  const base = g.createLinearGradient(0, 0, W, H);
+  base.addColorStop(0, '#06030f');
+  base.addColorStop(0.5, '#0a0618');
+  base.addColorStop(1, '#03020a');
+  g.fillStyle = base;
+  g.fillRect(0, 0, W, H);
+  const hues = [268, 288, 312, 196, 220, 334];
+  for (let i = 0; i < 24; i += 1) {
+    const cx = R() * W;
+    const cy = R() * H;
+    const r = Math.max(W, H) * (0.12 + R() * 0.3);
+    const q = g.createRadialGradient(cx, cy, 0, cx, cy, r);
+    q.addColorStop(0, `hsla(${hues[i % hues.length]},85%,68%,${(0.05 + R() * 0.09).toFixed(3)})`);
+    q.addColorStop(1, 'hsla(280,80%,50%,0)');
+    g.fillStyle = q;
+    g.fillRect(cx - r, cy - r, r * 2, r * 2);
+  }
+  const core = g.createRadialGradient(W * 0.52, H * 0.46, 0, W * 0.52, H * 0.46, Math.max(W, H) * 0.42);
+  core.addColorStop(0, 'rgba(255,225,255,.16)');
+  core.addColorStop(1, 'rgba(255,225,255,0)');
+  g.fillStyle = core;
+  g.fillRect(0, 0, W, H);
+  g.fillStyle = 'rgba(255,255,255,.82)';
+  for (let i = 0; i < 320; i += 1) {
+    const s = R() < 0.82 ? 1 : 2;
+    g.fillRect(R() * W, R() * H, s, s);
+  }
+  const twinkle = [...Array(46)].map(() => ({ x: R() * W, y: R() * H, p: R() * 6 }));
+  return (c, t) => {
+    c.drawImage(cv, -W * 0.03 + Math.sin(t / 9000) * W * 0.02, -H * 0.03 + Math.cos(t / 11000) * H * 0.02, W * 1.06, H * 1.06);
+    for (const o of twinkle) {
+      c.fillStyle = `rgba(255,255,255,${(0.2 + 0.55 * (0.5 + 0.5 * Math.sin(t / 700 + o.p))).toFixed(3)})`;
+      c.beginPath();
+      c.arc(o.x, o.y, 1.1, 0, TAU7);
+      c.fill();
+    }
+  };
+};
+
+/* rain fall: the heavier open-air shower — long slanted streaks over a plate,
+   distinct from rain's streaked-window lens. */
+const rainFall = (W, H) => {
+  const n = Math.max(80, Math.min(260, Math.round((W * H) / 6500)));
+  const mk = () => ({
+    x: R() * (W + 200) - 100,
+    y: R() * H,
+    len: 18 + R() * 34,
+    v: 12 + R() * 12,
+  });
+  const drops = [...Array(n)].map(mk);
+  return (c) => {
+    plate(c, W, H, '#080b12', '#04060b');
+    c.strokeStyle = 'rgba(170,200,240,.34)';
+    c.lineWidth = 1.2;
+    c.lineCap = 'round';
+    c.beginPath();
+    for (const d of drops) {
+      d.y += d.v;
+      d.x -= d.v * 0.22;
+      if (d.y > H + d.len) Object.assign(d, mk(), { y: -d.len - 4 });
+      c.moveTo(d.x, d.y);
+      c.lineTo(d.x + d.len * 0.22, d.y - d.len);
+    }
+    c.stroke();
+    for (let i = 0; i < 6; i += 1) {
+      if (R() < 0.4) {
+        c.strokeStyle = 'rgba(170,200,240,.16)';
+        c.lineWidth = 1;
+        c.beginPath();
+        c.arc(R() * W, H - R() * 5, 2 + R() * 4, 0, PI);
+        c.stroke();
+      }
+    }
+  };
+};
+
+/* bleeding: thin red runs that grow, break their tip and restart, over a near
+   black plate with a bruised glow at the top edge. */
+const bleeding = (W, H) => {
+  const n = Math.max(18, Math.min(48, Math.round(W / 32)));
+  const mk = (off) => ({
+    x: R() * W,
+    y: off ? R() * H : -20,
+    w: 1 + R() * 2.2,
+    v: 0.25 + R() * 0.85,
+    len: 24 + R() * 110,
+    a: 0.35 + R() * 0.5,
+  });
+  const drops = [...Array(n)].map(() => mk(true));
+  return (c, t) => {
+    plate(c, W, H, '#0d0508', '#040203');
+    const glow = c.createRadialGradient(W / 2, 0, 0, W / 2, 0, Math.max(W, H) * 0.7);
+    glow.addColorStop(0, 'rgba(122,10,24,.26)');
+    glow.addColorStop(1, 'rgba(122,10,24,0)');
+    c.fillStyle = glow;
+    c.fillRect(0, 0, W, H);
+    for (const d of drops) {
+      d.y += d.v;
+      if (d.y - d.len > H) Object.assign(d, mk(false));
+      const sway = Math.sin(t / 2200 + d.x) * 0.6;
+      c.fillStyle = `rgba(168,18,34,${d.a.toFixed(3)})`;
+      c.fillRect(d.x + sway, d.y - d.len, d.w, d.len);
+      c.beginPath();
+      c.arc(d.x + sway + d.w / 2, d.y, d.w * 1.15, 0, TAU7);
+      c.fill();
+    }
+  };
+};
+
+/* tv: the tape plate plus live static, so it reads as a broadcast signal. */
+const tv = (W, H) => {
+  const tape = vhs(W, H, 0, 1);
+  return (c, t) => {
+    tape(c, t);
+    c.fillStyle = 'rgba(255,255,255,.5)';
+    for (let i = 0; i < 90; i += 1) {
+      if (R() < 0.55) c.fillRect(R() * W, R() * H, 2, 1);
+    }
+    c.fillStyle = 'rgba(0,0,0,.25)';
+    for (let i = 0; i < 40; i += 1) c.fillRect(R() * W, R() * H, 2, 1);
+  };
+};
+
+/* grain: film noise as four alpha buckets of single-pixel specks. */
+const grain = (W, H) => {
+  const n = Math.max(260, Math.min(900, Math.round((W * H) / 2400)));
+  const ALPHAS = [0.03, 0.055, 0.08, 0.11];
+  const buckets = ALPHAS.map(() => []);
+  for (let i = 0; i < n; i += 1) buckets[i % ALPHAS.length].push({ x: R() * W, y: R() * H });
+  return (c) => {
+    for (let k = 0; k < buckets.length; k += 1) {
+      c.fillStyle = `rgba(255,255,255,${ALPHAS[k]})`;
+      for (const p of buckets[k]) {
+        if (R() < 0.6) {
+          p.x = R() * W;
+          p.y = R() * H;
+        }
+        c.fillRect(p.x, p.y, 1, 1);
+      }
+    }
+  };
+};
+
+/* spotlight (overlay): a vignette that keeps a soft hole over the pointer. */
+const spotOverlay = (W, H, pointer) => {
+  let x = W / 2;
+  let y = H / 2;
+  return (c, t = 0) => {
+    // Until the visitor moves, the lamp drifts in a slow ellipse so an idle
+    // profile still reads as lit rather than as a frozen dark page.
+    const seen = pointer.current.x >= 0;
+    const idle = t / 2600;
+    const tx = seen ? pointer.current.x : W / 2 + Math.cos(idle) * W * 0.08;
+    const ty = seen ? pointer.current.y : H / 2 + Math.sin(idle * 1.3) * H * 0.06;
+    x += (tx - x) * 0.14;
+    y += (ty - y) * 0.14;
+    const r = Math.max(240, Math.max(W, H) * 0.58);
+    const g = c.createRadialGradient(x, y, r * 0.06, x, y, r);
+    g.addColorStop(0, 'rgba(0,0,0,0)');
+    g.addColorStop(0.45, 'rgba(0,0,0,.16)');
+    g.addColorStop(1, 'rgba(0,0,0,.62)');
+    c.fillStyle = g;
+    c.fillRect(0, 0, W, H);
+  };
+};
+
 /* --------------------------------------------------- the two lookup tables -- */
 /* Exactly ghost's BG / OV maps, with the version-1 table's arguments hard-coded,
    and ids spelled in the catalog's kebab-case. `pointer` is shared so the one
@@ -467,36 +646,58 @@ const dots = (W, H) => {
 const pointerRef = () => ({ current: { x: -99, y: -99 } });
 
 export const GHOST_BG_IDS = [
-  'window-rain', 'snow-v1', 'snow-v2', 'cash-fall', 'heart-fall', 'vhs-tape', 'spotlight', 'thunder',
+  'rain', 'snow-v1', 'snow-v2', 'shooting-stars', 'thunder', 'constellation', 'galaxy',
+  'rain-fall', 'love-fall', 'bleeding', 'tv', 'snow-flake', 'frosted',
 ];
 
-export const GHOST_OVERLAY_IDS = [
-  'snow', 'vhs', 'rain', 'hearts', 'snow-flakes', 'frost-bite', 'shooting-stars', 'dotters',
-];
+export const GHOST_OVERLAY_IDS = ['snow', 'rain', 'vhs', 'grain', 'spotlight', 'dotters'];
 
 export function createGhostBgPainter(id, w, h, pointer = pointerRef()) {
   switch (id) {
-    case 'window-rain': return rain(w, h);
+    case 'rain': return rain(w, h);
     case 'snow-v1': return snow(w, h, 150, 0, 1);
     case 'snow-v2': return pile(w, h, 120, 24);
-    case 'cash-fall': return cash(w, h);
-    case 'heart-fall': return hearts(w, h, 40, 14);
-    case 'vhs-tape': return vhs(w, h, 0, 1);
-    case 'spotlight': return spot(w, h, pointer);
+    case 'shooting-stars': {
+      const stars = starsFx(w, h, 1, 9);
+      return (c, t) => {
+        plate(c, w, h, '#05060d', '#020207');
+        stars(c, t);
+      };
+    }
     case 'thunder': return thunder(w, h);
-    default: return null;
+    case 'constellation': return constellation(w, h);
+    case 'galaxy': return galaxy(w, h);
+    case 'rain-fall': return rainFall(w, h);
+    case 'love-fall': return hearts(w, h, 40, 14);
+    case 'bleeding': return bleeding(w, h);
+    case 'tv': return tv(w, h);
+    case 'snow-flake': {
+      const flakes = flakesFx(w, h, 34, 1.2);
+      return (c, t) => {
+        plate(c, w, h, '#080b14', '#03050b');
+        flakes(c, t);
+      };
+    }
+    case 'frosted': {
+      const ice = frost(w, h);
+      return (c, t) => {
+        plate(c, w, h, '#0a1220', '#040811');
+        ice(c, t);
+      };
+    }
+    default:
+      void pointer;
+      return null;
   }
 }
 
 export function createGhostOverlayPainter(id, w, h, pointer = pointerRef()) {
   switch (id) {
     case 'snow': return snow(w, h, 60, 0, 1);
-    case 'vhs': return vhs(w, h, 1, 1);
     case 'rain': return streak(w, h, 130, 0.18, 1);
-    case 'hearts': return hearts(w, h, 18, 9);
-    case 'snow-flakes': return flakesFx(w, h, 26, 1);
-    case 'frost-bite': return frost(w, h);
-    case 'shooting-stars': return starsFx(w, h, 1, 9);
+    case 'vhs': return vhs(w, h, 1, 1);
+    case 'grain': return grain(w, h);
+    case 'spotlight': return spotOverlay(w, h, pointer);
     case 'dotters': return dots(w, h);
     default:
       void pointer;

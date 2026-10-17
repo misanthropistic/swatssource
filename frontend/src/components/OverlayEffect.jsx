@@ -3,9 +3,8 @@ import { createGhostOverlayPainter } from "@/lib/ghostFx";
 import { resolveOverlay } from "@/constants/effects";
 
 /* ---------------------------------------------------------------------------
-   OverlayEffect — the layer above the profile card, painting the exact
-   ghost.html overlay set: snow, vhs, rain, hearts, snow-flakes, frost-bite,
-   shooting-stars, dotters (lib/ghostFx, ported verbatim, version 1).
+   OverlayEffect — the layer above the profile card: snow, rain, VHS, grain,
+   spotlight and dotters (lib/ghostFx).
 
    ghost runs every overlay as a canvas painter (there is no CSS half in the
    ghost page and there is none here either): one canvas, one painter, one clear
@@ -34,6 +33,12 @@ export function OverlayEffect({ effect, color, opacity }) {
     let painter = null;
     const pointer = { current: { x: -99, y: -99 } };
 
+    const onMove = (e) => {
+      const rect = canvas.getBoundingClientRect();
+      pointer.current.x = e.clientX - rect.left;
+      pointer.current.y = e.clientY - rect.top;
+    };
+
     const resize = () => {
       const parent = canvas.parentElement;
       // Device pixel ratio capped at 2 (and the box at 4096px, the same
@@ -59,6 +64,9 @@ export function OverlayEffect({ effect, color, opacity }) {
       raf = requestAnimationFrame(frame);
     };
 
+    if (id === "spotlight" && typeof window !== "undefined") {
+      window.addEventListener("pointermove", onMove, { passive: true });
+    }
     window.addEventListener("resize", resize);
     const observer =
       typeof ResizeObserver === "function" && canvas.parentElement
@@ -71,6 +79,9 @@ export function OverlayEffect({ effect, color, opacity }) {
     return () => {
       cancelAnimationFrame(raf);
       window.removeEventListener("resize", resize);
+      if (id === "spotlight" && typeof window !== "undefined") {
+        window.removeEventListener("pointermove", onMove);
+      }
       observer?.disconnect();
     };
   }, [id]);

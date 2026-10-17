@@ -4,8 +4,16 @@ import { CONTACT_EMAIL } from "@/lib/api";
 
 const COLS = [
   { title: "Product", links: [["Features", "/!/home"], ["Pricing", "/!/pricing"], ["Explore", "/!/explore"], ["Docs", "/!/docs"]] },
-  { title: "Legal", links: [["Terms of Service", "/!/legal"], ["Privacy Policy", "/!/legal"], ["Refund Policy", "/!/legal"], ["DMCA", "/!/legal"]] },
-  { title: "Community", links: [["Discord", "https://discord.gg/a9uwptuepD"], ["Twitter / X", "https://twitter.com"], ["Contact", `mailto:${CONTACT_EMAIL}`]] },
+  {
+    title: "Legal",
+    links: [
+      ["Terms of Service", "/!/legal#legal-terms-of-service"],
+      ["Privacy Policy", "/!/legal#legal-privacy-policy"],
+      ["Refund Policy", "/!/legal#legal-refund-policy"],
+      ["DMCA", "/!/legal#legal-dmca-content"],
+    ],
+  },
+  { title: "Community", links: [["Discord", "https://discord.gg/a9uwptuepD"], ["Docs", "/!/docs"], ["Contact", `mailto:${CONTACT_EMAIL}`]] },
 ];
 
 export const Footer = () => (
@@ -16,9 +24,12 @@ export const Footer = () => (
         <div>
           <Logo />
           <p className="mt-4 text-sm text-zinc-500 max-w-xs">The #1 home for your digital identity. Build a page the whole internet remembers.</p>
-          <div className="mt-4 inline-flex items-center gap-2 text-xs text-zinc-400">
-            <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse" /> All systems operational
-          </div>
+          <Link
+            to="/!/pricing"
+            className="mt-4 inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/[0.03] px-3 py-1.5 text-xs font-semibold text-zinc-300 transition hover:border-brand-400/30 hover:text-white"
+          >
+            <span className="h-1.5 w-1.5 rounded-full bg-brand-400" /> Go Premium
+          </Link>
         </div>
         {COLS.map((c) => (
           <div key={c.title}>

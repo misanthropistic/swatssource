@@ -50,11 +50,12 @@ describe("the ghost swap — the catalogs ARE ghost.html's lists", () => {
   });
 
   it("resolves the legacy ids instead of rendering half an effect", () => {
-    expect(resolveBackground("rain")).toBe("window-rain");
-    expect(resolveBackground("vhs")).toBe("vhs-tape");
-    expect(resolveBackground("cash")).toBe("cash-fall");
-    for (const gone of ["cherry", "galaxy", "matrix", "aurora", "fireflies", "neon-wave"]) {
-      expect(gone === "" || resolveBackground(gone)).toBe("");
+    expect(resolveBackground("window-rain")).toBe("rain");
+    expect(resolveBackground("vhs-tape")).toBe("tv");
+    expect(resolveBackground("heart-fall")).toBe("love-fall");
+    expect(resolveBackground("rain")).toBe("rain");
+    for (const gone of ["cherry", "matrix", "aurora", "fireflies", "neon-wave", "cash-fall"]) {
+      expect(resolveBackground(gone)).toBe("");
       expect(REMOVED_EFFECTS).toContain(gone);
     }
   });
@@ -147,7 +148,7 @@ describe("no file-backed effects", () => {
     expect(ghost).toContain("'255,236,170'"); // sparkle's warm second colour
     expect(ghost).toContain("#6e0000"); // drip stroke
     expect(ghost).toContain("rgba(190,210,255"); // thunder's flash wash
-    expect(ghost).toContain("0.7 + R() * 0.6"); // v2's… the bill shine scale
+    expect(ghost).toContain("rgba(168,18,34"); // bleeding's drip colour
   });
 });
 

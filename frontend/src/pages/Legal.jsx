@@ -1,9 +1,13 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { useLocation } from "react-router-dom";
 import { Navbar } from "@/components/landing/Navbar";
 import { Footer } from "@/components/landing/Footer";
 import { CONTACT_EMAIL } from "@/lib/api";
 import { motion, AnimatePresence } from "framer-motion";
-import { ChevronDown, Scale, Shield, RotateCcw, FileText, Mail, AlertTriangle, Cookie } from "lucide-react";
+import {
+  Scale, Shield, RotateCcw, FileText, Mail, AlertTriangle, Cookie,
+  ShieldAlert, Database, Lock, Accessibility, RefreshCw,
+} from "lucide-react";
 
 const slug = (s) => s.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "");
 
@@ -65,6 +69,57 @@ const SECTIONS = [
     ],
   },
   {
+    icon: ShieldAlert,
+    title: "Acceptable Use Policy",
+    items: [
+      ["1. Prohibited Content", "You may not publish content that is illegal in your jurisdiction or ours, sexually exploitative of minors, non-consensual intimate imagery, incitement to violence, targeted harassment, or content that infringes another person's intellectual property or privacy rights."],
+      ["2. Prohibited Behaviour", "No scraping at scale, credential stuffing, evasion of rate limits, attempts to access another account, uploading malware, using the Service to send spam or phishing links, or reselling access without written permission. Automated mass registration and view manipulation are prohibited."],
+      ["3. Impersonation", "You may not impersonate another person, brand or staff member, or present a page in a way that misleads visitors about who operates it. Verified badges are granted by staff and may be removed at any time."],
+      ["4. Enforcement", "We may remove content, restrict features, or suspend accounts that breach this policy. Serious breaches may result in immediate termination without refund. You can appeal an enforcement decision by emailing the contact address below."],
+      ["5. Reporting", `Report abusive pages or content to ${CONTACT_EMAIL} with the exact URL and a short description. Reports involving imminent harm should go to the appropriate emergency service first.`],
+    ],
+  },
+  {
+    icon: Database,
+    title: "Data Processing & Sub-processors",
+    items: [
+      ["1. Role", "For account and profile data you are the data subject and we are the controller. For content you upload, you remain the owner; we process it only to operate and display the Service."],
+      ["2. Sub-processors", "Hosting and API infrastructure, Cloudinary (media storage and delivery), Stripe (payments), Discord and Spotify (optional OAuth integrations) and Cloudflare (edge protection). Each receives only the data needed for its function."],
+      ["3. International Transfers", "Some processors operate outside your country. Where required, transfers rely on standard contractual clauses or an equivalent lawful mechanism."],
+      ["4. Retention", "Account data is kept while the account exists. Uploaded media is deleted when you remove it or delete the account, subject to short backup windows. Audit and billing records are retained where required for security, fraud prevention or tax law."],
+      ["5. Your Rights", `Access, correction, export, restriction and deletion requests can be sent to ${CONTACT_EMAIL}. We respond within the period required by applicable law and may need to verify account ownership first.`],
+    ],
+  },
+  {
+    icon: Lock,
+    title: "Security",
+    items: [
+      ["1. Safeguards", "Passwords are hashed with a slow algorithm, sessions use signed tokens, privileged endpoints enforce role checks, uploads are validated by type and size, and sensitive actions are rate-limited and audit-logged."],
+      ["2. Your Responsibilities", "Use a unique password, enable two-factor authentication, keep recovery codes offline, and never share session tokens. You are responsible for activity performed with your credentials."],
+      ["3. Incident Response", "If we become aware of a breach affecting personal data we will investigate, contain it, and notify affected users and authorities where legally required."],
+      ["4. Responsible Disclosure", `If you believe you have found a vulnerability, report it privately to ${CONTACT_EMAIL} with reproduction steps. Do not access other users' data, disrupt the Service, or publish details before we have had a reasonable chance to fix the issue.`],
+    ],
+  },
+  {
+    icon: Accessibility,
+    title: "Accessibility",
+    items: [
+      ["1. Commitment", "The Service aims to be usable with a keyboard, a screen reader and reduced-motion settings. Effect animations are slowed rather than removed when the visitor requests reduced motion."],
+      ["2. Known Limits", "Some user-generated content, third-party widgets and user-uploaded media may not meet accessibility guidelines because we do not control their markup or assets."],
+      ["3. Feedback", `If something blocks you from using the Service, email ${CONTACT_EMAIL} with the page and the assistive technology you use so we can address it.`],
+    ],
+  },
+  {
+    icon: RefreshCw,
+    title: "Changes & Contact",
+    items: [
+      ["1. Policy Changes", "We may update these policies as the Service evolves. The \"last updated\" date on this page always reflects the current version, and material changes are announced in the dashboard or on the changelog."],
+      ["2. Severability", "If any provision is found unenforceable, the remaining provisions stay in effect and the unenforceable part is limited to the minimum extent permitted by law."],
+      ["3. Entire Agreement", "These policies, together with the Terms of Service, are the entire agreement between you and swats.bio regarding the Service."],
+      ["4. Contact", `All legal, privacy, security and accessibility correspondence goes to ${CONTACT_EMAIL}. We aim to acknowledge within five business days.`],
+    ],
+  },
+  {
     icon: AlertTriangle,
     title: "Disclaimer",
     items: [
@@ -73,11 +128,19 @@ const SECTIONS = [
       ["3. User Pages", "Profiles are created by their owners. swats.bio does not endorse and is not responsible for the content, links, or claims on any user page. Visit external links at your own discretion."],
     ],
   },
-];
-
-export default function Legal() {
+];export default function Legal() {
+  const { hash } = useLocation();
   const [active, setActive] = useState(slug(SECTIONS[0].title));
-  const updated = "June 2026";
+  const updated = "October 2026";
+
+  useEffect(() => {
+    const id = hash.replace(/^#/, "");
+    if (!id) return;
+    const target = document.getElementById(id);
+    if (!target) return;
+    setActive(id.replace(/^legal-/, ""));
+    target.scrollIntoView({ behavior: "smooth", block: "start" });
+  }, [hash]);
 
   const go = (id) => {
     setActive(id);

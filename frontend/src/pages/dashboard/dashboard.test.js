@@ -747,16 +747,20 @@ describe("editor effect pickers", () => {
     expect("cursor_widget" in put.body).toBe(false);
   });
 
-  // The custom cursor upload is the pointer, not the buddy, and it lives in the
-  // Profile & Assets tab at the compact pill size the other uploads use.
-  it("uploads the custom cursor from the Profile & Assets tab at compact size", () => {
+  // The crosshair upload is the pointer, not the buddy, and it lives in the
+  // Profile & Assets tab with its own scale and hotspot controls.
+  it("uploads a custom crosshair from the Profile & Assets tab", () => {
     global.__DASH_USER__ = PREMIUM_USER;
     renderAt("/!/dashboard/editor", <Editor />);
     click(subtab("profile"));
 
-    const upload = container.querySelector('[data-testid="asset-cursor-image"]');
-    expect(upload).toBeTruthy();
-    expect(upload.textContent).toContain("Upload Cursor");
+    const picker = container.querySelector('[data-testid="crosshair"]');
+    expect(picker).toBeTruthy();
+    expect(picker.textContent).toContain("Upload crosshair");
+    expect(container.querySelector('[data-testid="crosshair-input"]')).toBeTruthy();
+    expect(container.querySelector('[data-testid="crosshair-scale"]')).toBeTruthy();
+    expect(container.querySelector('[data-testid="crosshair-x"]')).toBeTruthy();
+    expect(container.querySelector('[data-testid="crosshair-y"]')).toBeTruthy();
   });
 
   it("writes the selected effect through to the live preview", () => {

@@ -231,9 +231,10 @@ it("no longer renders the music player or static screenshots", async () => {
   expect(el.querySelector("audio")).toBeNull();
   expect(el.textContent).not.toContain("PRETENDERS");
   expect(el.textContent).not.toContain("Music Player");
-  // The static screenshot band is gone; the live full-size showcase replaced it.
+  // The static screenshot band is gone. The live showcase is its own section
+  // on the landing page, so this band must not draw a second copy of it.
   expect(el.querySelector('[data-testid="screenshot-stack"]')).toBeNull();
-  expect(el.querySelector('[data-testid="profile-showcase"]')).toBeTruthy();
+  expect(el.querySelector('[data-testid="profile-showcase"]')).toBeNull();
 
   cleanup();
 });

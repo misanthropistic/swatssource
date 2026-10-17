@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
-import { Check, X, Loader2, ArrowRight, Download } from "lucide-react";
+import { Check, X, Loader2, ArrowRight } from "lucide-react";
 import { API } from "@/lib/api";
 
 export const Hero = () => {
@@ -94,17 +94,6 @@ export const Hero = () => {
               {status.reason}
             </p>
           )}
-        </div>
-
-        <div className="mt-6 flex justify-center">
-          <a
-            data-testid="download-site-btn"
-            href={`${API}/download-site`}
-            className="group inline-flex items-center gap-2 px-5 py-2.5 rounded-full glass-strong border border-white/10 text-xs font-mono2 uppercase tracking-wider text-zinc-300 hover:text-white hover:border-brand-500/50 hover:bg-brand-500/10 transition-all"
-          >
-            <Download className="w-3.5 h-3.5 transition-transform group-hover:translate-y-0.5" />
-            Download Site
-          </a>
         </div>
       </div>
     </section>
