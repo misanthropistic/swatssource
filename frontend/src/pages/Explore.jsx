@@ -5,6 +5,7 @@ import { Search, Eye, BadgeCheck, ExternalLink, Link2, User, Loader2 } from "luc
 import { Navbar } from "@/components/landing/Navbar";
 import { Footer } from "@/components/landing/Footer";
 import { api, fileUrl, profileUrl } from "@/lib/api";
+import { filterProfiles, loadLeaderboardRows } from "@/lib/publicProfiles";
 import { toast } from "sonner";
 
 const FILTERS = [
@@ -91,14 +92,25 @@ export default function Explore() {
 
   const load = useCallback(async () => {
     setLoading(true);
+    let list = [];
     try {
       const { data } = await api.get("/explore", { params: { q: q.trim(), sort, tier, badge, limit: 60 } });
-      setItems(Array.isArray(data) ? data : []);
+      list = Array.isArray(data) ? data : [];
     } catch {
-      setItems([]);
-    } finally {
-      setLoading(false);
+      list = [];
     }
+    // An older API build may not serve /explore yet. The leaderboard is the
+    // same real roster, so Explore falls back to it and filters locally rather
+    // than claiming nobody has a page.
+    if (!list.length) {
+      try {
+        list = filterProfiles(await loadLeaderboardRows(60), { q, tier, badge });
+      } catch {
+        list = [];
+      }
+    }
+    setItems(list);
+    setLoading(false);
   }, [q, sort, tier, badge]);
 
   useEffect(() => {

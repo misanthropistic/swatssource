@@ -1,0 +1,12 @@
+.git
+.gitignore
+.freebuff
+frontend
+**/node_modules
+**/.env
+**/.env.*
+!**/.env.example
+**/*.log
+test_reports
+memory
+tests

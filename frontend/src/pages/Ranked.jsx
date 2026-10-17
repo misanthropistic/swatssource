@@ -5,6 +5,7 @@ import { Trophy, Eye, BadgeCheck, Crown, Medal, User, Loader2, ChevronLeft, Chev
 import { Navbar } from "@/components/landing/Navbar";
 import { Footer } from "@/components/landing/Footer";
 import { api, fileUrl } from "@/lib/api";
+import { loadLeaderboardRows } from "@/lib/publicProfiles";
 
 const SWAP_MS = 5000;
 const SPRING = { type: "spring", stiffness: 120, damping: 24, mass: 0.9 };
@@ -197,10 +198,22 @@ export default function Ranked() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    let alive = true;
+    const finish = (list) => {
+      if (!alive) return;
+      setItems(list);
+      setLoading(false);
+    };
     api.get("/ranked", { params: { limit: 100 } })
-      .then(({ data }) => setItems(Array.isArray(data) ? data : []))
-      .catch(() => setItems([]))
-      .finally(() => setLoading(false));
+      .then(({ data }) => {
+        const list = Array.isArray(data) ? data : [];
+        // A build that predates /ranked still serves /leaderboard.
+        return list.length ? list : loadLeaderboardRows(100);
+      })
+      .catch(() => loadLeaderboardRows(100).catch(() => []))
+      .then(finish)
+      .catch(() => finish([]));
+    return () => { alive = false; };
   }, []);
 
   const spotlit = useMemo(() => items.slice(0, 7), [items]);
