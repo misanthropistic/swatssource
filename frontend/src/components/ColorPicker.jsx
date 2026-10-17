@@ -3,14 +3,14 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import { Check } from "lucide-react";
 
 const PRESET_COLORS = [
-  "#ffffff", "#000000", "#FF7FBC", "#FFB8DB", "#F05CA5",
+  "#ffffff", "#000000", "#A48DF4", "#D3C4FF", "#8C71E8",
   "#3b82f6", "#38bdf8", "#10b981", "#34d399", "#f59e0b",
   "#ef4444", "#f43f5e", "#ec4899", "#18181b"
 ];
 
 // Helper: Parse any hex string (#rgb, #rrggbb, #rrggbbaa) to HSV + Alpha
 function hexToHsv(hexStr) {
-  let hex = (hexStr || "#FF7FBC").trim().replace(/^#/, "");
+  let hex = (hexStr || "#A48DF4").trim().replace(/^#/, "");
   if (hex.length === 3) {
     hex = hex.split("").map((c) => c + c).join("");
   } else if (hex.length === 4) {
@@ -104,8 +104,8 @@ function hsvToHex(h, s, v, a = 1) {
 
 export function ColorPicker({ label, value, onChange, testid }) {
   const [isOpen, setIsOpen] = useState(false);
-  const [hsv, setHsv] = useState(() => hexToHsv(value || "#FF7FBC"));
-  const [hexInput, setHexInput] = useState(value || "#FF7FBC");
+  const [hsv, setHsv] = useState(() => hexToHsv(value || "#A48DF4"));
+  const [hexInput, setHexInput] = useState(value || "#A48DF4");
 
   const satValRef = useRef(null);
   const hueRef = useRef(null);
@@ -114,8 +114,8 @@ export function ColorPicker({ label, value, onChange, testid }) {
   // Sync state if external value changes while closed
   useEffect(() => {
     if (!isOpen) {
-      setHsv(hexToHsv(value || "#FF7FBC"));
-      setHexInput(value || "#FF7FBC");
+      setHsv(hexToHsv(value || "#A48DF4"));
+      setHexInput(value || "#A48DF4");
     }
   }, [value, isOpen]);
 
@@ -234,12 +234,12 @@ export function ColorPicker({ label, value, onChange, testid }) {
             <div
               className="w-7 h-7 rounded-lg shadow-inner shrink-0 relative overflow-hidden"
               style={{
-                backgroundColor: value || "#FF7FBC",
+                backgroundColor: value || "#A48DF4",
                 boxShadow: "inset 0 0 0 1px rgba(255,255,255,0.15)",
               }}
             />
             <span className="w-full bg-transparent text-[13px] font-mono2 text-zinc-200 uppercase flex-1 text-left font-semibold truncate">
-              {value || "#FF7FBC"}
+              {value || "#A48DF4"}
             </span>
           </div>
         </PopoverTrigger>
@@ -346,7 +346,7 @@ export function ColorPicker({ label, value, onChange, testid }) {
                 onChange={handleHexInputChange}
                 onBlur={handleHexInputBlur}
                 className="w-full bg-transparent text-xs font-mono2 text-zinc-100 uppercase font-bold outline-none"
-                placeholder="#FF7FBC"
+                placeholder="#A48DF4"
                 maxLength={9}
               />
             </div>

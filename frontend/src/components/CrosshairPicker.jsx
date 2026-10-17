@@ -24,7 +24,7 @@ const Preview = ({ src, settings, natural, setNatural }) => {
 
   return (
     <div className="relative flex flex-col items-center">
-      <div className="relative grid h-[168px] w-[168px] shrink-0 place-items-center overflow-hidden rounded-2xl border border-white/10 bg-[radial-gradient(circle_at_50%_50%,rgba(255,127,188,0.15),transparent_70%),linear-gradient(rgba(255,255,255,.05)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,.05)_1px,transparent_1px)] [background-size:auto,16px_16px,16px_16px] shadow-[0_4px_24px_rgba(0,0,0,0.5)]">
+      <div className="relative grid h-[168px] w-[168px] shrink-0 place-items-center overflow-hidden rounded-2xl border border-white/10 bg-[radial-gradient(circle_at_50%_50%,rgba(164, 141, 244,0.15),transparent_70%),linear-gradient(rgba(255,255,255,.05)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,.05)_1px,transparent_1px)] [background-size:auto,16px_16px,16px_16px] shadow-[0_4px_24px_rgba(0,0,0,0.5)]">
         {src ? (
           <>
             {/* Live custom cursor preview */}
@@ -45,7 +45,7 @@ const Preview = ({ src, settings, natural, setNatural }) => {
               />
               {/* Centered click hotspot crosshair */}
               <span
-                className="pointer-events-none absolute h-3.5 w-3.5 -translate-x-1/2 -translate-y-1/2 rounded-full border border-brand-300 bg-brand-500/50 shadow-[0_0_12px_rgba(255,127,188,0.9)]"
+                className="pointer-events-none absolute h-3.5 w-3.5 -translate-x-1/2 -translate-y-1/2 rounded-full border border-brand-300 bg-brand-500/50 shadow-[0_0_12px_rgba(164, 141, 244,0.9)]"
                 style={{
                   left: `calc(50% - ${width / 2}px + ${left}px)`,
                   top: `calc(50% - ${height / 2}px + ${top}px)`,

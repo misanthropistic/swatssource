@@ -51,18 +51,18 @@ export default function Badges() {
     name: "",
     desc: "",
     icon_url: "",
-    color: "#FF7FBC",
-    glow: "#FF7FBC66",
+    color: "#A48DF4",
+    glow: "#A48DF466",
   });
 
   const [paintSettings, setPaintSettings] = useState({
     glow: user?.profile?.badge_glow !== false,
-    glow_color: user?.profile?.badge_glow_color || "#FF7FBC",
+    glow_color: user?.profile?.badge_glow_color || "#A48DF4",
     glow_intensity: user?.profile?.badge_glow_intensity ?? 60,
     // The colour laid over every badge, and how much of it. Off unless the owner
     // turns it on: an overlay on by default would repaint everybody's badges.
     overlay: user?.profile?.badge_overlay === true,
-    overlay_color: user?.profile?.badge_overlay_color || "#FF7FBC",
+    overlay_color: user?.profile?.badge_overlay_color || "#A48DF4",
     overlay_strength: user?.profile?.badge_overlay_strength ?? 60,
   });
 
@@ -251,7 +251,7 @@ export default function Badges() {
       setEquippedList(newEquipped);
       toast.success(`Custom badge "${customBadge.name}" created & equipped!`);
       setShowCreateModal(false);
-      setCustomBadge({ name: "", desc: "", icon_url: "", color: "#FF7FBC", glow: "#FF7FBC66" });
+      setCustomBadge({ name: "", desc: "", icon_url: "", color: "#A48DF4", glow: "#A48DF466" });
     } catch {
       toast.error("Failed to create custom badge");
     }
@@ -275,7 +275,7 @@ export default function Badges() {
           </button>
           <button
             onClick={() => (isPremium ? setShowCreateModal(true) : setPremiumFeature("Custom badges"))}
-            className="px-4 py-2.5 rounded-xl bg-gradient-to-r from-brand-500 to-brand-600 text-white text-xs font-semibold flex items-center gap-2 hover:brightness-110 transition shadow-[0_0_20px_rgba(255,127,188,0.3)]"
+            className="px-4 py-2.5 rounded-xl bg-gradient-to-r from-brand-500 to-brand-600 text-white text-xs font-semibold flex items-center gap-2 hover:brightness-110 transition shadow-[0_0_20px_rgba(164, 141, 244,0.3)]"
           >
             {!isPremium && <Lock className="w-3.5 h-3.5 text-amber-400" />}
             <Plus className="w-4 h-4" /> Create Custom Badge
@@ -495,7 +495,7 @@ export default function Badges() {
           className="fixed inset-0 z-50 bg-black/80 backdrop-blur-md flex items-center justify-center p-4 animate-in fade-in duration-200"
           onClick={(e) => { if (e.target === e.currentTarget) setShowPaintModal(false); }}
         >
-          <div className="bg-[#0b0b0d]/95 backdrop-blur-2xl rounded-3xl p-5 max-w-md w-full relative border border-white/15 shadow-[0_25px_90px_rgba(0,0,0,0.95),0_0_40px_rgba(255,127,188,0.15)] animate-in zoom-in-95 duration-200">
+          <div className="bg-[#0A0A0D]/95 backdrop-blur-2xl rounded-3xl p-5 max-w-md w-full relative border border-white/15 shadow-[0_25px_90px_rgba(0,0,0,0.95),0_0_40px_rgba(164, 141, 244,0.15)] animate-in zoom-in-95 duration-200">
             <div className="flex items-center justify-between pb-4 border-b border-white/10">
               <div className="flex items-center gap-2">
                 <Paintbrush className="w-5 h-5 text-brand-400" />
@@ -597,7 +597,7 @@ export default function Badges() {
           className="fixed inset-0 z-50 bg-black/80 backdrop-blur-md flex items-center justify-center p-4 animate-in fade-in duration-200"
           onClick={(e) => { if (e.target === e.currentTarget) setShowCreateModal(false); }}
         >
-          <div className="bg-[#0b0b0d]/95 backdrop-blur-2xl rounded-3xl p-5 max-w-md w-full relative border border-white/15 shadow-[0_25px_90px_rgba(0,0,0,0.95),0_0_40px_rgba(255,127,188,0.15)] animate-in zoom-in-95 duration-200">
+          <div className="bg-[#0A0A0D]/95 backdrop-blur-2xl rounded-3xl p-5 max-w-md w-full relative border border-white/15 shadow-[0_25px_90px_rgba(0,0,0,0.95),0_0_40px_rgba(164, 141, 244,0.15)] animate-in zoom-in-95 duration-200">
             <div className="flex items-center justify-between pb-4 border-b border-white/10">
               <div className="flex items-center gap-2">
                 <Plus className="w-5 h-5 text-brand-400" />

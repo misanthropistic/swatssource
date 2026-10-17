@@ -378,9 +378,9 @@
 }
 .fx-ov-swats_pulse::after { animation-delay: 1.45s; }
 @keyframes fx-sw-ring {
-  0% { box-shadow: inset 0 0 0 0 rgba(255, 127, 188, .8); opacity: 1; }
-  55% { box-shadow: inset 0 0 0 4px rgba(255, 127, 188, .45); }
-  100% { box-shadow: inset 0 0 0 15px rgba(255, 127, 188, 0); opacity: .15; }
+  0% { box-shadow: inset 0 0 0 0 rgba(164, 141, 244, .8); opacity: 1; }
+  55% { box-shadow: inset 0 0 0 4px rgba(164, 141, 244, .45); }
+  100% { box-shadow: inset 0 0 0 15px rgba(164, 141, 244, 0); opacity: .15; }
 }
 
 /* Glaze — a frosted plate with one slow sheen crossing it. */
@@ -408,7 +408,7 @@
   mix-blend-mode: screen;
 }
 .fx-ov-swats_chromatic::before {
-  box-shadow: inset 0 0 0 2px rgba(255, 45, 149, .62);
+  box-shadow: inset 0 0 0 2px rgba(164, 141, 244, .62);
   animation: fx-sw-chroma-warm 3.2s ease-in-out infinite;
 }
 .fx-ov-swats_chromatic::after {
@@ -426,25 +426,25 @@
 
 /* Radiance — a breathing halo with a slow aurora turning inside it. */
 .fx-ov-swats_radiance {
-  background: radial-gradient(circle, rgba(255, 127, 188, .32) 42%, transparent 72%);
+  background: radial-gradient(circle, rgba(164, 141, 244, .32) 42%, transparent 72%);
   animation: fx-sw-radiance 5.2s ease-in-out infinite;
 }
 .fx-ov-swats_radiance::before {
   inset: -22%;
   background: conic-gradient(
     from 0deg,
-    rgba(255, 127, 188, 0) 0deg,
-    rgba(255, 127, 188, .5) 55deg,
+    rgba(164, 141, 244, 0) 0deg,
+    rgba(164, 141, 244, .5) 55deg,
     rgba(255, 255, 255, .38) 88deg,
-    rgba(255, 127, 188, 0) 150deg,
-    rgba(255, 127, 188, 0) 360deg
+    rgba(211, 196, 255, .4) 150deg,
+    rgba(164, 141, 244, 0) 360deg
   );
   filter: blur(6px);
   animation: fx-sw-aurora-turn 9s linear infinite;
 }
 @keyframes fx-sw-radiance {
-  0%, 100% { opacity: .7; box-shadow: 0 0 20px 4px rgba(255, 127, 188, .3); }
-  50% { opacity: 1; box-shadow: 0 0 36px 10px rgba(255, 127, 188, .55); }
+  0%, 100% { opacity: .7; box-shadow: 0 0 20px 4px rgba(164, 141, 244, .3); }
+  50% { opacity: 1; box-shadow: 0 0 36px 10px rgba(164, 141, 244, .55); }
 }
 @keyframes fx-sw-aurora-turn {
   to { transform: rotate(360deg); }
@@ -452,7 +452,7 @@
 
 /* Twilight — dusk bands drifting across each other. */
 .fx-ov-swats_twilight {
-  background: linear-gradient(180deg, rgba(240, 92, 165, .42) 0%, rgba(30, 27, 75, .5) 58%, rgba(8, 8, 12, .6) 100%);
+  background: linear-gradient(180deg, rgba(140, 113, 232, .42) 0%, rgba(30, 27, 75, .5) 58%, rgba(8, 8, 12, .6) 100%);
   animation: fx-sw-dusk 8.5s ease-in-out infinite;
 }
 .fx-ov-swats_twilight::before {
@@ -604,7 +604,7 @@
   width: 5px;
   height: 5px;
   border-radius: 9999px;
-  background: #FF7FBC;
+  background: #A48DF4;
   opacity: 0;
   will-change: transform, opacity;
 }

@@ -143,7 +143,7 @@ export default function Links() {
         label: meta.name || platform,
         url: "",
         username: "",
-        color: meta.color || "#FF7FBC",
+        color: meta.color || "#A48DF4",
         glow: "",
       },
     });
@@ -348,7 +348,7 @@ export default function Links() {
           {links.map((l, i) => {
             const meta = ALL_MAP[l.platform] || {};
             const Icon = meta.Icon || LinkIcon;
-            const c = l.color || globals.color || meta.color || "#FF7FBC";
+            const c = l.color || globals.color || meta.color || "#A48DF4";
             const glow = l.glow || globals.glow || "";
 
             return (
@@ -474,7 +474,7 @@ export default function Links() {
             data-testid="links-save-btn"
             onClick={saveAll}
             disabled={saving}
-            className="flex items-center gap-2 rounded-xl bg-gradient-to-r from-brand-500 to-brand-600 px-5 py-2.5 text-xs font-bold text-white shadow-[0_0_24px_rgba(255,127,188,0.35)] transition-colors duration-200 hover:brightness-110 disabled:opacity-50"
+            className="flex items-center gap-2 rounded-xl bg-gradient-to-r from-brand-500 to-brand-600 px-5 py-2.5 text-xs font-bold text-white shadow-[0_0_24px_rgba(164, 141, 244,0.35)] transition-colors duration-200 hover:brightness-110 disabled:opacity-50"
           >
             {saving ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />}
             {saving ? "Saving…" : "Save Links"}
@@ -488,14 +488,14 @@ export default function Links() {
           className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 p-4 backdrop-blur-md animate-in fade-in duration-200"
           onClick={(e) => { if (e.target === e.currentTarget) setActiveModal(null); }}
         >
-          <div className="bg-[#0b0b0d]/95 backdrop-blur-2xl relative max-h-[90vh] w-full max-w-3xl overflow-y-auto rounded-3xl border border-white/15 p-7 shadow-[0_25px_90px_rgba(0,0,0,0.95),0_0_40px_rgba(255,127,188,0.15)] animate-in zoom-in-95 duration-200">
+          <div className="bg-[#0A0A0D]/95 backdrop-blur-2xl relative max-h-[90vh] w-full max-w-3xl overflow-y-auto rounded-3xl border border-white/15 p-7 shadow-[0_25px_90px_rgba(0,0,0,0.95),0_0_40px_rgba(164, 141, 244,0.15)] animate-in zoom-in-95 duration-200">
             <div className="flex items-center justify-between border-b border-white/10 pb-5">
               <div className="flex items-center gap-2.5">
                 <span
                   className="flex h-9 w-9 items-center justify-center rounded-xl"
-                  style={{ background: `${activeMeta.color || "#FF7FBC"}1f` }}
+                  style={{ background: `${activeMeta.color || "#A48DF4"}1f` }}
                 >
-                  <ActiveIcon className="h-4 w-4" style={{ color: activeMeta.color || "#FF7FBC" }} />
+                  <ActiveIcon className="h-4 w-4" style={{ color: activeMeta.color || "#A48DF4" }} />
                 </span>
                 <h3 className="font-display text-lg font-bold text-zinc-100">
                   {activeModal.isNew ? "Add Link Card" : "Edit Link Card"}
@@ -634,7 +634,7 @@ export default function Links() {
                       {activeModal.link.icon_url ? (
                         <img src={fileUrl(activeModal.link.icon_url)} alt="" className="h-full w-full object-cover" />
                       ) : (
-                        <ActiveIcon className="h-5 w-5" style={{ color: activeMeta.color || "#FF7FBC" }} />
+                        <ActiveIcon className="h-5 w-5" style={{ color: activeMeta.color || "#A48DF4" }} />
                       )}
                     </span>
                     <div className="flex flex-1 flex-wrap items-center gap-2">
@@ -708,8 +708,8 @@ export default function Links() {
                 </div>
 
                 <div className="grid grid-cols-2 gap-4">
-                  <ColorPicker label="Custom Color" value={activeModal.link.color || "#FF7FBC"} onChange={(v) => patchLink({ color: v })} />
-                  <ColorPicker label="Custom Glow" value={activeModal.link.glow || "#FF7FBC"} onChange={(v) => patchLink({ glow: v })} />
+                  <ColorPicker label="Custom Color" value={activeModal.link.color || "#A48DF4"} onChange={(v) => patchLink({ color: v })} />
+                  <ColorPicker label="Custom Glow" value={activeModal.link.glow || "#A48DF4"} onChange={(v) => patchLink({ glow: v })} />
                 </div>
               </div>
 
@@ -796,8 +796,8 @@ export default function Links() {
               </label>
 
               <div className="grid grid-cols-2 gap-4">
-                <ColorPicker label="Global Color" value={globals.color || "#FF7FBC"} onChange={(v) => setGlobals({ ...globals, color: v })} />
-                <ColorPicker label="Global Glow" value={globals.glow || "#FF7FBC"} onChange={(v) => setGlobals({ ...globals, glow: v })} />
+                <ColorPicker label="Global Color" value={globals.color || "#A48DF4"} onChange={(v) => setGlobals({ ...globals, color: v })} />
+                <ColorPicker label="Global Glow" value={globals.glow || "#A48DF4"} onChange={(v) => setGlobals({ ...globals, glow: v })} />
               </div>
 
               <p className="rounded-xl border border-white/10 bg-white/[0.02] px-3.5 py-2.5 text-[11px] leading-relaxed text-zinc-400">

@@ -85,7 +85,7 @@ const withA = (hex, a = 100) => {
 const ADVANCED_OVERRIDE = (p) => p.advanced_mode === true;
 
 function cardStyles(p) {
-  const accent = p.accent_color || "#FF7FBC";
+  const accent = p.accent_color || "#A48DF4";
   const base = { card: {}, pill: {}, view: {} };
   switch (ADVANCED_OVERRIDE(p) ? "classic" : p.card_style) {
     case "frosted":
@@ -1145,8 +1145,8 @@ export const ProfilePreview = ({ data, embedded = false, backgroundAudio = false
   // never read by any renderer, so a colour background "never showed" — the
   // page stayed on the default black. A media background still paints over it.
   const pageBg = p.background_color || "#050505";
-  const accent = p.accent_color || "#FF7FBC";
-  const theme = p.theme_color || "#FF7FBC";
+  const accent = p.accent_color || "#A48DF4";
+  const theme = p.theme_color || "#A48DF4";
   const links = p.links || [];
   const widgets = p.widgets || [];
   const nameColor = p.name_color || "#ffffff";

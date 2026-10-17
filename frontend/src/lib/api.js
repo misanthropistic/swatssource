@@ -21,7 +21,7 @@ if (API_OVERRIDDEN || process.env.NODE_ENV === "development") {
     `%c[swats.bio]%c Backend API Target: %c${API}%c ${
       API_OVERRIDDEN ? "(from REACT_APP_BACKEND_URL)" : "(default relative /api)"
     }`,
-    "color: #FF7FBC; font-weight: bold;",
+    "color: #A48DF4; font-weight: bold;",
     "color: #a1a1aa;",
     "color: #38bdf8; font-weight: bold;",
     "color: #71717a; font-style: italic;"

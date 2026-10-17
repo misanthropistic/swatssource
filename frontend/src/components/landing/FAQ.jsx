@@ -20,7 +20,7 @@ const FAQItem = ({ item, open, onToggle, index }) => (
   <div
     data-testid={`faq-item-${index}`}
     className={`rounded-2xl border transition duration-300 overflow-hidden ${
-      open ? "bg-brand-500/10 border-brand-500/40 shadow-[0_0_30px_rgba(255,127,188,0.15)]" : "glass border-white/10 hover:border-white/20"
+      open ? "bg-brand-500/10 border-brand-500/40 shadow-[0_0_30px_rgba(164, 141, 244,0.15)]" : "glass border-white/10 hover:border-white/20"
     }`}
   >
     <button onClick={onToggle} className="w-full flex items-center justify-between gap-4 p-5 text-left">

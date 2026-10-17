@@ -15,47 +15,32 @@ module.exports = {
         sm: 'calc(var(--radius) - 4px)'
       },
       colors: {
-        // ── swats palette: black, grey and white, with a light pink accent ──────
-        //
-        // The page is black/grey/white end to end; pink is the ONLY colour in the
-        // interface and it is deliberately light rather than neon, so it reads as
-        // an accent against near-black instead of glowing at it.
-        //
-        // Two consequences worth knowing before changing this ramp:
-        //   1. A light fill cannot carry white text. Solid pink surfaces (500/600)
-        //      are given near-black ink by a rule in index.css that matches the
-        //      fill class together with `text-white`, so the ~100 existing
-        //      `bg-brand-500 text-white` buttons did not each need editing.
-        //   2. Anything that means "pressed" or "gradient tail" uses 600–800, which
-        //      darken within the same hue family instead of drifting to magenta.
+        // ── swats palette: Near-black #0A0A0D with Primary purple #A48DF4 and Light lavender #D3C4FF ──
         brand: {
-          50: '#FFF6FB',
-          100: '#FFE9F5',
-          200: '#FFD3EA',
-          300: '#FFB8DB', // light pink — accent text, icons, borders
-          400: '#FF9DCC', // light pink — the usual accent tint
-          500: '#FF7FBC', // light pink — primary fill (dark ink on top)
-          600: '#F05CA5', // pressed / hover fill
-          700: '#D63A8B',
-          800: '#A52268',
-          900: '#6E1544',
-          950: '#3A0B24',
+          50: '#FAF8FF',
+          100: '#F2EDFF',
+          200: '#E4DAFF',
+          300: '#D3C4FF', // Light lavender (#D3C4FF) — accent text, icons, borders, highlights
+          400: '#BCACF8', // soft lavender accent
+          500: '#A48DF4', // Primary purple (#A48DF4) — primary brand fill & buttons
+          600: '#8C71E8', // pressed / hover purple fill
+          700: '#7354D4', // deep purple
+          800: '#5938B8', // rich violet
+          900: '#3E228B',
+          950: '#1F0E54',
         },
-        // Pure neutrals. The old ramp carried a slight violet cast (Gunmetal
-        // #343238, Smoky Grey #55545B), which fought the pink accent and made
-        // "grey" read as purple in large areas.
         ink: {
-          50: '#FAFAFA',
-          100: '#E5E5E8',
-          200: '#B4B4BC',
-          300: '#8C8C95',
-          400: '#71717A',
-          500: '#5A5A62',
-          600: '#45454C',
-          700: '#333338',
-          800: '#212125',
-          900: '#131316',
-          950: '#08080A',
+          50: '#FAFAFC',
+          100: '#E6E6EC',
+          200: '#B5B5C2',
+          300: '#8D8D9E',
+          400: '#717182',
+          500: '#59596A',
+          600: '#444454',
+          700: '#32323E',
+          800: '#202029',
+          900: '#14141B',
+          950: '#0A0A0D', // Near-black (#0A0A0D)
         },
         background: 'hsl(var(--background))',
         foreground: 'hsl(var(--foreground))',

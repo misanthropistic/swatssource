@@ -8,10 +8,10 @@
     no background and no plate, and the notches are cut deep so the silhouette
     still reads as a crown at 18px.
   -->
-  <path d="M24 8.4 31.2 29 41 12.5 38.6 35H9.4L7 12.5 16.8 29 24 8.4Z" fill="#FF7FBC"/>
-  <path d="M9.4 35h29.2c1 0 1.8.8 1.8 1.8v3.8c0 1-.8 1.8-1.8 1.8H9.4c-1 0-1.8-.8-1.8-1.8v-3.8c0-1 .8-1.8 1.8-1.8Z" fill="#D34E93"/>
-  <circle cx="24" cy="7.6" r="3.2" fill="#FFC2DE"/>
-  <circle cx="7" cy="12.5" r="3.2" fill="#FFC2DE"/>
-  <circle cx="41" cy="12.5" r="3.2" fill="#FFC2DE"/>
-  <circle cx="24" cy="38.7" r="2.3" fill="#FF7FBC"/>
+  <path d="M24 8.4 31.2 29 41 12.5 38.6 35H9.4L7 12.5 16.8 29 24 8.4Z" fill="#A48DF4"/>
+  <path d="M9.4 35h29.2c1 0 1.8.8 1.8 1.8v3.8c0 1-.8 1.8-1.8 1.8H9.4c-1 0-1.8-.8-1.8-1.8v-3.8c0-1 .8-1.8 1.8-1.8Z" fill="#7354D4"/>
+  <circle cx="24" cy="7.6" r="3.2" fill="#D3C4FF"/>
+  <circle cx="7" cy="12.5" r="3.2" fill="#D3C4FF"/>
+  <circle cx="41" cy="12.5" r="3.2" fill="#D3C4FF"/>
+  <circle cx="24" cy="38.7" r="2.3" fill="#A48DF4"/>
 </svg>

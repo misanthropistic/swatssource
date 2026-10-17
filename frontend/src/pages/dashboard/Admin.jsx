@@ -372,7 +372,7 @@ export default function Admin() {
       {/* Quick Broadcast Modal */}
       {quickBroadcastModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-md px-4">
-          <div className="w-full max-w-md glass-strong rounded-3xl p-6 space-y-4 border border-brand-500/30 fade-up shadow-[0_0_50px_rgba(255,127,188,0.2)]">
+          <div className="w-full max-w-md glass-strong rounded-3xl p-6 space-y-4 border border-brand-500/30 fade-up shadow-[0_0_50px_rgba(164, 141, 244,0.2)]">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2.5 text-brand-300">
                 <Send className="w-5 h-5" />

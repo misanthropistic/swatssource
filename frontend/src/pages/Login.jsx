@@ -134,7 +134,7 @@ export default function Login() {
         <p className="text-center text-sm text-zinc-500 mt-1">{mode === "login" ? "Log in to manage your page" : "Claim your digital identity"}</p>
 
         <button data-testid="discord-login-btn" onClick={discordAuth}
-          className="mt-7 w-full flex items-center justify-center gap-2.5 py-3 rounded-xl text-sm font-semibold bg-white hover:bg-white/90 text-[#08080a] transition">
+          className="mt-7 w-full flex items-center justify-center gap-2.5 py-3 rounded-xl text-sm font-semibold bg-white hover:bg-white/90 text-[#0A0A0D] transition">
           <FaDiscord className="w-5 h-5" /> {mode === "login" ? "Login with Discord" : "Sign up with Discord"}
         </button>
 
@@ -206,7 +206,7 @@ export default function Login() {
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm px-4" data-testid="premium-prompt">
           <div className="w-full max-w-md glass-strong rounded-3xl p-8 relative fade-up">
             <button onClick={() => setShowPremium(false)} className="absolute top-4 right-4 text-zinc-500 hover:text-zinc-200"><X className="w-5 h-5" /></button>
-            <div className="flex items-center justify-center w-14 h-14 rounded-2xl bg-gradient-to-br from-brand-500 to-brand-700 mx-auto shadow-[0_0_30px_rgba(255,127,188,0.5)]"><Crown className="w-7 h-7 text-white" /></div>
+            <div className="flex items-center justify-center w-14 h-14 rounded-2xl bg-gradient-to-br from-brand-500 to-brand-700 mx-auto shadow-[0_0_30px_rgba(164, 141, 244,0.5)]"><Crown className="w-7 h-7 text-white" /></div>
             <h2 className="text-center font-display text-2xl font-extrabold text-zinc-50 mt-5">Want a Premium account?</h2>
             <p className="text-center text-sm text-zinc-500 mt-1">Unlock everything for $5/month. You can always upgrade later.</p>
             <ul className="mt-6 space-y-2.5 max-h-56 overflow-y-auto pr-1">

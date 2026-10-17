@@ -124,7 +124,7 @@ export default function Pricing() {
             </ul>
           </div>
 
-          <div data-testid="plan-premium" className="relative rounded-3xl p-8 bg-gradient-to-b from-brand-600/15 to-transparent border border-brand-500/30 shadow-[0_0_60px_rgba(240,92,165,0.2)]">
+          <div data-testid="plan-premium" className="relative rounded-3xl p-8 bg-gradient-to-b from-brand-600/15 to-transparent border border-brand-500/30 shadow-[0_0_60px_rgba(140, 113, 232,0.2)]">
             <div className="absolute -top-3 left-1/2 -translate-x-1/2 px-3 py-1 rounded-full bg-gradient-to-r from-brand-500 to-brand-600 text-white text-[10px] font-bold uppercase tracking-wider">Most Popular</div>
             <div className="flex items-center gap-2 text-sm font-mono2 uppercase tracking-wider text-brand-300"><Crown className="w-4 h-4" /> Premium</div>
             <div className="mt-3 font-display text-4xl font-black text-zinc-50">{PREMIUM_PRICE.label}<span className="text-base font-normal text-zinc-500">/{PREMIUM_PRICE.cadence.replace("per ", "")}</span></div>
@@ -144,7 +144,7 @@ export default function Pricing() {
                 </button>
               </>
             ) : (
-              <button onClick={upgrade} disabled={busy} data-testid="premium-cta" className="mt-6 w-full text-center py-3 rounded-xl bg-gradient-to-r from-brand-500 to-brand-600 text-white text-sm font-semibold hover:brightness-110 transition shadow-[0_0_24px_rgba(255,127,188,0.4)] disabled:opacity-50">
+              <button onClick={upgrade} disabled={busy} data-testid="premium-cta" className="mt-6 w-full text-center py-3 rounded-xl bg-gradient-to-r from-brand-500 to-brand-600 text-white text-sm font-semibold hover:brightness-110 transition shadow-[0_0_24px_rgba(164, 141, 244,0.4)] disabled:opacity-50">
                 {busy ? <Loader2 className="inline h-4 w-4 animate-spin" /> : "Go Premium"}
               </button>
             )}

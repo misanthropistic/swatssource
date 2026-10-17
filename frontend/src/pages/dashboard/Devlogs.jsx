@@ -250,7 +250,7 @@ export default function Devlogs() {
             type="submit"
             disabled={saving}
             data-testid="devlog-publish"
-            className="flex items-center gap-2 rounded-xl bg-gradient-to-r from-brand-500 to-brand-600 px-5 py-2.5 text-sm font-semibold text-white shadow-[0_0_20px_rgba(255,127,188,0.3)] transition hover:brightness-110 disabled:opacity-60"
+            className="flex items-center gap-2 rounded-xl bg-gradient-to-r from-brand-500 to-brand-600 px-5 py-2.5 text-sm font-semibold text-white shadow-[0_0_20px_rgba(164, 141, 244,0.3)] transition hover:brightness-110 disabled:opacity-60"
           >
             {saving ? <Loader2 className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4" />} Publish devlog
           </button>

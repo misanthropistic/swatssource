@@ -173,7 +173,7 @@ export default function PublicProfile() {
   if (notFound) {
     return (
       <div className="min-h-screen sw-page-bg flex flex-col items-center justify-center text-center px-4" data-testid="public-notfound">
-        <img src="/logo.png" alt="swats.bio" className="w-16 h-16 rounded-2xl mb-4 object-contain shadow-[0_0_30px_rgba(255,127,188,0.4)]" />
+        <img src="/logo.png" alt="swats.bio" className="w-16 h-16 rounded-2xl mb-4 object-contain shadow-[0_0_30px_rgba(164, 141, 244,0.4)]" />
         <div className="font-display text-5xl font-black text-zinc-100">404</div>
         <p className="mt-3 text-zinc-400">swats.bio/{alias} isn't claimed yet.</p>
         <Link to={`/!/login?claim=${alias}`} className="mt-6 px-5 py-2.5 rounded-full bg-gradient-to-r from-brand-500 to-brand-600 text-white text-sm font-semibold hover:brightness-110 transition">Claim this name</Link>
@@ -221,7 +221,7 @@ export default function PublicProfile() {
         >
           {p.entry_style === "text" ? (
             <div className="flex flex-col items-center gap-2 text-center p-4">
-              <div className="text-zinc-200 font-mono2 text-sm uppercase tracking-widest hover:text-white transition-colors drop-shadow-[0_0_15px_rgba(255,127,188,0.7)]">
+              <div className="text-zinc-200 font-mono2 text-sm uppercase tracking-widest hover:text-white transition-colors drop-shadow-[0_0_15px_rgba(164, 141, 244,0.7)]">
                 {p.entry_text || "Click to enter"}
               </div>
               {p.entry_subtext && (
@@ -253,7 +253,7 @@ export default function PublicProfile() {
               <div className="relative flex items-center justify-center">
                 <span className="pointer-events-none absolute h-20 w-20 rounded-full border border-brand-400/40 animate-ping" />
                 <span className="pointer-events-none absolute h-28 w-28 rounded-full border border-brand-400/20 animate-pulse" />
-                <div className="relative rounded-full border border-brand-400/60 bg-brand-500/25 px-7 py-3.5 text-sm font-semibold text-brand-100 shadow-[0_0_35px_rgba(255,127,188,0.5)] backdrop-blur hover:scale-105 transition-transform">
+                <div className="relative rounded-full border border-brand-400/60 bg-brand-500/25 px-7 py-3.5 text-sm font-semibold text-brand-100 shadow-[0_0_35px_rgba(164, 141, 244,0.5)] backdrop-blur hover:scale-105 transition-transform">
                   {p.entry_text || "Click to Listen & Enter"}
                 </div>
               </div>

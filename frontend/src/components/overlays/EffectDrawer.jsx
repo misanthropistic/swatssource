@@ -96,7 +96,7 @@ export function EffectDrawer({
   open = false,
   onOpenChange,
   variant = "text",
-  accent = "#FF7FBC",
+  accent = "#A48DF4",
   title,
   description,
   options = [],

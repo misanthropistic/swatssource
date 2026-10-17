@@ -54,7 +54,7 @@ function DecorationButton({ item, avatarUrl, selected, onSelect }) {
       onClick={() => onSelect(item)}
       className={`group relative aspect-square rounded-2xl border p-1 transition ${
         selected
-          ? "border-brand-500 bg-brand-500/20 shadow-[0_0_15px_rgba(255,127,188,0.3)]"
+          ? "border-brand-500 bg-brand-500/20 shadow-[0_0_15px_rgba(164, 141, 244,0.3)]"
           : "border-white/10 hover:border-white/25 hover:bg-white/5"
       }`}
     >
@@ -188,7 +188,7 @@ export default function AvatarDecorationModal({
       }}
     >
       <div
-        className="bg-[#0b0b0d]/95 backdrop-blur-2xl rounded-3xl p-6 max-w-4xl w-full max-h-[88vh] flex flex-col relative shadow-[0_25px_90px_rgba(0,0,0,0.95),0_0_40px_rgba(255,127,188,0.15)] border border-white/15 animate-in zoom-in-95 duration-200"
+        className="bg-[#0A0A0D]/95 backdrop-blur-2xl rounded-3xl p-6 max-w-4xl w-full max-h-[88vh] flex flex-col relative shadow-[0_25px_90px_rgba(0,0,0,0.95),0_0_40px_rgba(164, 141, 244,0.15)] border border-white/15 animate-in zoom-in-95 duration-200"
         data-testid="decoration-modal"
       >
         {/* Header */}

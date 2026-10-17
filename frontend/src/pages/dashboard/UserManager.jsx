@@ -35,7 +35,7 @@ const ROLES = [
     label: "Admin",
     description: "Full dashboard access: users, tiers, badges and settings.",
     Icon: ShieldCheck,
-    tint: "#FF7FBC",
+    tint: "#A48DF4",
   },
 ];
 

@@ -340,7 +340,7 @@ const EntryStyleThumb = ({ id, accent }) => (
       style={{ background: `radial-gradient(circle at 50% 130%, ${accent}33, transparent 70%)` }}
     />
     {id === "text" ? (
-      <span className="relative font-mono2 text-[10px] uppercase tracking-widest text-zinc-300 drop-shadow-[0_0_8px_rgba(255,127,188,0.6)]">Click to enter</span>
+      <span className="relative font-mono2 text-[10px] uppercase tracking-widest text-zinc-300 drop-shadow-[0_0_8px_rgba(164, 141, 244,0.6)]">Click to enter</span>
     ) : id === "terminal" ? (
       <span className="relative font-mono2 text-[9px] uppercase tracking-wider text-emerald-400 font-bold">&gt; [DECRYPT]</span>
     ) : id === "glitch" ? (
@@ -792,7 +792,7 @@ export default function Editor() {
   }, [user?.profile?.widgets, user?.profile?.tracks]);
 
   const set = (k, v) => setP((prev) => ({ ...prev, [k]: v }));
-  const accentColor = p.accent_color || "#FF7FBC";
+  const accentColor = p.accent_color || "#A48DF4";
 
   // Per-effect tuning lives in profile.fx_tuning keyed by effect id, so it is
   // saved with everything else and read back by FxText via FxTuningProvider.
@@ -1109,7 +1109,7 @@ export default function Editor() {
                   </div>
                   <div>
                     <label className="mb-1.5 block text-xs text-zinc-400">Accent colour</label>
-                    <ColorPicker label="" value={p.accent_color || "#FF7FBC"} onChange={(v) => set("accent_color", v)} testid="color-accent" />
+                    <ColorPicker label="" value={p.accent_color || "#A48DF4"} onChange={(v) => set("accent_color", v)} testid="color-accent" />
                   </div>
                 </div>
               </ProfileRow>
@@ -1850,7 +1850,7 @@ export default function Editor() {
             onClick={save}
             disabled={saving}
             data-testid="editor-save"
-            className="w-full py-3.5 rounded-2xl bg-gradient-to-r from-brand-500 to-brand-600 text-white font-bold text-sm hover:brightness-110 transition disabled:opacity-50 flex items-center justify-center gap-2 shadow-[0_0_30px_rgba(255,127,188,0.3)]"
+            className="w-full py-3.5 rounded-2xl bg-gradient-to-r from-brand-500 to-brand-600 text-white font-bold text-sm hover:brightness-110 transition disabled:opacity-50 flex items-center justify-center gap-2 shadow-[0_0_30px_rgba(164, 141, 244,0.3)]"
           >
             {saving ? (
               <Loader2 className="w-4 h-4 animate-spin" />

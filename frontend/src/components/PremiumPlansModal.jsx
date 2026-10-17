@@ -131,7 +131,7 @@ export function PremiumPlansModal({ open = false, onClose, highlight = null }) {
 
         <div
           data-testid="premium-plan-premium"
-          className="relative overflow-hidden rounded-2xl border border-brand-500/30 bg-gradient-to-b from-brand-600/15 to-transparent p-5 shadow-[0_0_50px_-12px_rgba(240,92,165,0.45)]"
+          className="relative overflow-hidden rounded-2xl border border-brand-500/30 bg-gradient-to-b from-brand-600/15 to-transparent p-5 shadow-[0_0_50px_-12px_rgba(140, 113, 232,0.45)]"
         >
           <div className="pointer-events-none absolute -right-10 -top-14 h-36 w-36 rounded-full bg-brand-600/25 blur-[50px]" />
           <div className="relative flex items-center justify-between">

@@ -52,7 +52,7 @@ export const Navbar = () => {
             <Link
               to="/!/dashboard"
               data-testid="nav-dashboard-btn"
-              className="px-4 py-1.5 text-sm font-semibold rounded-full bg-gradient-to-r from-brand-500 to-brand-600 text-white hover:brightness-110 transition shadow-[0_0_20px_rgba(255,127,188,0.4)]"
+              className="px-4 py-1.5 text-sm font-semibold rounded-full bg-gradient-to-r from-brand-500 to-brand-600 text-white hover:brightness-110 transition shadow-[0_0_20px_rgba(164, 141, 244,0.4)]"
             >
               Dashboard
             </Link>

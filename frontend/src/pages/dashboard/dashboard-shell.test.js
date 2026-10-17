@@ -47,7 +47,7 @@ const FREE_USER = {
   equipped_badges: ["og"],
   discord: { linked: false },
   created_at: "2025-01-05T00:00:00.000Z",
-  profile: { bio: "hello world", links: [], widgets: [], tracks: [], accent_color: "#FF7FBC" },
+  profile: { bio: "hello world", links: [], widgets: [], tracks: [], accent_color: "#A48DF4" },
 };
 
 global.__DASH_USER__ = FREE_USER;

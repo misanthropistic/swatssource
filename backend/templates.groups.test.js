@@ -27,7 +27,7 @@ const CONFIG = {
   bio: 'made by someone else',
   display_name: 'Stranger',
   theme_color: '#FF2693',
-  accent_color: '#FFB8DB',
+  accent_color: '#D3C4FF',
   name_font: 'Unbounded',
   card_style: 'glass',
   card_radius: 24,

@@ -645,7 +645,7 @@ const renderLink = (link, profile = {}) => {
   document.body.appendChild(el);
   const r = createRoot(el);
   const Icon = () => <i />;
-  act(() => r.render(<LinkCard link={link} profile={profile} accent="#FF7FBC" Icon={Icon} />));
+  act(() => r.render(<LinkCard link={link} profile={profile} accent="#A48DF4" Icon={Icon} />));
   const html = el.innerHTML;
   act(() => r.unmount());
   el.remove();

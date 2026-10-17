@@ -4,28 +4,22 @@
 @tailwind components;
 @tailwind utilities;
 
-/* swats palette: black, grey and white, with ONE colour — light pink.
-
-   The page is near-black, surfaces are greys, type is white/grey, and light pink
-   (#FF7FBC) is the only accent: links, icons, active states, focus rings and
-   primary buttons. Fills are light enough that they carry near-black ink rather
-   than white (see the `.text-white` rule in the utilities layer below), which is
-   what keeps a light accent usable as a button. */
+/* swats palette: Near-black #0A0A0D, Primary purple #A48DF4, and Light lavender #D3C4FF. */
 :root {
-    --sw-bg: #08080a;          /* page black */
-    --sw-surface: #0e0e12;     /* raised panel */
-    --sw-surface-2: #17171b;   /* top border / overlay layer */
-    --sw-border: rgba(255, 255, 255, 0.075);
-    --sw-border-active: rgba(255, 127, 188, 0.4);
-    --sw-accent: #FF7FBC;      /* light pink — the accent */
-    --sw-accent-2: #F05CA5;    /* pressed pink */
-    --sw-cherry: #A52268;      /* deep pink, gradient tails */
-    --sw-silver: #8C8C95;      /* mid grey */
-    --sw-blush: #FFB8DB;       /* lightest pink, highlights */
+    --sw-bg: #0A0A0D;          /* near-black */
+    --sw-surface: #121217;     /* raised panel */
+    --sw-surface-2: #191922;   /* top border / overlay layer */
+    --sw-border: rgba(255, 255, 255, 0.08);
+    --sw-border-active: rgba(164, 141, 244, 0.45);
+    --sw-accent: #A48DF4;      /* Primary purple (#A48DF4) */
+    --sw-accent-2: #8C71E8;    /* pressed purple */
+    --sw-cherry: #5938B8;      /* deep violet, gradient tails */
+    --sw-silver: #8D8D9E;      /* mid grey */
+    --sw-blush: #D3C4FF;       /* Light lavender (#D3C4FF) */
     --sw-radius: 1rem;         /* section radius (same as rounded-2xl) */
-    --sw-text: #f4f4f5;
-    --sw-text-2: #a1a1aa;
-    --sw-text-3: #71717a;
+    --sw-text: #f4f4f7;
+    --sw-text-2: #a1a1b0;
+    --sw-text-3: #717182;
 }
 
 * { scroll-behavior: smooth; }
@@ -39,39 +33,37 @@ body {
     -moz-osx-font-smoothing: grayscale;
 }
 
-::selection { background: rgba(255, 127, 188, 0.35); color: #fff; }
+::selection { background: rgba(164, 141, 244, 0.35); color: #fff; }
 
 ::-webkit-scrollbar { width: 10px; height: 10px; }
-::-webkit-scrollbar-track { background: #070708; }
-::-webkit-scrollbar-thumb { background: #27272a; border-radius: 8px; border: 2px solid #070708; }
-::-webkit-scrollbar-thumb:hover { background: #3f3f46; }
+::-webkit-scrollbar-track { background: #0A0A0D; }
+::-webkit-scrollbar-thumb { background: #202029; border-radius: 8px; border: 2px solid #0A0A0D; }
+::-webkit-scrollbar-thumb:hover { background: #32323E; }
 
 @layer base {
     :root {
-        /* 331 100% 75% is light pink #FF7FBC. The shadcn tokens follow it so the
-           Radix primitives (slider, switch, tooltip, dialog) match the site
-           instead of staying violet. Neutrals are cast-free greys now, matching
-           the ink ramp in tailwind.config.js. */
-        --background: 240 6% 4%;
+        /* Primary purple #A48DF4 -> HSL 254 82% 75%
+           Near-black #0A0A0D -> HSL 240 13% 4.5% */
+        --background: 240 13% 4.5%;
         --foreground: 0 0% 96%;
-        --card: 240 5% 7%;
+        --card: 240 12% 7%;
         --card-foreground: 0 0% 96%;
-        --popover: 240 5% 7%;
+        --popover: 240 12% 7%;
         --popover-foreground: 0 0% 96%;
-        --primary: 331 100% 75%;
-        /* Dark ink on the light pink fill — white here would be ~1.9:1. */
-        --primary-foreground: 240 6% 5%;
-        --secondary: 240 4% 13%;
+        --primary: 254 82% 75%;
+        /* Dark ink on the primary purple / light lavender fill */
+        --primary-foreground: 240 13% 4.5%;
+        --secondary: 240 10% 12%;
         --secondary-foreground: 0 0% 96%;
-        --muted: 240 4% 14%;
-        --muted-foreground: 240 4% 64%;
-        --accent: 331 100% 75%;
-        --accent-foreground: 240 6% 5%;
+        --muted: 240 10% 13%;
+        --muted-foreground: 240 8% 64%;
+        --accent: 254 82% 75%;
+        --accent-foreground: 240 13% 4.5%;
         --destructive: 0 72% 51%;
         --destructive-foreground: 0 0% 98%;
-        --border: 240 4% 15%;
-        --input: 240 4% 15%;
-        --ring: 331 100% 75%;
+        --border: 240 10% 16%;
+        --input: 240 10% 16%;
+        --ring: 254 82% 75%;
         --radius: 1rem;
     }
 }
@@ -105,7 +97,7 @@ body {
         0 6px 1px rgba(0,0,0,0.3),
         0 0 8px rgba(0,0,0,0.3),
         0 10px 16px rgba(0,0,0,0.6),
-        0 16px 30px rgba(240,92,165,0.25);
+        0 16px 30px rgba(164,141,244,0.25);
 }
 
 .glass {
@@ -217,15 +209,16 @@ body {
 
 /* Reusable brand gradients. Rose is the light-pink accent pair; silver is the
    grey/black one used behind neutral panels. */
-.sw-gradient-rose {
-    background-image: linear-gradient(135deg, #FF7FBC 0%, #F05CA5 52%, #A52268 100%);
+.sw-gradient-rose,
+.sw-gradient-purple {
+    background-image: linear-gradient(135deg, #D3C4FF 0%, #A48DF4 52%, #5938B8 100%);
 }
 .sw-gradient-silver {
-    background-image: linear-gradient(135deg, #8C8C95 0%, #333338 52%, #08080A 100%);
+    background-image: linear-gradient(135deg, #8D8D9E 0%, #32323E 52%, #0A0A0D 100%);
 }
 
 @layer utilities {
-    /* A light pink fill cannot carry white text (#FF7FBC on #fff is about 1.9:1),
+    /* A light pink fill cannot carry white text (#A48DF4 on #fff is about 1.9:1),
        so every solid brand surface is switched to near-black ink here instead of
        editing the ~100 buttons that were written as `text-white`.
 
@@ -236,13 +229,14 @@ body {
     .bg-brand-500.text-white,
     .bg-brand-600.text-white,
     .bg-brand-400.text-white,
+    .bg-brand-300.text-white,
     .bg-brand-500.hover\:text-white:hover,
     .bg-brand-600.hover\:text-white:hover,
     .from-brand-500.text-white,
     .from-brand-600.text-white,
     .to-brand-500.text-white,
     .to-brand-600.text-white {
-        color: #08080a;
+        color: #0A0A0D;
     }
 }
 
@@ -314,8 +308,8 @@ select:focus-visible,
 .animate-float { animation: sw-float 6s ease-in-out infinite; }
 
 @keyframes sw-pulse-glow {
-    0%,100% { box-shadow: 0 0 0 0 rgba(255, 127, 188, 0.25); }
-    50% { box-shadow: 0 0 36px 4px rgba(255, 127, 188, 0.35); }
+    0%,100% { box-shadow: 0 0 0 0 rgba(164, 141, 244, 0.25); }
+    50% { box-shadow: 0 0 36px 4px rgba(164, 141, 244, 0.35); }
 }
 .animate-pulse-glow { animation: sw-pulse-glow 3s ease-in-out infinite; }
 
@@ -325,7 +319,7 @@ select:focus-visible,
 @keyframes sw-fade-up { from { opacity: 0; transform: translateY(24px); } to { opacity: 1; transform: translateY(0); } }
 .fade-up { animation: sw-fade-up 0.7s cubic-bezier(0.16,1,0.3,1) both; }
 
-.glow-ring { box-shadow: 0 0 0 1px rgba(255,127,188,0.4), 0 0 28px rgba(255,127,188,0.3); }
+.glow-ring { box-shadow: 0 0 0 1px rgba(164,141,244,0.4), 0 0 28px rgba(164,141,244,0.3); }
 
 @keyframes sw-eq { 0%,100% { height: 20%; } 50% { height: 100%; } }
 .eq-bar { animation: sw-eq 0.9s ease-in-out infinite; }

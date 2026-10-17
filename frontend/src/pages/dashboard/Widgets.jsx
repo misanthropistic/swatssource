@@ -96,7 +96,7 @@ export default function Widgets() {
 
   // The profile accent drives the style previews, so a mock player matches the
   // colours the owner's real player will use.
-  const accentColor = user.profile?.accent_color || "#FF7FBC";
+  const accentColor = user.profile?.accent_color || "#A48DF4";
 
   const [widgets, setWidgets] = useState(user.profile?.widgets || []);
   const [tracks, setTracks] = useState(user.profile?.tracks || []);
@@ -303,7 +303,7 @@ export default function Widgets() {
 
   const accentFor = (w) => {
     const kind = KIND_MAP[w.type];
-    return w.color || kind?.color || "#FF7FBC";
+    return w.color || kind?.color || "#A48DF4";
   };
 
   return (
@@ -694,7 +694,7 @@ export default function Widgets() {
           onClick={saveAll}
           disabled={saving}
           data-testid="widget-save-btn"
-          className="px-6 py-2.5 rounded-xl bg-gradient-to-r from-brand-500 to-brand-600 text-white font-bold text-sm hover:brightness-110 transition-colors duration-200 disabled:opacity-50 flex items-center justify-center gap-2 shadow-[0_0_24px_rgba(255,127,188,0.28)] shrink-0"
+          className="px-6 py-2.5 rounded-xl bg-gradient-to-r from-brand-500 to-brand-600 text-white font-bold text-sm hover:brightness-110 transition-colors duration-200 disabled:opacity-50 flex items-center justify-center gap-2 shadow-[0_0_24px_rgba(164, 141, 244,0.28)] shrink-0"
         >
           {saving ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />} Save
         </button>
@@ -766,11 +766,11 @@ export default function Widgets() {
       />
 
       {activeModal && (() => {
-        const kind = KIND_MAP[activeModal.widget.type] || { label: activeModal.widget.type, color: "#FF7FBC", subtypes: [] };
+        const kind = KIND_MAP[activeModal.widget.type] || { label: activeModal.widget.type, color: "#A48DF4", subtypes: [] };
         const KindIcon = kind.Icon || GENERIC_WIDGET_ICON;
         const sub = subtypeOf(activeModal.widget);
         const fields = fieldsFor(activeModal.widget);
-        const color = activeModal.widget.color || kind.color || "#FF7FBC";
+        const color = activeModal.widget.color || kind.color || "#A48DF4";
         const glow = activeModal.widget.glow || "";
         return (
           <div
@@ -1134,10 +1134,10 @@ export default function Widgets() {
                       <div className="grid grid-cols-2 gap-3">
                         {previewPill ? (
                           <div className={Number(activeModal.widget.span ?? 2) === 2 ? "col-span-2" : ""}>
-                            <WidgetPill w={activeModal.widget} accent={kind.color || "#FF7FBC"} ownerCreated={user.created_at} owner={user.username} />
+                            <WidgetPill w={activeModal.widget} accent={kind.color || "#A48DF4"} ownerCreated={user.created_at} owner={user.username} />
                           </div>
                         ) : (
-                          <WidgetCard w={activeModal.widget} accent={kind.color || "#FF7FBC"} ownerCreated={user.created_at} owner={user.username} />
+                          <WidgetCard w={activeModal.widget} accent={kind.color || "#A48DF4"} ownerCreated={user.created_at} owner={user.username} />
                         )}
                       </div>
                     </div>
@@ -1257,7 +1257,7 @@ export default function Widgets() {
                 const Icon = kind.Icon || GENERIC_WIDGET_ICON;
                 return (
                   <div key={g.id} className="p-4 rounded-2xl bg-white/[0.02] border border-white/10 space-y-2.5">
-                    <div className="flex items-center gap-2.5 font-bold text-sm" style={{ color: kind.color || "#FF7FBC" }}>
+                    <div className="flex items-center gap-2.5 font-bold text-sm" style={{ color: kind.color || "#A48DF4" }}>
                       <Icon className="w-4 h-4" /> {g.title}
                     </div>
                     <div className="text-xs text-zinc-300 space-y-1.5 leading-relaxed">

@@ -816,7 +816,7 @@ function DiscordProfile({ w, accent, data, status, error, refresh }) {
   if (style === "discord") {
     return (
       <div className="-m-4 overflow-hidden rounded-2xl" style={{ background: DC.panel }} data-testid="discord-profile-style">
-        <div className="h-14" style={{ background: `linear-gradient(120deg, ${DC.blurple}, #F05CA5)` }} />
+        <div className="h-14" style={{ background: `linear-gradient(120deg, ${DC.blurple}, #8C71E8)` }} />
         <div className="px-3 pb-3">
           <span className="relative -mt-7 mb-1 inline-block">
             <span className="block rounded-full border-4" style={{ borderColor: DC.panel }}>
@@ -955,7 +955,7 @@ function DiscordServer({ w, accent, data, status, error, refresh }) {
           {bannerSrc ? (
             <img src={bannerSrc} alt="" className="h-full w-full object-cover" />
           ) : (
-            <div className="h-full w-full" style={{ background: `linear-gradient(120deg, ${DC.blurple}, #F05CA5)` }} />
+            <div className="h-full w-full" style={{ background: `linear-gradient(120deg, ${DC.blurple}, #8C71E8)` }} />
           )}
           <div className="absolute inset-x-0 bottom-0 h-1/2" style={{ background: "linear-gradient(to top, rgba(12,13,18,0.9), transparent)" }} />
         </div>
@@ -1406,7 +1406,7 @@ function GenericCard({ w, accent }) {
 // Main Widget Router
 // ---------------------------------------------------------------------------
 
-export function WidgetCard({ w, accent = "#FF7FBC", ownerCreated, owner = "", profileRadius }) {
+export function WidgetCard({ w, accent = "#A48DF4", ownerCreated, owner = "", profileRadius }) {
   // The rounding dial from the profile's Card section reaches every widget:
   // a widget without its own card_radius inherits the card's corner instead of
   // standing at a fixed radius the owner cannot change.
@@ -1760,7 +1760,7 @@ export function LinkIcons({ links, profile, accent, PLAT_MAP, compact }) {
   );
 }
 
-export function WidgetPill({ w, accent = "#FF7FBC", ownerCreated, owner = "", p }) {
+export function WidgetPill({ w, accent = "#A48DF4", ownerCreated, owner = "", p }) {
   const type = (w?.type || "").toLowerCase();
   const sub = (w?.subtype || "").toLowerCase();
   const live = LIVE_TYPES.has(type) || (type === "roblox" && sub === "game");
@@ -1769,7 +1769,7 @@ export function WidgetPill({ w, accent = "#FF7FBC", ownerCreated, owner = "", p 
   const bgEnabled = w?.background !== false && w?.bg_enabled !== false && w?.show_bg !== false && !w?.transparent && w?.card_style !== "transparent" && (w?.card_fill_alpha === undefined || Number(w.card_fill_alpha) > 0);
   const fillAlpha = Number.isFinite(Number(w?.card_fill_alpha ?? p?.card_fill_alpha)) ? Number(w?.card_fill_alpha ?? p?.card_fill_alpha) : 65;
   const outlineAlpha = Number.isFinite(Number(w?.card_outline_alpha ?? p?.card_outline_alpha)) ? Number(w?.card_outline_alpha ?? p?.card_outline_alpha) : 25;
-  const brandColor = w?.color || accent || "#FF7FBC";
+  const brandColor = w?.color || accent || "#A48DF4";
   const pillBorderWidth = Math.max(0, Math.round(numOr(w?.card_border_width, WIDGET_SURFACE_DEFAULTS.borderWidth)));
   const pillGlowAmount = numOr(w?.glow_amount, 18);
 

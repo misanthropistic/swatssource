@@ -260,7 +260,7 @@ export default function Templates() {
             disabled={slotsFull}
             data-testid="template-publish-open"
             title={slotsFull ? slotReason : "Publish your current look to the community marketplace"}
-            className="px-4 py-2.5 rounded-xl bg-gradient-to-r from-brand-500 to-brand-600 text-white text-xs font-semibold flex items-center gap-2 hover:brightness-110 transition shadow-[0_0_20px_rgba(255,127,188,0.3)] self-start sm:self-auto disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:brightness-100"
+            className="px-4 py-2.5 rounded-xl bg-gradient-to-r from-brand-500 to-brand-600 text-white text-xs font-semibold flex items-center gap-2 hover:brightness-110 transition shadow-[0_0_20px_rgba(164, 141, 244,0.3)] self-start sm:self-auto disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:brightness-100"
           >
             <Plus className="w-4 h-4" /> {slotsFull ? "All slots used" : "Publish Your Design"} ({slotLabel})
           </button>
@@ -295,7 +295,7 @@ export default function Templates() {
               >
                 <span
                   className="h-8 w-12 shrink-0 rounded-lg border border-white/10"
-                  style={{ background: t.background_preview || "#FF7FBC" }}
+                  style={{ background: t.background_preview || "#A48DF4" }}
                   aria-hidden="true"
                 />
                 <div className="min-w-0 flex-1">
@@ -344,7 +344,7 @@ export default function Templates() {
                 onClick={() => setCategoryFilter(cat.id)}
                 className={`whitespace-nowrap px-3 py-1.5 rounded-xl text-xs font-semibold transition cursor-pointer ${
                   active
-                    ? "bg-brand-500/20 text-brand-200 border border-brand-500/40 shadow-[0_0_12px_rgba(255,127,188,0.2)]"
+                    ? "bg-brand-500/20 text-brand-200 border border-brand-500/40 shadow-[0_0_12px_rgba(164, 141, 244,0.2)]"
                     : "bg-white/[0.03] text-zinc-400 border border-white/5 hover:bg-white/[0.06] hover:text-zinc-200"
                 }`}
               >
@@ -427,7 +427,7 @@ export default function Templates() {
                   style={{
                     background: bgUrl && !bgUrl.startsWith("#")
                       ? `url(${bgUrl}) center/cover no-repeat`
-                      : `linear-gradient(135deg, ${t.background_preview || "#FF7FBC"}, #3b0764)`
+                      : `linear-gradient(135deg, ${t.background_preview || "#A48DF4"}, #3b0764)`
                   }}
                 >
                   <div className="absolute inset-0 bg-black/40 backdrop-blur-[2px]" />
@@ -553,7 +553,7 @@ export default function Templates() {
           className="fixed inset-0 z-50 bg-black/75 backdrop-blur-md flex items-center justify-center p-4 animate-in fade-in duration-200"
           onClick={(e) => { if (e.target === e.currentTarget) setEditing(null); }}
         >
-          <div className="w-full max-w-md rounded-3xl border border-white/15 bg-[#0b0b0d]/95 p-5 backdrop-blur-2xl animate-in zoom-in-95 duration-200">
+          <div className="w-full max-w-md rounded-3xl border border-white/15 bg-[#0A0A0D]/95 p-5 backdrop-blur-2xl animate-in zoom-in-95 duration-200">
             <h3 className="font-display text-base font-bold text-zinc-100">Edit "{editing.title}"</h3>
             <p className="mt-1 text-[11px] text-zinc-500">
               The look itself stays as published — people are already wearing this snapshot.
@@ -620,7 +620,7 @@ export default function Templates() {
           className="fixed inset-0 z-50 bg-black/70 backdrop-blur-md flex items-center justify-center p-3 sm:p-6 animate-in fade-in duration-200"
           onClick={(e) => { if (e.target === e.currentTarget) setViewing(null); }}
         >
-          <div className="w-full max-w-5xl overflow-hidden rounded-3xl border border-white/15 bg-[#0b0b0d]/95 shadow-[0_25px_90px_rgba(0,0,0,0.95),0_0_40px_rgba(255,127,188,0.12)] backdrop-blur-2xl">
+          <div className="w-full max-w-5xl overflow-hidden rounded-3xl border border-white/15 bg-[#0A0A0D]/95 shadow-[0_25px_90px_rgba(0,0,0,0.95),0_0_40px_rgba(164, 141, 244,0.12)] backdrop-blur-2xl">
             <div className="flex items-center justify-between gap-3 border-b border-white/10 px-5 py-4">
               <div className="min-w-0">
                 <h3 className="truncate font-display text-base font-bold text-zinc-100">{viewing.title}</h3>
@@ -770,7 +770,7 @@ export default function Templates() {
           className="fixed inset-0 z-50 bg-black/75 backdrop-blur-md flex items-center justify-center p-4 animate-in fade-in duration-200"
           onClick={(e) => { if (e.target === e.currentTarget) setShowPublishModal(false); }}
         >
-          <div className="bg-[#0b0b0d]/95 backdrop-blur-2xl rounded-3xl p-5 max-w-md w-full relative shadow-[0_25px_90px_rgba(0,0,0,0.95),0_0_40px_rgba(255,127,188,0.15)] border border-white/15 animate-in zoom-in-95 duration-200">
+          <div className="bg-[#0A0A0D]/95 backdrop-blur-2xl rounded-3xl p-5 max-w-md w-full relative shadow-[0_25px_90px_rgba(0,0,0,0.95),0_0_40px_rgba(164, 141, 244,0.15)] border border-white/15 animate-in zoom-in-95 duration-200">
             <div className="flex items-center justify-between pb-4 border-b border-white/10">
               <div className="flex items-center gap-2">
                 <Wand2 className="w-5 h-5 text-brand-400" />

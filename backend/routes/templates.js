@@ -56,10 +56,10 @@ const DEFAULT_STARTER_TEMPLATES = [
     title: 'Y2K Bubblegum',
     description: 'Retro 2000s aesthetic with frosted pink glass, sparkles, and bouncy cute typography.',
     author_username: 'swats',
-    background_preview: '#FF7FBC',
+    background_preview: '#A48DF4',
     config: {
-      theme_color: '#FF7FBC',
-      accent_color: '#FFB8DB',
+      theme_color: '#A48DF4',
+      accent_color: '#D3C4FF',
       name_font: 'Outfit',
       bio_font: 'Poppins',
       display_font: 'Outfit',
@@ -329,7 +329,7 @@ router.post('/', requireAuth, async (req, res) => {
     }
 
     const profile = req.user.profile || {};
-    const bgPreview = profile.background_url || profile.banner_url || profile.avatar_url || profile.theme_color || '#FF7FBC';
+    const bgPreview = profile.background_url || profile.banner_url || profile.avatar_url || profile.theme_color || '#A48DF4';
     const authorAvatar = profile.avatar_url || null;
 
     // What gets stored is the look only: the author's own links and widgets stay

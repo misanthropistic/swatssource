@@ -32,7 +32,7 @@ export const BADGE_GROUPS = {
   server: { label: "Servers", tint: "#5865f2" },
   special: { label: "Special", tint: "#23a55a" },
   guilds: { label: "Guilds", tint: "#f0b232" },
-  platform: { label: "swats.bio", tint: "#FF7FBC" },
+  platform: { label: "swats.bio", tint: "#A48DF4" },
   // The seasonal set: earned by being here while the window is open, one badge
   // per event per year (see constants/badges.js).
   events: { label: "Seasonal", tint: "#f97316" },

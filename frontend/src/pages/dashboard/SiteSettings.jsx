@@ -358,7 +358,7 @@ export default function SiteSettings() {
           <button
             type="submit"
             disabled={saving}
-            className="px-6 py-2.5 rounded-xl bg-gradient-to-r from-brand-500 to-brand-600 text-white text-sm font-semibold hover:brightness-110 transition flex items-center gap-2 shadow-[0_0_20px_rgba(255,127,188,0.3)]"
+            className="px-6 py-2.5 rounded-xl bg-gradient-to-r from-brand-500 to-brand-600 text-white text-sm font-semibold hover:brightness-110 transition flex items-center gap-2 shadow-[0_0_20px_rgba(164, 141, 244,0.3)]"
           >
             {saving ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />} Save Site Settings
           </button>

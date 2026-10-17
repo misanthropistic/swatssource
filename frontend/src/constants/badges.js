@@ -18,21 +18,21 @@ import { DISCORD_BADGES, DISCORD_BADGE_MAP, badgeSrc } from "./discordBadges";
    borrows from the Discord set. */
 const PLATFORM_BADGES = {
   og: { src: "og.png", color: "#fbbf24" },
-  verified: { src: "verfied.gif", color: "#FF7FBC" },
+  verified: { src: "verfied.gif", color: "#A48DF4" },
   bug_hunter: { src: "discord/core/bug_hunter_level_1.svg", color: "#22c55e" },
   team: { src: "team.gif", color: "#38bdf8" },
   // Our own crown, in the brand pink. Discord's server-owner crown is the art
   // the *Server Owner* badge already wears, so using it here made the platform
   // owner and a Discord server owner look like the same badge.
-  owner: { src: "owner.svg", color: "#FF7FBC" },
+  owner: { src: "owner.svg", color: "#A48DF4" },
   admin: { src: "discord/discordmod.svg", color: "#ef4444" },
   media: { src: "discord/server/CommunityDark.svg", color: "#ec4899" },
   // Transparent art on purpose: the source set's `fame/` folder was a set of
   // opaque panel screenshots, which showed up as a rectangle around the badge.
   // Those files are gone and the registry no longer lists them.
-  featured: { src: "discord/core/hypesquad_events.svg", color: "#FF7FBC" },
+  featured: { src: "discord/core/hypesquad_events.svg", color: "#A48DF4" },
   booster: { src: "booster.png", color: "#f472b6" },
-  premium: { src: "discord/core/nitro.svg", color: "#FF7FBC" },
+  premium: { src: "discord/core/nitro.svg", color: "#A48DF4" },
   donater: { src: "gifters.png", color: "#34d399" },
   donator: { src: "gifters.png", color: "#34d399" },
   partner: { src: "partner.png", color: "#60a5fa" },

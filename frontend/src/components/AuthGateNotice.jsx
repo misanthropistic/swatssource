@@ -39,7 +39,7 @@ export default function AuthGateNotice({ variant = "strip" }) {
             type="button"
             onClick={connect}
             data-testid="auth-gate-connect"
-            className="flex shrink-0 items-center justify-center gap-2 rounded-xl bg-white px-4 py-2.5 text-sm font-semibold text-[#08080a] transition-colors duration-200 hover:bg-white/90"
+            className="flex shrink-0 items-center justify-center gap-2 rounded-xl bg-white px-4 py-2.5 text-sm font-semibold text-[#0A0A0D] transition-colors duration-200 hover:bg-white/90"
           >
             <FaDiscord className="h-4 w-4" /> Connect Discord
           </button>
@@ -62,7 +62,7 @@ export default function AuthGateNotice({ variant = "strip" }) {
         type="button"
         onClick={connect}
         data-testid="auth-gate-connect"
-        className="ml-auto flex shrink-0 items-center gap-1.5 rounded-lg bg-white px-3 py-1.5 text-xs font-semibold text-[#08080a] transition-colors duration-200 hover:bg-white/90"
+        className="ml-auto flex shrink-0 items-center gap-1.5 rounded-lg bg-white px-3 py-1.5 text-xs font-semibold text-[#0A0A0D] transition-colors duration-200 hover:bg-white/90"
       >
         <FaDiscord className="h-3.5 w-3.5" /> Connect
       </button>

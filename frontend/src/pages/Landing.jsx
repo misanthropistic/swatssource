@@ -22,7 +22,7 @@ export default function Landing() {
         className="pointer-events-none absolute inset-x-0 top-0 z-0 h-[46rem]"
         style={{
           background:
-            "radial-gradient(120% 100% at 50% -18%, rgba(255,127,188,0.40) 0%, rgba(255,127,188,0.17) 32%, rgba(255,127,188,0.05) 60%, rgba(255,127,188,0) 100%)",
+            "radial-gradient(120% 100% at 50% -18%, rgba(164, 141, 244,0.40) 0%, rgba(164, 141, 244,0.17) 32%, rgba(164, 141, 244,0.05) 60%, rgba(164, 141, 244,0) 100%)",
         }}
       />
       <Navbar />

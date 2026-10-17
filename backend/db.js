@@ -211,7 +211,7 @@ export async function initDb() {
         name TEXT NOT NULL,
         description TEXT,
         icon_url TEXT,
-        glow_color TEXT DEFAULT '#FF7FBC',
+        glow_color TEXT DEFAULT '#A48DF4',
         glow_intensity INTEGER DEFAULT 50,
         created_at TIMESTAMPTZ DEFAULT NOW()
       );
@@ -516,8 +516,8 @@ export async function initDb() {
           hash,
           JSON.stringify({
             bio: 'Official swats.bio administrator',
-            theme_color: '#FF7FBC',
-            accent_color: '#FFB8DB',
+            theme_color: '#A48DF4',
+            accent_color: '#D3C4FF',
             name_font: 'Unbounded',
             display_font: 'Unbounded',
             bio_font: 'Inter',

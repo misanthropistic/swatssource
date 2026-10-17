@@ -23,7 +23,7 @@ const PlatformIcon = ({ item }) => {
       {/* NO BACKGROUND PILL OR BOX - Pure Floating Icon */}
       <Icon
         className="w-8 h-8 sm:w-10 sm:h-10 transition-transform duration-300 group-hover:scale-110"
-        style={{ color: item.color || "#FF7FBC" }}
+        style={{ color: item.color || "#A48DF4" }}
       />
     </div>
   );

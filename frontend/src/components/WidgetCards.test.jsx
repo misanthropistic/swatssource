@@ -122,7 +122,7 @@ const renderLink = (link, profile = {}) => {
   const el = document.createElement("div");
   document.body.appendChild(el);
   const root = createRoot(el);
-  act(() => root.render(<LinkCard link={link} profile={profile} accent="#FF7FBC" Icon={LinkIcon} />));
+  act(() => root.render(<LinkCard link={link} profile={profile} accent="#A48DF4" Icon={LinkIcon} />));
   const html = el.innerHTML;
   act(() => root.unmount());
   el.remove();

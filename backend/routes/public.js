@@ -291,7 +291,7 @@ router.get('/meta/:username', async (req, res) => {
           <title>swats | User Not Found</title>
           <meta property="og:title" content="swats.bio | User Not Found" />
           <meta property="og:description" content="This username is available to claim on swats.bio" />
-          <meta property="theme-color" content="#FF7FBC" />
+          <meta property="theme-color" content="#A48DF4" />
         </head>
         <body>User Not Found</body>
         </html>
@@ -303,7 +303,7 @@ router.get('/meta/:username', async (req, res) => {
     const name = user.display_name || user.username;
     const bio = profile.bio || `Check out ${name}'s bio link on swats.bio`;
     const avatar = profile.avatar_url || 'https://www.swats.bio/logo.png';
-    const color = profile.theme_color || '#FF7FBC';
+    const color = profile.theme_color || '#A48DF4';
 
     return res.type('text/html').send(`
       <!DOCTYPE html>

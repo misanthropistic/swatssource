@@ -39,7 +39,7 @@ const SpotlightCard = ({ user: u, offset, onFocus, onOpen }) => {
       <div
         className={`relative h-[300px] overflow-hidden rounded-3xl border bg-[#0b0b0f] transition-shadow duration-300 sm:h-[350px] ${
           center
-            ? "border-brand-400/50 shadow-[0_30px_80px_-30px_rgba(255,127,188,0.55)]"
+            ? "border-brand-400/50 shadow-[0_30px_80px_-30px_rgba(164, 141, 244,0.55)]"
             : "border-white/10 shadow-[0_18px_44px_-24px_rgba(0,0,0,0.95)]"
         }`}
       >

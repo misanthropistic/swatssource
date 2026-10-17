@@ -28,10 +28,10 @@ export default function Stats() {
         <div className="h-64">
           <ResponsiveContainer width="100%" height="100%">
             <AreaChart data={data}>
-              <defs><linearGradient id="g" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stopColor="#FF7FBC" stopOpacity={0.5} /><stop offset="100%" stopColor="#FF7FBC" stopOpacity={0} /></linearGradient></defs>
+              <defs><linearGradient id="g" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stopColor="#A48DF4" stopOpacity={0.5} /><stop offset="100%" stopColor="#A48DF4" stopOpacity={0} /></linearGradient></defs>
               <XAxis dataKey="day" stroke="#52525b" fontSize={12} />
               <Tooltip contentStyle={{ background: "#131316", border: "1px solid rgba(255,255,255,0.1)", borderRadius: 12, color: "#fff" }} />
-              <Area type="monotone" dataKey="views" stroke="#FF7FBC" strokeWidth={2} fill="url(#g)" />
+              <Area type="monotone" dataKey="views" stroke="#A48DF4" strokeWidth={2} fill="url(#g)" />
             </AreaChart>
           </ResponsiveContainer>
         </div>

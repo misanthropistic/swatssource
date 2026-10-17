@@ -86,7 +86,7 @@ it("shows the rank, the XP and the distance to the next one", async () => {
 });
 
 it("says the top rank is the top rank instead of promising a next one", async () => {
-  global.__RANK__ = { ...RANKED, rank: { id: "legend", name: "Legend", color: "#FF7FBC" }, next: null, toNext: 0, percent: 100 };
+  global.__RANK__ = { ...RANKED, rank: { id: "legend", name: "Legend", color: "#A48DF4" }, next: null, toNext: 0, percent: 100 };
   await draw();
 
   expect(container.querySelector('[data-testid="rank-name"]').textContent).toBe("Legend");

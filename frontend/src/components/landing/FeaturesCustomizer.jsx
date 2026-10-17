@@ -79,7 +79,7 @@ const DiscordServerCard = ({ server, testid }) => {
             className="h-full w-full scale-150 object-cover opacity-70 blur-xl"
           />
         ) : (
-          <div className="h-full w-full" style={{ background: "linear-gradient(120deg, #5865F2, #F05CA5)" }} />
+          <div className="h-full w-full" style={{ background: "linear-gradient(120deg, #5865F2, #8C71E8)" }} />
         )}
         <div
           className="absolute inset-0"
@@ -166,7 +166,7 @@ const DiscordServerCard = ({ server, testid }) => {
             target="_blank"
             rel="noreferrer"
             data-testid={`${testid}-join`}
-            className="mt-3 flex w-full items-center justify-center gap-2 rounded-xl bg-white py-2 text-xs font-semibold text-[#08080a] outline-none transition-colors duration-200 hover:bg-white/90 focus-visible:ring-2 focus-visible:ring-brand-500/60 sm:mt-4 sm:py-2.5 sm:text-sm"
+            className="mt-3 flex w-full items-center justify-center gap-2 rounded-xl bg-white py-2 text-xs font-semibold text-[#0A0A0D] outline-none transition-colors duration-200 hover:bg-white/90 focus-visible:ring-2 focus-visible:ring-brand-500/60 sm:mt-4 sm:py-2.5 sm:text-sm"
           >
             <Users className="h-4 w-4" /> Join server
             <ExternalLink className="h-3.5 w-3.5 opacity-70" />

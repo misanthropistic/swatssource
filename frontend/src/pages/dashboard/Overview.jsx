@@ -101,7 +101,7 @@ const StatChip = ({ icon: Icon, label, value, to, testid }) => {
   // of the page read as a spreadsheet header. The accent glow only wakes on
   // hover so the strip stays quiet by default.
   const cls =
-    "flex min-w-0 items-center gap-2.5 rounded-2xl border border-white/[0.06] bg-gradient-to-br from-white/[0.06] via-white/[0.03] to-transparent px-4 py-3 shadow-[0_4px_18px_rgba(0,0,0,0.28)] transition-all duration-200 hover:-translate-y-0.5 hover:border-brand-400/25 hover:shadow-[0_10px_28px_rgba(255,127,188,0.10)]";
+    "flex min-w-0 items-center gap-2.5 rounded-2xl border border-white/[0.06] bg-gradient-to-br from-white/[0.06] via-white/[0.03] to-transparent px-4 py-3 shadow-[0_4px_18px_rgba(0,0,0,0.28)] transition-all duration-200 hover:-translate-y-0.5 hover:border-brand-400/25 hover:shadow-[0_10px_28px_rgba(164, 141, 244,0.10)]";
   return to ? (
     <Link to={to} className={`${cls} outline-none focus-visible:ring-2 focus-visible:ring-brand-500/50`} data-testid={testid}>
       {body}
@@ -228,7 +228,7 @@ export default function Overview() {
       <div className="relative overflow-hidden rounded-3xl border border-white/10 bg-gradient-to-r from-brand-950/40 via-purple-950/20 to-black/60 p-5 shadow-[0_10px_30px_rgba(0,0,0,0.5)] backdrop-blur-xl">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div className="flex items-center gap-3">
-            <div className="grid h-12 w-12 shrink-0 place-items-center rounded-2xl bg-gradient-to-tr from-brand-500 to-purple-600 text-white shadow-[0_0_20px_rgba(255,127,188,0.4)]">
+            <div className="grid h-12 w-12 shrink-0 place-items-center rounded-2xl bg-gradient-to-tr from-brand-500 to-purple-600 text-white shadow-[0_0_20px_rgba(164, 141, 244,0.4)]">
               <Globe className="h-6 w-6" />
             </div>
             <div>

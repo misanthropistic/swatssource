@@ -24,7 +24,7 @@ const frontend = (...parts) => fs.readFileSync(path.join(import.meta.dirname, '.
 const FREE = {
   layout: 'minimal',
   theme_color: '#FF2693',
-  accent_color: '#FFB8DB',
+  accent_color: '#D3C4FF',
   display_font: 'Unbounded',
   name_font: 'Inter',
   bio_font: 'Inter',

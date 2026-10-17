@@ -36,7 +36,7 @@ export const RANKS = [
   { id: 'gold', name: 'Gold', min: 1400, color: '#fbbf24', blurb: 'A page people come back to' },
   { id: 'platinum', name: 'Platinum', min: 3200, color: '#67e8f9', blurb: 'A recognised profile' },
   { id: 'diamond', name: 'Diamond', min: 6500, color: '#a78bfa', blurb: 'One of the big pages' },
-  { id: 'legend', name: 'Legend', min: 12000, color: '#FF7FBC', blurb: 'The top of the site' },
+  { id: 'legend', name: 'Legend', min: 12000, color: '#A48DF4', blurb: 'The top of the site' },
 ];
 
 /* What each thing is worth. Kept as one table so the profile page, the docs and

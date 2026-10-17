@@ -172,7 +172,7 @@ export default function NotificationBell() {
             <span className="pointer-events-none absolute -right-0.5 -top-0.5 h-2.5 w-2.5 animate-ping rounded-full bg-brand-400/70" />
             <span
               data-testid="notification-badge"
-              className="absolute -right-1.5 -top-1.5 min-w-[18px] rounded-full bg-brand-500 px-1 text-center font-mono2 text-[10px] font-bold leading-[18px] text-white shadow-[0_0_10px_rgba(255,127,188,0.6)]"
+              className="absolute -right-1.5 -top-1.5 min-w-[18px] rounded-full bg-brand-500 px-1 text-center font-mono2 text-[10px] font-bold leading-[18px] text-white shadow-[0_0_10px_rgba(164, 141, 244,0.6)]"
             >
               {badge}
             </span>
